@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.8.34601.278
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "openapi2excel", "openapi2excel\openapi2excel.csproj", "{90BAE74F-E824-41C6-8358-74B0781ECE75}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{90BAE74F-E824-41C6-8358-74B0781ECE75}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{90BAE74F-E824-41C6-8358-74B0781ECE75}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{90BAE74F-E824-41C6-8358-74B0781ECE75}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{90BAE74F-E824-41C6-8358-74B0781ECE75}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {A1730378-B71B-42E8-B8B3-26281AE5CF6D}
+	EndGlobalSection
+EndGlobal
