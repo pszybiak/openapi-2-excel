@@ -1,5 +1,6 @@
 ﻿using ClosedXML.Excel;
 using Microsoft.OpenApi.Readers;
+using openapi2excel.Builders;
 
 namespace openapi2excel;
 
@@ -35,21 +36,18 @@ public static class OpenApiDocumentationGenerator
         }
 
         using var workbook = new XLWorkbook();
-        foreach (var openApiPath in readResult.OpenApiDocument.Paths)
+        var infoWorksheetsBuilder = new InfoWorksheetBuilder(workbook, readResult.OpenApiDocument, options);
+        var worksheetBuilder = new OperationWorksheetBuilder(workbook, options);
+
+        foreach (var path in readResult.OpenApiDocument.Paths)
         {
-            foreach (var openApiOperation in openApiPath.Value.Operations)
+            foreach (var operation in path.Value.Operations)
             {
-                var worksheet = workbook.Worksheets.Add(openApiOperation.Value.OperationId);
-                worksheet.Cell("A1").Value = openApiPath.Key;
-                worksheet.Cell("A2").Value = openApiOperation.Key.ToString();
-                worksheet.Cell("A3").Value = openApiOperation.Value.Summary;
+                var worksheet = worksheetBuilder.Build(path.Key, path.Value, operation.Key, operation.Value);
+                infoWorksheetsBuilder.AddLink(operation.Key, path.Key, worksheet);
             }
         }
 
         workbook.SaveAs(new FileInfo(outputFile).FullName);
     }
-}
-
-public class OpenApiDocumentationOptions
-{
 }
