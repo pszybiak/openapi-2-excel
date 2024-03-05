@@ -6,7 +6,7 @@ namespace openapi2excel.Builders;
 internal class InfoWorksheetBuilder : WorksheetBuilder
 {
     private readonly OpenApiDocument _readResultOpenApiDocument;
-    public static string Name => "Info";
+    public static string Name => OpenApiDocumentationLanguageConst.Info;
     private readonly IXLWorksheet _infoWorksheet;
     private int _actualRowIndex = 1;
 
@@ -40,7 +40,7 @@ internal class InfoWorksheetBuilder : WorksheetBuilder
             return;
         }
 
-        FillInfo("Version", _readResultOpenApiDocument.Info.Version);
+        FillInfo(OpenApiDocumentationLanguageConst.Version, _readResultOpenApiDocument.Info.Version);
     }
 
     private void AddDescription()
@@ -49,7 +49,7 @@ internal class InfoWorksheetBuilder : WorksheetBuilder
         {
             return;
         }
-        FillInfo("Description", _readResultOpenApiDocument.Info.Description, true);
+        FillInfo(OpenApiDocumentationLanguageConst.Description, _readResultOpenApiDocument.Info.Description, true);
     }
 
     private void AddTitle()
@@ -58,7 +58,7 @@ internal class InfoWorksheetBuilder : WorksheetBuilder
         {
             return;
         }
-        FillInfo("Title", _readResultOpenApiDocument.Info.Title);
+        FillInfo(OpenApiDocumentationLanguageConst.Title, _readResultOpenApiDocument.Info.Title);
     }
 
     private void AddEmptyRow()
@@ -66,9 +66,9 @@ internal class InfoWorksheetBuilder : WorksheetBuilder
         _actualRowIndex++;
     }
 
-    private void FillInfo(string name, string value, bool multipleRowText = false)
+    private void FillInfo(string languageKey, string value, bool multipleRowText = false)
     {
-        _infoWorksheet.Cell(_actualRowIndex, 1).Value = name;
+        _infoWorksheet.Cell(_actualRowIndex, 1).Value = Options.Language.Get(languageKey);
         if (multipleRowText)
         {
             var splitValues = value.Split('\n', '\r', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
