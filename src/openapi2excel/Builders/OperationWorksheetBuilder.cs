@@ -7,6 +7,7 @@ internal class OperationWorksheetBuilder(IXLWorkbook workbook, OpenApiDocumentat
     : WorksheetBuilder(options)
 {
     private int _actualRowIndex = 1;
+    private const int ColumnOffset = 4;
     private IXLWorksheet _worksheet = null!;
     private int _attributesColumnsStartIndex;
 
@@ -16,8 +17,10 @@ internal class OperationWorksheetBuilder(IXLWorkbook workbook, OpenApiDocumentat
         _worksheet = workbook.Worksheets.Add(operation.OperationId);
 
         SetMaxTreeLevel(operation);
-        for (var columnIndex = 1; columnIndex <= _attributesColumnsStartIndex; columnIndex++)
-            _worksheet.Column(columnIndex).Width = 3;
+        for (var columnIndex = 1; columnIndex < _attributesColumnsStartIndex; columnIndex++)
+        {
+            _worksheet.Column(columnIndex).Width = 2;
+        }
 
         AddHomePageLink();
         AddEmptyRow();
@@ -36,7 +39,7 @@ internal class OperationWorksheetBuilder(IXLWorkbook workbook, OpenApiDocumentat
 
         _attributesColumnsStartIndex = operation.RequestBody.Content
             .Select(openApiMediaType => openApiMediaType.Value.Schema)
-            .Select(schema => SetMaxTreeLevel(schema, 0)).Prepend(1).Max();
+            .Select(schema => SetMaxTreeLevel(schema, 0)).Prepend(1).Max() + ColumnOffset;
     }
 
     private static int SetMaxTreeLevel(OpenApiSchema schema, int currentLevel)
@@ -79,9 +82,10 @@ internal class OperationWorksheetBuilder(IXLWorkbook workbook, OpenApiDocumentat
         if (operation.RequestBody is null)
             return;
 
+        AddRequestBodyHeader();
         foreach (var mediaType in operation.RequestBody.Content)
         {
-            AddInfoRow("Request", mediaType.Key, true);
+            AddContentTypeRow(mediaType.Key);
             foreach (var property in mediaType.Value.Schema.Properties)
             {
                 AddRequestParameter(property.Key, property.Value, 1);
@@ -92,10 +96,31 @@ internal class OperationWorksheetBuilder(IXLWorkbook workbook, OpenApiDocumentat
         AddEmptyRow();
     }
 
+    private void AddRequestBodyHeader()
+    {
+        var column = _attributesColumnsStartIndex;
+        FillHeaderCell("Field name", 1);
+        for (var i = 2; i < column; i++)
+        {
+            FillHeaderCell(null, i);
+        }
+        FillHeaderCell("Type", column++);
+        FillHeaderCell("Format", column++);
+        FillHeaderCell("Description", column);
+        MoveToNextRow();
+        return;
+
+        void FillHeaderCell(string? label, int columnIndex) => FillCell(columnIndex, label, XLColor.LightBlue);
+    }
 
     private void AddRequestParameter(string name, OpenApiSchema schema, int level)
     {
         AddPropertyRow(name, schema, level++);
+        if (schema.Items != null)
+        {
+            AddPropertyRow("value", schema.Items, level);
+        }
+
         foreach (var property in schema.Properties)
         {
             AddRequestParameter(property.Key, property.Value, level);
@@ -104,31 +129,64 @@ internal class OperationWorksheetBuilder(IXLWorkbook workbook, OpenApiDocumentat
 
     private void AddHomePageLink()
     {
-        _worksheet.Cell(_actualRowIndex, 1).Value = "<<<<<";
+        FillCell(1, "<<<<<");
         _worksheet.Cell(_actualRowIndex++, 1).SetHyperlink(new XLHyperlink($"'{InfoWorksheetBuilder.Name}'!A1"));
     }
 
-    private void AddEmptyRow()
-    {
-        _actualRowIndex++;
-    }
+    private void AddEmptyRow() => MoveToNextRow();
 
     private void AddInfoRow(string label, string? value, bool addIfNotExists = false)
     {
         if (!addIfNotExists && value is null)
             return;
 
-        _worksheet.Cell(_actualRowIndex, 1).Value = label;
-        _worksheet.Cell(_actualRowIndex++, _attributesColumnsStartIndex + 2).Value = value;
+        FillCell(1, label);
+        FillCell(_attributesColumnsStartIndex, value);
+        MoveToNextRow();
+    }
+
+    private void AddContentTypeRow(string name)
+    {
+        FillCell(1, "Request format");
+        FillCell(_attributesColumnsStartIndex, name);
+        for (var i = 1; i < _attributesColumnsStartIndex + 3; i++) // TODO: fill background of all attributes cells
+        {
+            FillCell(i, XLColor.LightBlue);
+        }
+        MoveToNextRow();
     }
 
     private void AddPropertyRow(string name, OpenApiSchema schema, int level)
     {
-        var column = _attributesColumnsStartIndex + 1;
+        for (var columnIndex = 1; columnIndex < level; columnIndex++)
+        {
+            FillCell(columnIndex, XLColor.DarkGray);
+        }
 
-        _worksheet.Cell(_actualRowIndex, level).Value = name;
-        _worksheet.Cell(_actualRowIndex, column++).Value = schema.Type;
-        _worksheet.Cell(_actualRowIndex, column++).Value = schema.Format;
-        _worksheet.Cell(_actualRowIndex++, column).Value = schema.Description;
+        var column = _attributesColumnsStartIndex;
+        FillCell(level, name);
+        FillCell(column++, schema.Type);
+        FillCell(column++, schema.Format);
+        FillCell(column, schema.Description);
+        MoveToNextRow();
+    }
+
+    private void FillCell(int column, string? value, XLColor? backgoundColor = null)
+    {
+        _worksheet.Cell(_actualRowIndex, column).Value = value;
+        if (backgoundColor is not null)
+        {
+            _worksheet.Cell(_actualRowIndex, column).Style.Fill.BackgroundColor = backgoundColor;
+        }
+    }
+
+    private void FillCell(int column, XLColor backgoundColor)
+    {
+        _worksheet.Cell(_actualRowIndex, column).Style.Fill.BackgroundColor = backgoundColor;
+    }
+
+    private void MoveToNextRow()
+    {
+        _actualRowIndex++;
     }
 }
