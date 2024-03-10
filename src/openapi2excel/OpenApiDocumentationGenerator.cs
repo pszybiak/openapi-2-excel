@@ -32,7 +32,10 @@ public static class OpenApiDocumentationGenerator
         var readResult = await new OpenApiStreamReader().ReadAsync(openApiFileStream);
         if (readResult.OpenApiDiagnostic.Errors.Any())
         {
-            throw new InvalidOperationException("Some errors occurred while processing input file.");
+            var errorMessageBuilder = new StringBuilder();
+            errorMessageBuilder.AppendLine("Some errors occurred while processing input file.");
+            readResult.OpenApiDiagnostic.Errors.ToList().ForEach(e => errorMessageBuilder.AppendLine(e.Message));
+            throw new InvalidOperationException(errorMessageBuilder.ToString());
         }
 
         using var workbook = new XLWorkbook();
