@@ -1,6 +1,7 @@
 ﻿using ClosedXML.Excel;
 using Microsoft.OpenApi.Readers;
 using openapi2excel.Builders;
+using System.Text;
 
 namespace openapi2excel;
 
@@ -16,7 +17,6 @@ public static class OpenApiDocumentationGenerator
 
         await using var fileStream = File.OpenRead(openApiFile);
         await GenerateDocumentationImpl(fileStream, outputFile, options);
-
     }
 
     public static async Task GenerateDocumentation(Stream openApiFileStream, string outputFile, OpenApiDocumentationOptions options)
@@ -39,9 +39,10 @@ public static class OpenApiDocumentationGenerator
         }
 
         using var workbook = new XLWorkbook();
-        var infoWorksheetsBuilder = new InfoWorksheetBuilder(workbook, readResult.OpenApiDocument, options);
+        var infoWorksheetsBuilder = new InfoWorksheetBuilder(workbook, options);
         var worksheetBuilder = new OperationWorksheetBuilder(workbook, options);
 
+        infoWorksheetsBuilder.Build(readResult.OpenApiDocument);
         foreach (var path in readResult.OpenApiDocument.Paths)
         {
             foreach (var operation in path.Value.Operations)

@@ -3,17 +3,16 @@ using Microsoft.OpenApi.Models;
 
 namespace openapi2excel.Builders;
 
-internal class InfoWorksheetBuilder : WorksheetBuilder
+internal class InfoWorksheetBuilder(IXLWorkbook workbook, OpenApiDocumentationOptions options) : WorksheetBuilder(options)
 {
-    private readonly OpenApiDocument _readResultOpenApiDocument;
+    private OpenApiDocument _readResultOpenApiDocument = null!;
+    private IXLWorksheet _infoWorksheet = null!;
     public static string Name => OpenApiDocumentationLanguageConst.Info;
-    private readonly IXLWorksheet _infoWorksheet;
     private int _actualRowIndex = 1;
 
-    public InfoWorksheetBuilder(IXLWorkbook workbook, OpenApiDocument readResultOpenApiDocument, OpenApiDocumentationOptions options)
-    : base(options)
+    public IXLWorksheet Build(OpenApiDocument openApiDocument)
     {
-        _readResultOpenApiDocument = readResultOpenApiDocument;
+        _readResultOpenApiDocument = openApiDocument;
         _infoWorksheet = workbook.Worksheets.Add(Name);
         _infoWorksheet.Column(1).Width = 11;
 
@@ -21,6 +20,8 @@ internal class InfoWorksheetBuilder : WorksheetBuilder
         AddTitle();
         AddDescription();
         AddEmptyRow();
+
+        return _infoWorksheet;
     }
 
     public void AddLink(OperationType operation, string path, IXLWorksheet worksheet)
