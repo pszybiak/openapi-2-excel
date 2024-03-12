@@ -35,7 +35,7 @@ internal class OperationWorksheetBuilder(IXLWorkbook workbook, OpenApiDocumentat
         const int attributesColumnOffset = 4;
         _attributesColumnsStartIndex = operation.RequestBody.Content
             .Select(openApiMediaType => openApiMediaType.Value.Schema)
-            .Select(schema => SetMaxTreeLevel(schema, 0))
+            .Select(schema => EstablishMaxTreeLevel(schema, 0))
             .Prepend(1)
             .Max() + attributesColumnOffset;
     }
@@ -48,13 +48,13 @@ internal class OperationWorksheetBuilder(IXLWorkbook workbook, OpenApiDocumentat
         }
     }
 
-    private static int SetMaxTreeLevel(OpenApiSchema schema, int currentLevel)
+    private static int EstablishMaxTreeLevel(OpenApiSchema schema, int currentLevel)
     {
         currentLevel++;
         return schema.Properties?.Any() != true
             ? currentLevel
             : schema.Properties
-                .Select(schemaProperty => SetMaxTreeLevel(schemaProperty.Value, currentLevel))
+                .Select(schemaProperty => EstablishMaxTreeLevel(schemaProperty.Value, currentLevel))
                 .Prepend(currentLevel)
                 .Max();
     }
