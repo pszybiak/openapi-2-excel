@@ -1,6 +1,6 @@
 ﻿using System.CommandLine;
 
-namespace openapi2excel.cli;
+namespace OpenApi2Excel.cli;
 
 internal static class Program
 {

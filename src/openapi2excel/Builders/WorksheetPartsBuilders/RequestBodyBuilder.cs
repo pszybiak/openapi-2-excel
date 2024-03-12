@@ -2,7 +2,7 @@
 using Microsoft.OpenApi.Models;
 using System.Text;
 
-namespace openapi2excel.Builders.WorksheetPartsBuilders;
+namespace OpenApi2Excel.Builders.WorksheetPartsBuilders;
 
 internal class RequestBodyBuilder(
     RowPointer actualRow,
@@ -102,7 +102,7 @@ internal class RequestBodyBuilder(
         }
         if (schema.MinLength is not null && !(schema.MinLength is null && schema.MaxLength is not null))
         {
-            propertyTypeDescription.Append($"..");
+            propertyTypeDescription.Append("..");
         }
         if (schema.MaxLength is not null)
         {

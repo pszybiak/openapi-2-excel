@@ -1,7 +1,7 @@
 ﻿using ClosedXML.Excel;
 using Microsoft.OpenApi.Models;
 
-namespace openapi2excel.Builders.WorksheetPartsBuilders;
+namespace OpenApi2Excel.Builders.WorksheetPartsBuilders;
 
 internal class RequestParametersBuilder(RowPointer actualRow, int attributesColumnIndex, IXLWorksheet worksheet, OpenApiDocumentationOptions options)
     : WorksheetPartBuilder(actualRow, worksheet, options)

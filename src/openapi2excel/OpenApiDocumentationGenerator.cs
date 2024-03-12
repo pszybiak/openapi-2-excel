@@ -1,9 +1,9 @@
-﻿using ClosedXML.Excel;
+﻿using System.Text;
+using ClosedXML.Excel;
 using Microsoft.OpenApi.Readers;
-using openapi2excel.Builders;
-using System.Text;
+using OpenApi2Excel.Builders;
 
-namespace openapi2excel;
+namespace OpenApi2Excel;
 
 public static class OpenApiDocumentationGenerator
 {

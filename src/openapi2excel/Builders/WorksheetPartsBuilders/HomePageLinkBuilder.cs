@@ -1,6 +1,6 @@
 ﻿using ClosedXML.Excel;
 
-namespace openapi2excel.Builders.WorksheetPartsBuilders;
+namespace OpenApi2Excel.Builders.WorksheetPartsBuilders;
 
 internal class HomePageLinkBuilder(RowPointer actualRow, IXLWorksheet worksheet, OpenApiDocumentationOptions options)
     : WorksheetPartBuilder(actualRow, worksheet, options)

@@ -1,8 +1,8 @@
 ﻿using ClosedXML.Excel;
 using Microsoft.OpenApi.Models;
-using openapi2excel.Builders.WorksheetPartsBuilders;
+using OpenApi2Excel.Builders.WorksheetPartsBuilders;
 
-namespace openapi2excel.Builders;
+namespace OpenApi2Excel.Builders;
 
 internal class OperationWorksheetBuilder(IXLWorkbook workbook, OpenApiDocumentationOptions options)
     : WorksheetBuilder(options)

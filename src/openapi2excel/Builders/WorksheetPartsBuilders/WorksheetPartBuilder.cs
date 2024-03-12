@@ -1,6 +1,6 @@
 ﻿using ClosedXML.Excel;
 
-namespace openapi2excel.Builders.WorksheetPartsBuilders
+namespace OpenApi2Excel.Builders.WorksheetPartsBuilders
 {
     internal abstract class WorksheetPartBuilder(RowPointer actualRow, IXLWorksheet worksheet, OpenApiDocumentationOptions options)
     {

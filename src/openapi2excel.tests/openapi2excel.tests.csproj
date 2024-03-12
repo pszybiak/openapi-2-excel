@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>net8.0</TargetFramework>
@@ -21,7 +21,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\openapi2excel\openapi2excel.csproj" />
+    <ProjectReference Include="..\openapi2excel\OpenApi2Excel.csproj" />
   </ItemGroup>
 
   <ItemGroup>

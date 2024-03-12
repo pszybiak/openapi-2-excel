@@ -15,6 +15,6 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\openapi2excel\openapi2excel.csproj" />
+      <ProjectReference Include="..\openapi2excel\OpenApi2Excel.csproj" />
     </ItemGroup>
 </Project>
