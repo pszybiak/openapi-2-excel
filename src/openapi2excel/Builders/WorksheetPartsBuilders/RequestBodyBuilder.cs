@@ -1,5 +1,6 @@
 ﻿using ClosedXML.Excel;
 using Microsoft.OpenApi.Models;
+using System.Text;
 
 namespace openapi2excel.Builders.WorksheetPartsBuilders;
 
@@ -39,6 +40,9 @@ internal class RequestBodyBuilder(
         }
         FillHeaderCell("Type", column++);
         FillHeaderCell("Format", column++);
+        FillHeaderCell("Length", column++);
+        FillHeaderCell("Range", column++);
+        FillHeaderCell("Pattern", column++);
         FillHeaderCell("Description", column);
         MoveToNextRow();
         return;
@@ -62,7 +66,7 @@ internal class RequestBodyBuilder(
         AddPropertyRow(name, schema, level++);
         if (schema.Items != null)
         {
-            AddPropertyRow("value", schema.Items, level);
+            AddPropertyRow("element", schema.Items, level);
         }
 
         foreach (var property in schema.Properties)
@@ -82,7 +86,56 @@ internal class RequestBodyBuilder(
         FillCell(level, name);
         FillCell(column++, schema.Type);
         FillCell(column++, schema.Format);
+        FillCell(column++, GetPropertyLength(schema));
+        FillCell(column++, GetPropertyRange(schema));
+        FillCell(column, schema.Pattern);
         FillCell(column, schema.Description);
         MoveToNextRow();
+    }
+
+    private static string GetPropertyLength(OpenApiSchema schema)
+    {
+        StringBuilder propertyTypeDescription = new();
+        if (schema.MinLength is not null)
+        {
+            propertyTypeDescription.Append($"{schema.MinLength}");
+        }
+        if (schema.MinLength is not null && !(schema.MinLength is null && schema.MaxLength is not null))
+        {
+            propertyTypeDescription.Append($"..");
+        }
+        if (schema.MaxLength is not null)
+        {
+            propertyTypeDescription.Append(schema.MaxLength);
+        }
+        return propertyTypeDescription.ToString();
+    }
+
+    private static string GetPropertyRange(OpenApiSchema schema)
+    {
+        StringBuilder propertyTypeDescription = new();
+        if (schema.Minimum is not null)
+        {
+            var sign = schema.ExclusiveMinimum is null or false ? "[" : "(";
+            propertyTypeDescription.Append($"{sign}{schema.Minimum}");
+        }
+        else if (schema.Maximum is not null)
+        {
+            propertyTypeDescription.Append("(..");
+        }
+        if (schema.Minimum is not null || schema.Maximum is not null)
+        {
+            propertyTypeDescription.Append(';');
+        }
+        if (schema.Maximum is not null)
+        {
+            var sign = schema.ExclusiveMaximum is null or false ? "]" : ")";
+            propertyTypeDescription.Append($"{schema.Maximum}{sign}");
+        }
+        else if (schema.Minimum is not null)
+        {
+            propertyTypeDescription.Append("..)");
+        }
+        return propertyTypeDescription.ToString();
     }
 }
