@@ -17,7 +17,7 @@ internal class OperationWorksheetBuilder(IXLWorkbook workbook, OpenApiDocumentat
         _actualRowPointer.GoTo(1);
 
         SetMaxTreeLevel(operation);
-        AdjustColumnsWithToRequestTreeLevel();
+        AdjustColumnsWidthToRequestTreeLevel();
 
         AddHomePageLink();
         AddOperationInfos(path, pathItem, operationType, operation);
@@ -40,9 +40,9 @@ internal class OperationWorksheetBuilder(IXLWorkbook workbook, OpenApiDocumentat
             .Max() + attributesColumnOffset;
     }
 
-    private void AdjustColumnsWithToRequestTreeLevel()
+    private void AdjustColumnsWidthToRequestTreeLevel()
     {
-        for (var columnIndex = 1; columnIndex < _attributesColumnsStartIndex; columnIndex++)
+        for (var columnIndex = 1; columnIndex < _attributesColumnsStartIndex - 1; columnIndex++)
         {
             _worksheet.Column(columnIndex).Width = 2;
         }
