@@ -23,6 +23,7 @@ internal class OperationWorksheetBuilder(IXLWorkbook workbook, OpenApiDocumentat
         AddOperationInfos(path, pathItem, operationType, operation);
         AddRequestParameters(operation);
         AddRequestBody(operation);
+        AdjustLastNamesColumnToContents();
 
         return _worksheet;
     }
@@ -32,12 +33,11 @@ internal class OperationWorksheetBuilder(IXLWorkbook workbook, OpenApiDocumentat
         if (operation.RequestBody is null)
             return;
 
-        const int attributesColumnOffset = 4;
         _attributesColumnsStartIndex = operation.RequestBody.Content
             .Select(openApiMediaType => openApiMediaType.Value.Schema)
             .Select(schema => EstablishMaxTreeLevel(schema, 0))
             .Prepend(1)
-            .Max() + attributesColumnOffset;
+            .Max();
     }
 
     private void AdjustColumnsWidthToRequestTreeLevel()
@@ -46,6 +46,11 @@ internal class OperationWorksheetBuilder(IXLWorkbook workbook, OpenApiDocumentat
         {
             _worksheet.Column(columnIndex).Width = 2;
         }
+    }
+
+    private void AdjustLastNamesColumnToContents()
+    {
+        _worksheet.Column(_attributesColumnsStartIndex - 1).AdjustToContents();
     }
 
     private static int EstablishMaxTreeLevel(OpenApiSchema schema, int currentLevel)
