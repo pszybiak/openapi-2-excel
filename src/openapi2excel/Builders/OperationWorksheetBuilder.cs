@@ -14,6 +14,8 @@ internal class OperationWorksheetBuilder(IXLWorkbook workbook, OpenApiDocumentat
     public IXLWorksheet Build(string path, OpenApiPathItem pathItem, OperationType operationType, OpenApiOperation operation)
     {
         _worksheet = workbook.Worksheets.Add(operation.OperationId);
+        _worksheet.Style.Font.FontSize = 10;
+        _worksheet.Style.Font.FontName = "Arial";
         _actualRowPointer.GoTo(1);
 
         SetMaxTreeLevel(operation);

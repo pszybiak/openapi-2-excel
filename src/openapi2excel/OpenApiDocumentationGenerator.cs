@@ -1,7 +1,8 @@
-﻿using System.Text;
-using ClosedXML.Excel;
+﻿using ClosedXML.Excel;
 using Microsoft.OpenApi.Readers;
 using OpenApi2Excel.Builders;
+using OpenApi2Excel.Common;
+using System.Text;
 
 namespace OpenApi2Excel;
 
@@ -43,14 +44,14 @@ public static class OpenApiDocumentationGenerator
         var worksheetBuilder = new OperationWorksheetBuilder(workbook, options);
 
         infoWorksheetsBuilder.Build(readResult.OpenApiDocument);
-        foreach (var path in readResult.OpenApiDocument.Paths)
-        {
-            foreach (var operation in path.Value.Operations)
+        readResult.OpenApiDocument.Paths.ForEach(path
+            => path.Value.Operations.ForEach(operation
+                =>
             {
                 var worksheet = worksheetBuilder.Build(path.Key, path.Value, operation.Key, operation.Value);
                 infoWorksheetsBuilder.AddLink(operation.Key, path.Key, worksheet);
             }
-        }
+        ));
 
         workbook.SaveAs(new FileInfo(outputFile).FullName);
     }
