@@ -13,9 +13,7 @@ internal class OperationWorksheetBuilder(IXLWorkbook workbook, OpenApiDocumentat
 
     public IXLWorksheet Build(string path, OpenApiPathItem pathItem, OperationType operationType, OpenApiOperation operation)
     {
-        _worksheet = workbook.Worksheets.Add(operation.OperationId);
-        _worksheet.Style.Font.FontSize = 10;
-        _worksheet.Style.Font.FontName = "Arial";
+        CreateNewWorksheet(operation);
         _actualRowPointer.GoTo(1);
 
         SetMaxTreeLevel(operation);
@@ -30,6 +28,13 @@ internal class OperationWorksheetBuilder(IXLWorkbook workbook, OpenApiDocumentat
         return _worksheet;
     }
 
+    private void CreateNewWorksheet(OpenApiOperation operation)
+    {
+        _worksheet = workbook.Worksheets.Add(operation.OperationId);
+        _worksheet.Style.Font.FontSize = 10;
+        _worksheet.Style.Font.FontName = "Arial";
+    }
+
     private void SetMaxTreeLevel(OpenApiOperation operation)
     {
         if (operation.RequestBody is null)
@@ -40,30 +45,35 @@ internal class OperationWorksheetBuilder(IXLWorkbook workbook, OpenApiDocumentat
             .Select(schema => EstablishMaxTreeLevel(schema, 0))
             .Prepend(1)
             .Max();
+        return;
+
+        int EstablishMaxTreeLevel(OpenApiSchema schema, int currentLevel)
+        {
+            currentLevel++;
+            if (schema.Items != null)
+            {
+                return Math.Max(currentLevel, EstablishMaxTreeLevel(schema.Items, currentLevel));
+            }
+            return schema.Properties?.Any() != true
+                ? currentLevel
+                : schema.Properties
+                    .Select(schemaProperty => EstablishMaxTreeLevel(schemaProperty.Value, currentLevel))
+                    .Prepend(currentLevel)
+                    .Max();
+        }
     }
 
     private void AdjustColumnsWidthToRequestTreeLevel()
     {
         for (var columnIndex = 1; columnIndex < _attributesColumnsStartIndex - 1; columnIndex++)
         {
-            _worksheet.Column(columnIndex).Width = 2;
+            _worksheet.Column(columnIndex).Width = 1.8;
         }
     }
 
     private void AdjustLastNamesColumnToContents()
     {
         _worksheet.Column(_attributesColumnsStartIndex - 1).AdjustToContents();
-    }
-
-    private static int EstablishMaxTreeLevel(OpenApiSchema schema, int currentLevel)
-    {
-        currentLevel++;
-        return schema.Properties?.Any() != true
-            ? currentLevel
-            : schema.Properties
-                .Select(schemaProperty => EstablishMaxTreeLevel(schemaProperty.Value, currentLevel))
-                .Prepend(currentLevel)
-                .Max();
     }
 
     private void AddOperationInfos(string path, OpenApiPathItem pathItem, OperationType operationType, OpenApiOperation operation) =>

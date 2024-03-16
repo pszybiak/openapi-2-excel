@@ -19,18 +19,15 @@ internal class RequestParametersBuilder(RowPointer actualRow, int attributesColu
 
     private void AddRequestParametersHeader(OpenApiOperation operation)
     {
-        var columnIndex = 1;
-        FillHeaderCell("Parameters", columnIndex);
+        var columnIndex = attributesColumnIndex;
+        FillHeaderCell("Parameters", 1);
         MoveToNextRow();
-        FillHeaderCell("Name", columnIndex++);
-        while (columnIndex < attributesColumnIndex)
-        {
-            FillHeaderCell(columnIndex++);
-        }
+        FillHeaderCell("Name", 1);
         FillHeaderCell("Location", columnIndex++);
         FillHeaderCell("Serialization", columnIndex++);
         FillHeaderCell("Required", columnIndex++);
-        FillSchemaDescriptionHeaderCells(columnIndex);
+        var lastUsedColumn = FillSchemaDescriptionHeaderCells(columnIndex);
+        FillHeaderBackground(1, lastUsedColumn);
         MoveToNextRow();
     }
 
