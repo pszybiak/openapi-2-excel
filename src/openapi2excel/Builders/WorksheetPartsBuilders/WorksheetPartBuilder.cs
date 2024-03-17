@@ -61,11 +61,6 @@ namespace OpenApi2Excel.Builders.WorksheetPartsBuilders
             Worksheet.Cell(ActualRow, column).Style.Alignment.SetHorizontal(alignment);
         }
 
-        protected void FillCell(int column, string value, XLAlignmentHorizontalValues alignment)
-        {
-            FillCell(column, value, null, alignment);
-        }
-
         protected void FillCell(int column, bool value, XLColor? backgoundColor = null)
         {
             Worksheet.Cell(ActualRow, column).Value = Options.Language.Get(value);
@@ -91,11 +86,6 @@ namespace OpenApi2Excel.Builders.WorksheetPartsBuilders
         protected void FillHeaderBackground(int startColumn, int endColumn)
         {
             FillBackground(startColumn, endColumn, HeaderBackgroundColor);
-        }
-
-        protected void FillHeaderBackground(int column)
-        {
-            FillBackground(column, HeaderBackgroundColor);
         }
 
         protected void AddBottomBorder(int startColumn, int endColumn)
