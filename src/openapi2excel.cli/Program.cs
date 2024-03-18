@@ -17,10 +17,12 @@ internal static class Program
         var rootCommand = new RootCommand("OpenApi-2-Excel");
         rootCommand.AddOption(inputFileOption);
         rootCommand.AddOption(outputFileOption);
-        rootCommand.SetHandler(async (inFile, outFile)
-                => await OpenApiDocumentationGenerator.GenerateDocumentation(inFile!.FullName, outFile!.FullName, new OpenApiDocumentationOptions()).ConfigureAwait(false),
-            inputFileOption, outputFileOption);
+        rootCommand.SetHandler(HandleFileGeneration, inputFileOption, outputFileOption);
 
         return await rootCommand.InvokeAsync(args);
     }
+
+    private static async Task HandleFileGeneration(FileInfo? inFile, FileInfo? outFile)
+        => await OpenApiDocumentationGenerator.GenerateDocumentation(inFile!.FullName, outFile!.FullName, new OpenApiDocumentationOptions())
+            .ConfigureAwait(false);
 }

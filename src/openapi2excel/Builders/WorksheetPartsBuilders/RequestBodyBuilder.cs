@@ -14,7 +14,6 @@ internal class RequestBodyBuilder(
         if (operation.RequestBody is null)
             return;
 
-
         foreach (var mediaType in operation.RequestBody.Content)
         {
             AddContentTypeRow(mediaType.Key);
