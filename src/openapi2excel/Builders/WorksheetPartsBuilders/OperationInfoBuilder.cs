@@ -26,8 +26,9 @@ namespace OpenApi2Excel.Builders.WorksheetPartsBuilders
             if (!addIfNotExists && value is null)
                 return;
 
-            FillCell(1, label);
-            FillCell(attributesColumnIndex, value);
+            Fill(1).WithText(label)
+                .Next(attributesColumnIndex - 1)
+                .WithText(value!);
             MoveToNextRow();
         }
     }

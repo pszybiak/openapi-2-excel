@@ -9,7 +9,8 @@ namespace OpenApi2Excel.Builders.WorksheetPartsBuilders
         protected OpenApiDocumentationOptions Options { get; } = options;
         protected RowPointer ActualRow { get; } = actualRow;
         protected IXLWorksheet Worksheet { get; } = worksheet;
-        protected XLColor HeaderBackgroundColor => XLColor.LightGray;
+        protected XLColor HeaderBackgroundColor
+            => XLColor.LightGray;
 
         protected void MoveToNextRow()
             => ActualRow.MoveNext();
@@ -18,9 +19,7 @@ namespace OpenApi2Excel.Builders.WorksheetPartsBuilders
             => MoveToNextRow();
 
         protected CellBuilder Fill(int column)
-        {
-            return new CellBuilder(Worksheet.Cell(ActualRow, column), Options);
-        }
+            => new(Worksheet.Cell(ActualRow, column), Options);
 
         protected CellBuilder FillHeader(int column)
         {
@@ -39,13 +38,13 @@ namespace OpenApi2Excel.Builders.WorksheetPartsBuilders
 
         protected int FillSchemaDescriptionHeaderCells(int startColumn)
         {
-            FillHeader(startColumn++).WithText("Type");
-            FillHeader(startColumn++).WithText("Format");
-            FillHeader(startColumn++).WithText("Length");
-            FillHeader(startColumn++).WithText("Range");
-            FillHeader(startColumn++).WithText("Pattern");
-            FillHeader(startColumn).WithText("Description");
-            return startColumn;
+            var cellBuilder = FillHeader(startColumn).WithText("Type")
+                .Next().WithText("Format")
+                .Next().WithText("Length")
+                .Next().WithText("Range")
+                .Next().WithText("Pattern")
+                .Next().WithText("Description");
+            return cellBuilder.GetCell().Address.ColumnNumber;
         }
 
         protected void FillHeaderCell(string? label, int columnIndex)
@@ -53,40 +52,34 @@ namespace OpenApi2Excel.Builders.WorksheetPartsBuilders
 
         protected void FillCell(int column, string? value, XLColor? backgoundColor = null, XLAlignmentHorizontalValues alignment = XLAlignmentHorizontalValues.Left)
         {
-            Worksheet.Cell(ActualRow, column).Value = value;
+            var cellBuilder = Fill(column).WithText(value);
             if (backgoundColor is not null)
             {
-                Worksheet.Cell(ActualRow, column).Style.Fill.BackgroundColor = backgoundColor;
+                cellBuilder.WithBackground(backgoundColor);
             }
-            Worksheet.Cell(ActualRow, column).Style.Alignment.SetHorizontal(alignment);
+            cellBuilder.WithHorizontalAlignment(alignment);
         }
 
         protected void FillCell(int column, bool value, XLColor? backgoundColor = null)
         {
-            Worksheet.Cell(ActualRow, column).Value = Options.Language.Get(value);
+            var cellBuilder = Fill(column).WithText(Options.Language.Get(value));
             if (backgoundColor is not null)
             {
-                Worksheet.Cell(ActualRow, column).Style.Fill.BackgroundColor = backgoundColor;
+                cellBuilder.WithBackground(backgoundColor);
             }
         }
 
         protected void FillBackground(int startColumn, int endColumn, XLColor backgroundColor)
         {
+            var cellBuilder = Fill(startColumn);
             for (var columnIndex = startColumn; columnIndex <= endColumn; columnIndex++)
             {
-                FillBackground(columnIndex, backgroundColor);
+                cellBuilder.WithBackground(backgroundColor).Next();
             }
         }
 
-        protected void FillBackground(int column, XLColor backgroundColor)
-        {
-            Worksheet.Cell(ActualRow, column).Style.Fill.BackgroundColor = backgroundColor;
-        }
-
         protected void FillHeaderBackground(int startColumn, int endColumn)
-        {
-            FillBackground(startColumn, endColumn, HeaderBackgroundColor);
-        }
+            => FillBackground(startColumn, endColumn, HeaderBackgroundColor);
 
         protected void AddBottomBorder(int startColumn, int endColumn)
         {

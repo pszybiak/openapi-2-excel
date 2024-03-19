@@ -4,9 +4,17 @@ namespace OpenApi2Excel.Builders.WorksheetPartsBuilders;
 
 internal class CellBuilder(IXLCell cell, OpenApiDocumentationOptions option)
 {
+    public IXLCell GetCell() => cell;
+
     public CellBuilder Next()
     {
         cell = cell.CellRight();
+        return this;
+    }
+
+    public CellBuilder Next(int step)
+    {
+        cell = cell.CellRight(step);
         return this;
     }
 
@@ -16,7 +24,7 @@ internal class CellBuilder(IXLCell cell, OpenApiDocumentationOptions option)
         return this;
     }
 
-    public CellBuilder WithText(string value)
+    public CellBuilder WithText(string? value)
         => With(c => c.Value = value);
 
     public CellBuilder WithBackground(XLColor color)
