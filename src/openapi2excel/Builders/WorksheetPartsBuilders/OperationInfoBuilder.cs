@@ -29,7 +29,8 @@ namespace OpenApi2Excel.Builders.WorksheetPartsBuilders
             Fill(1).WithText(label)
                 .Next(attributesColumnIndex - 1)
                 .WithText(value!);
-            MoveToNextRow();
+
+            ActualRow.MoveNext();
         }
     }
 }

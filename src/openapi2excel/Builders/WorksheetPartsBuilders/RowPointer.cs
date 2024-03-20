@@ -10,6 +10,11 @@ internal class RowPointer(int rowNumber)
         rowNumber += rowCount;
     }
 
+    public void MovePrev(int rowCount = 1)
+    {
+        rowNumber -= rowCount;
+    }
+
     public int Get() => rowNumber;
 
     public int GoTo(int row)

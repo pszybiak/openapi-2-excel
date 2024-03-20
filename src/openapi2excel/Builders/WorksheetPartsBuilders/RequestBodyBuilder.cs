@@ -33,14 +33,14 @@ internal class RequestBodyBuilder(
         var lastUsedColumn = FillSchemaDescriptionHeaderCells(attributesColumnIndex);
         FillHeaderBackground(1, lastUsedColumn);
         AddBottomBorder(1, lastUsedColumn);
-        MoveToNextRow();
+        ActualRow.MoveNext();
     }
 
     private void AddContentTypeRow(string name)
     {
         FillCell(1, $"Request format: {name}");
         FillHeaderBackground(1, attributesColumnIndex + 2);
-        MoveToNextRow();
+        ActualRow.MoveNext();
     }
 
     private void AddRequestParameter(string name, OpenApiSchema schema, int level)
@@ -76,6 +76,6 @@ internal class RequestBodyBuilder(
         FillHeaderBackground(1, level - 1);
         FillCell(level, name);
         FillSchemaDescriptionCells(schema, attributesColumnIndex);
-        MoveToNextRow();
+        ActualRow.MoveNext();
     }
 }

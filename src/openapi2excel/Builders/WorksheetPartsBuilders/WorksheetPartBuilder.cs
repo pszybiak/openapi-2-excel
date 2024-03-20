@@ -12,11 +12,12 @@ namespace OpenApi2Excel.Builders.WorksheetPartsBuilders
         protected XLColor HeaderBackgroundColor
             => XLColor.LightGray;
 
-        protected void MoveToNextRow()
-            => ActualRow.MoveNext();
+
+        protected void MoveToPrewRow()
+            => ActualRow.MovePrev();
 
         protected void AddEmptyRow()
-            => MoveToNextRow();
+            => ActualRow.MoveNext();
 
         protected CellBuilder Fill(int column)
             => new(Worksheet.Cell(ActualRow, column), Options);

@@ -12,23 +12,27 @@ internal class RequestParametersBuilder(RowPointer actualRow, int attributesColu
         if (!operation.Parameters.Any())
             return;
 
-        AddRequestParametersHeader(operation);
+        AddRequestParametersHeader();
         operation.Parameters.ForEach(AddPropertyRow);
         AddEmptyRow();
     }
 
-    private void AddRequestParametersHeader(OpenApiOperation operation)
+    private void AddRequestParametersHeader()
     {
-        var columnIndex = attributesColumnIndex;
-        FillHeaderCell("Parameters", 1);
-        MoveToNextRow();
-        FillHeaderCell("Name", 1);
-        FillHeaderCell("Location", columnIndex++);
-        FillHeaderCell("Serialization", columnIndex++);
-        FillHeaderCell("Required", columnIndex++);
-        var lastUsedColumn = FillSchemaDescriptionHeaderCells(columnIndex);
+        FillHeader(1).WithText("Parameters");
+        ActualRow.MoveNext();
+
+        var nextCell = FillHeader(1).WithText("Name")
+            .Next(attributesColumnIndex - 1).WithText("Location")
+            .Next().WithText("Serialization")
+            .Next().WithText("Required")
+            .Next().GetCell();
+        var lastUsedColumn = FillSchemaDescriptionHeaderCells(nextCell.Address.ColumnNumber);
+        ActualRow.MovePrev();
         FillHeaderBackground(1, lastUsedColumn);
-        MoveToNextRow();
+        ActualRow.MoveNext();
+        FillHeaderBackground(1, lastUsedColumn);
+        ActualRow.MoveNext();
     }
 
     private void AddPropertyRow(OpenApiParameter parameter)
@@ -39,6 +43,6 @@ internal class RequestParametersBuilder(RowPointer actualRow, int attributesColu
         FillCell(currentColumn++, parameter.Style?.ToString());
         FillCell(currentColumn++, parameter.Required);
         FillSchemaDescriptionCells(parameter.Schema, currentColumn);
-        MoveToNextRow();
+        ActualRow.MoveNext();
     }
 }
