@@ -32,6 +32,7 @@ internal class RequestParametersBuilder(RowPointer actualRow, int attributesColu
         FillHeaderBackground(1, lastUsedColumn);
         ActualRow.MoveNext();
         FillHeaderBackground(1, lastUsedColumn);
+        AddBottomBorder(1, lastUsedColumn);
         ActualRow.MoveNext();
     }
 
