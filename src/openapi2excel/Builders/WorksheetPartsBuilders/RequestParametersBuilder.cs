@@ -19,14 +19,15 @@ internal class RequestParametersBuilder(RowPointer actualRow, int attributesColu
 
     private void AddRequestParametersHeader()
     {
-        FillHeader(1).WithText("Parameters");
+        FillHeader(1).WithText("Parameters").WithBoldStyle();
         ActualRow.MoveNext();
 
-        var nextCell = FillHeader(1).WithText("Name")
-            .Next(attributesColumnIndex - 1).WithText("Location")
-            .Next().WithText("Serialization")
-            .Next().WithText("Required")
+        var nextCell = FillHeader(1).WithText("Name").WithBoldStyle()
+            .Next(attributesColumnIndex - 1).WithText("Location").WithBoldStyle()
+            .Next().WithText("Serialization").WithBoldStyle()
+            .Next().WithText("Required").WithBoldStyle()
             .Next().GetCell();
+
         var lastUsedColumn = FillSchemaDescriptionHeaderCells(nextCell.Address.ColumnNumber);
         ActualRow.MovePrev();
         FillHeaderBackground(1, lastUsedColumn);
@@ -38,12 +39,13 @@ internal class RequestParametersBuilder(RowPointer actualRow, int attributesColu
 
     private void AddPropertyRow(OpenApiParameter parameter)
     {
-        var currentColumn = attributesColumnIndex;
-        FillCell(1, parameter.Name);
-        FillCell(currentColumn++, parameter.In.ToString()?.ToUpper());
-        FillCell(currentColumn++, parameter.Style?.ToString());
-        FillCell(currentColumn++, parameter.Required);
-        FillSchemaDescriptionCells(parameter.Schema, currentColumn);
+        var nextCell = Fill(1).WithText(parameter.Name)
+            .Next(attributesColumnIndex - 1).WithText(parameter.In.ToString()?.ToUpper())
+            .Next().WithText(parameter.Style?.ToString())
+            .Next().WithText(Options.Language.Get(parameter.Required))
+            .Next().GetCell();
+
+        FillSchemaDescriptionCells(parameter.Schema, nextCell.Address.ColumnNumber);
         ActualRow.MoveNext();
     }
 }

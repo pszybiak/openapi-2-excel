@@ -39,12 +39,12 @@ namespace OpenApi2Excel.Builders.WorksheetPartsBuilders
 
         protected int FillSchemaDescriptionHeaderCells(int startColumn)
         {
-            var cellBuilder = FillHeader(startColumn).WithText("Type")
-                .Next().WithText("Format")
-                .Next().WithText("Length")
-                .Next().WithText("Range")
-                .Next().WithText("Pattern")
-                .Next().WithText("Description");
+            var cellBuilder = FillHeader(startColumn).WithText("Type").WithBoldStyle()
+                .Next().WithText("Format").WithBoldStyle()
+                .Next().WithText("Length").WithBoldStyle()
+                .Next().WithText("Range").WithBoldStyle()
+                .Next().WithText("Pattern").WithBoldStyle()
+                .Next().WithText("Description").WithBoldStyle();
             return cellBuilder.GetCell().Address.ColumnNumber;
         }
 

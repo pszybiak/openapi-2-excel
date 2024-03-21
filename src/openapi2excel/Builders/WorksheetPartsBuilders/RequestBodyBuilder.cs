@@ -16,8 +16,7 @@ internal class RequestBodyBuilder(
 
         foreach (var mediaType in operation.RequestBody.Content)
         {
-            AddContentTypeRow(mediaType.Key);
-            AddRequestBodyHeader();
+            AddRequestBodyHeader(mediaType.Key);
             foreach (var property in mediaType.Value.Schema.Properties)
             {
                 AddRequestParameter(property.Key, property.Value, 1);
@@ -27,20 +26,17 @@ internal class RequestBodyBuilder(
         AddEmptyRow();
     }
 
-    private void AddRequestBodyHeader()
+    private void AddRequestBodyHeader(string name)
     {
-        FillHeaderCell("Name", 1);
+        Fill(1).WithText($"Request format: {name}").WithBoldStyle();
+        ActualRow.MoveNext();
+        Fill(1).WithText("Name").WithBoldStyle();
         var lastUsedColumn = FillSchemaDescriptionHeaderCells(attributesColumnIndex);
         FillHeaderBackground(1, lastUsedColumn);
         AddBottomBorder(1, lastUsedColumn);
-        ActualRow.MoveNext();
-    }
-
-    private void AddContentTypeRow(string name)
-    {
-        FillCell(1, $"Request format: {name}");
-        FillHeaderBackground(1, attributesColumnIndex + 2);
-        ActualRow.MoveNext();
+        ActualRow.MovePrev();
+        FillHeaderBackground(1, lastUsedColumn);
+        ActualRow.MoveNext(2);
     }
 
     private void AddRequestParameter(string name, OpenApiSchema schema, int level)
