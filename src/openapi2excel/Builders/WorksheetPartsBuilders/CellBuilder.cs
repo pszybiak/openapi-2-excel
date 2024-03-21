@@ -36,6 +36,9 @@ internal class CellBuilder(IXLCell cell, OpenApiDocumentationOptions option)
     public CellBuilder WithBottomBorder()
         => With(c => c.Style.Border.BottomBorder = XLBorderStyleValues.Medium);
 
+    public CellBuilder WithBoldStyle()
+        => With(c => c.Style.Font.Bold = true);
+
     private CellBuilder With(Action<IXLCell> action)
     {
         action(cell);
