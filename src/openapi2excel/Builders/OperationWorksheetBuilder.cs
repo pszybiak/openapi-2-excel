@@ -37,14 +37,27 @@ internal class OperationWorksheetBuilder(IXLWorkbook workbook, OpenApiDocumentat
 
     private void SetMaxTreeLevel(OpenApiOperation operation)
     {
-        if (operation.RequestBody is null)
+        if (operation.RequestBody is null && !operation.Responses.Any())
             return;
 
-        _attributesColumnsStartIndex = operation.RequestBody.Content
-            .Select(openApiMediaType => openApiMediaType.Value.Schema)
-            .Select(schema => EstablishMaxTreeLevel(schema, 0))
-            .Prepend(1)
-            .Max();
+        if (operation.RequestBody is not null)
+        {
+            _attributesColumnsStartIndex = operation.RequestBody.Content
+                .Select(openApiMediaType => openApiMediaType.Value.Schema)
+                .Select(schema => EstablishMaxTreeLevel(schema, 0))
+                .Prepend(1)
+                .Max();
+        }
+
+        foreach (var maxLevel in operation.Responses.Select(operationResponse => operationResponse.Value.Content
+                     .Select(openApiMediaType => openApiMediaType.Value.Schema)
+                     .Select(schema => EstablishMaxTreeLevel(schema, 0))
+                     .Prepend(1)
+                     .Max())
+                     .Where(maxLevel => maxLevel > _attributesColumnsStartIndex))
+        {
+            _attributesColumnsStartIndex = maxLevel;
+        }
         return;
 
         int EstablishMaxTreeLevel(OpenApiSchema schema, int currentLevel)
