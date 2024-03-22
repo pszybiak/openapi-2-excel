@@ -23,6 +23,7 @@ internal class OperationWorksheetBuilder(IXLWorkbook workbook, OpenApiDocumentat
         AddOperationInfos(path, pathItem, operationType, operation);
         AddRequestParameters(operation);
         AddRequestBody(operation);
+        AddResponseBody(operation);
         AdjustLastNamesColumnToContents();
 
         return _worksheet;
@@ -100,6 +101,10 @@ internal class OperationWorksheetBuilder(IXLWorkbook workbook, OpenApiDocumentat
     private void AddRequestBody(OpenApiOperation operation) =>
         new RequestBodyBuilder(_actualRowPointer, _attributesColumnsStartIndex, _worksheet, Options)
             .AddRequestBodyPart(operation);
+
+    private void AddResponseBody(OpenApiOperation operation) =>
+        new ResponseBodyBuilder(_actualRowPointer, _attributesColumnsStartIndex, _worksheet, Options)
+            .AddResponseBodyPart(operation);
 
     private void AddHomePageLink() => new HomePageLinkBuilder(_actualRowPointer, _worksheet, Options)
         .AddHomePageLinkPart();
