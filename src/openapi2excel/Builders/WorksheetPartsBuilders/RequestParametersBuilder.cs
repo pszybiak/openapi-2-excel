@@ -22,7 +22,7 @@ internal class RequestParametersBuilder(RowPointer actualRow, int attributesColu
         FillHeader(1).WithText("Parameters").WithBoldStyle();
         ActualRow.MoveNext();
 
-        var nextCell = FillHeader(1).WithText("Name").WithBoldStyle()
+        var nextCell = Fill(1).WithText("Name").WithBoldStyle()
             .Next(attributesColumnIndex - 1).WithText("Location").WithBoldStyle()
             .Next().WithText("Serialization").WithBoldStyle()
             .Next().WithText("Required").WithBoldStyle()
@@ -31,10 +31,7 @@ internal class RequestParametersBuilder(RowPointer actualRow, int attributesColu
         var lastUsedColumn = FillSchemaDescriptionHeaderCells(nextCell.Address.ColumnNumber);
         ActualRow.MovePrev();
         FillHeaderBackground(1, lastUsedColumn);
-        ActualRow.MoveNext();
-        FillHeaderBackground(1, lastUsedColumn);
-        AddBottomBorder(1, lastUsedColumn);
-        ActualRow.MoveNext();
+        ActualRow.MoveNext(2);
     }
 
     private void AddPropertyRow(OpenApiParameter parameter)

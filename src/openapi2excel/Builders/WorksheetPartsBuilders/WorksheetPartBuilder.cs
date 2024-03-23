@@ -4,17 +4,16 @@ using OpenApi2Excel.Common;
 
 namespace OpenApi2Excel.Builders.WorksheetPartsBuilders
 {
-    internal abstract class WorksheetPartBuilder(RowPointer actualRow, IXLWorksheet worksheet, OpenApiDocumentationOptions options)
+    internal abstract class WorksheetPartBuilder(
+        RowPointer actualRow,
+        IXLWorksheet worksheet,
+        OpenApiDocumentationOptions options)
     {
         protected OpenApiDocumentationOptions Options { get; } = options;
         protected RowPointer ActualRow { get; } = actualRow;
         protected IXLWorksheet Worksheet { get; } = worksheet;
         protected XLColor HeaderBackgroundColor
             => XLColor.LightGray;
-
-
-        protected void MoveToPrewRow()
-            => ActualRow.MovePrev();
 
         protected void AddEmptyRow()
             => ActualRow.MoveNext();
@@ -27,6 +26,44 @@ namespace OpenApi2Excel.Builders.WorksheetPartsBuilders
             return Fill(column).WithBackground(HeaderBackgroundColor);
         }
 
+        protected void AddProperty(string name, OpenApiSchema schema, int level, int attributesColumnIndex)
+        {
+            // current property
+            AddPropertyRow(name, schema, level++);
+            if (schema.Items != null)
+            {
+                if (schema.Items.Properties.Any())
+                {
+                    // array object subproperties
+                    foreach (var property in schema.Items.Properties)
+                    {
+                        AddProperty(property.Key, property.Value, level, attributesColumnIndex);
+                    }
+                }
+                else
+                {
+                    // if array contains simple type
+                    AddProperty("element", schema.Items, level, attributesColumnIndex);
+                }
+            }
+
+            // subproperties
+            foreach (var property in schema.Properties)
+            {
+                AddProperty(property.Key, property.Value, level, attributesColumnIndex);
+            }
+
+            return;
+
+            void AddPropertyRow(string propertyName, OpenApiSchema propertySchema, int propertyLevel)
+            {
+                FillHeaderBackground(1, propertyLevel - 1);
+                FillCell(propertyLevel, propertyName);
+                FillSchemaDescriptionCells(propertySchema, attributesColumnIndex);
+                ActualRow.MoveNext();
+            }
+        }
+
         protected void FillSchemaDescriptionCells(OpenApiSchema schema, int startColumn)
         {
             Fill(startColumn).WithText(schema.Type)
@@ -37,19 +74,21 @@ namespace OpenApi2Excel.Builders.WorksheetPartsBuilders
                 .Next().WithText(schema.Description);
         }
 
-        protected int FillSchemaDescriptionHeaderCells(int startColumn)
+        protected int FillSchemaDescriptionHeaderCells(int attributesStartColumn)
         {
-            var cellBuilder = FillHeader(startColumn).WithText("Type").WithBoldStyle()
+            var cellBuilder = Fill(1).WithText("Name").WithBoldStyle()
+                .Next(attributesStartColumn - 1).WithText("Type").WithBoldStyle()
                 .Next().WithText("Format").WithBoldStyle()
                 .Next().WithText("Length").WithBoldStyle()
                 .Next().WithText("Range").WithBoldStyle()
                 .Next().WithText("Pattern").WithBoldStyle()
                 .Next().WithText("Description").WithBoldStyle();
-            return cellBuilder.GetCell().Address.ColumnNumber;
-        }
 
-        protected void FillHeaderCell(string? label, int columnIndex)
-            => FillCell(columnIndex, label, HeaderBackgroundColor);
+            var lastUsedColumn = cellBuilder.GetCell().Address.ColumnNumber;
+            AddBottomBorder(1, lastUsedColumn);
+            FillHeaderBackground(1, lastUsedColumn);
+            return lastUsedColumn;
+        }
 
         protected void FillCell(int column, string? value, XLColor? backgoundColor = null, XLAlignmentHorizontalValues alignment = XLAlignmentHorizontalValues.Left)
         {

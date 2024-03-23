@@ -14,16 +14,16 @@ internal class ResponseBodyBuilder(
         if (!operation.Responses.Any())
             return;
 
-        foreach (var reponse in operation.Responses)
+        foreach (var response in operation.Responses)
         {
-            var httpCode = reponse.Key;
-            var responseContent = reponse.Value.Content;
-            foreach (var mediaType in responseContent)
+            AddResponseHttpCode(response.Key, response.Value.Description);
+            foreach (var mediaType in response.Value.Content)
             {
-                AddResponseBodyHeader(mediaType.Key);
+                AddResponseFormat(mediaType.Key);
+                AddResponseHeader();
                 foreach (var property in mediaType.Value.Schema.Properties)
                 {
-                    AddResponseParameter(property.Key, property.Value, 1);
+                    AddProperty(property.Key, property.Value, 1, attributesColumnIndex);
                 }
                 AddEmptyRow();
             }
@@ -32,12 +32,30 @@ internal class ResponseBodyBuilder(
         AddEmptyRow();
     }
 
-    private void AddResponseParameter(string propertyKey, OpenApiSchema propertyValue, int level)
+    private void AddResponseHeader()
     {
+        var lastUsedColumn = FillSchemaDescriptionHeaderCells(attributesColumnIndex);
+        ActualRow.MovePrev();
+        FillHeaderBackground(1, lastUsedColumn);
+        ActualRow.MoveNext(2);
     }
 
-    private void AddResponseBodyHeader(string mediaTypeKey)
+    private void AddResponseHttpCode(string httpCode, string? description)
     {
+        if (string.IsNullOrEmpty(description))
+        {
+            Fill(1).WithText($"Response HttpCode: {httpCode}").WithBoldStyle();
+        }
+        else
+        {
+            Fill(1).WithText($"Response HttpCode: {httpCode}: {description}").WithBoldStyle();
+        }
+        ActualRow.MoveNext();
+    }
 
+    private void AddResponseFormat(string name)
+    {
+        Fill(1).WithText($"Response format: {name}").WithBoldStyle();
+        ActualRow.MoveNext();
     }
 }
