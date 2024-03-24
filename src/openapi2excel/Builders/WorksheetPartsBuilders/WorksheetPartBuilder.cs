@@ -26,6 +26,37 @@ namespace OpenApi2Excel.Builders.WorksheetPartsBuilders
             return Fill(column).WithBackground(HeaderBackgroundColor);
         }
 
+        protected void AddPropertiesTreeForMediaTypes(IDictionary<string, OpenApiMediaType> mediaTypes, int attributesColumnIndex)
+        {
+            foreach (var mediaType in mediaTypes)
+            {
+                AddResponseFormat(mediaType.Key);
+                AddResponseHeader();
+                foreach (var property in mediaType.Value.Schema.Properties)
+                {
+                    AddProperty(property.Key, property.Value, 1, attributesColumnIndex);
+                }
+                AddEmptyRow();
+            }
+            AddEmptyRow();
+
+            return;
+
+            void AddResponseHeader()
+            {
+                var lastUsedColumn = FillSchemaDescriptionHeaderCells(attributesColumnIndex);
+                ActualRow.MovePrev();
+                FillHeaderBackground(1, lastUsedColumn);
+                ActualRow.MoveNext(2);
+            }
+
+            void AddResponseFormat(string name)
+            {
+                Fill(1).WithText($"Format: {name}").WithBoldStyle();
+                ActualRow.MoveNext();
+            }
+        }
+
         protected void AddProperty(string name, OpenApiSchema schema, int level, int attributesColumnIndex)
         {
             // current property

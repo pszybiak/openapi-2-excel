@@ -17,27 +17,9 @@ internal class ResponseBodyBuilder(
         foreach (var response in operation.Responses)
         {
             AddResponseHttpCode(response.Key, response.Value.Description);
-            foreach (var mediaType in response.Value.Content)
-            {
-                AddResponseFormat(mediaType.Key);
-                AddResponseHeader();
-                foreach (var property in mediaType.Value.Schema.Properties)
-                {
-                    AddProperty(property.Key, property.Value, 1, attributesColumnIndex);
-                }
-                AddEmptyRow();
-            }
-            AddEmptyRow();
+            AddPropertiesTreeForMediaTypes(response.Value.Content, attributesColumnIndex);
         }
         AddEmptyRow();
-    }
-
-    private void AddResponseHeader()
-    {
-        var lastUsedColumn = FillSchemaDescriptionHeaderCells(attributesColumnIndex);
-        ActualRow.MovePrev();
-        FillHeaderBackground(1, lastUsedColumn);
-        ActualRow.MoveNext(2);
     }
 
     private void AddResponseHttpCode(string httpCode, string? description)
@@ -53,9 +35,5 @@ internal class ResponseBodyBuilder(
         ActualRow.MoveNext();
     }
 
-    private void AddResponseFormat(string name)
-    {
-        Fill(1).WithText($"Response format: {name}").WithBoldStyle();
-        ActualRow.MoveNext();
-    }
+
 }
