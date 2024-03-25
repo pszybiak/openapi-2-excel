@@ -32,10 +32,7 @@ namespace OpenApi2Excel.Builders.WorksheetPartsBuilders
             {
                 AddResponseFormat(mediaType.Key);
                 AddResponseHeader();
-                foreach (var property in mediaType.Value.Schema.Properties)
-                {
-                    AddProperty(property.Key, property.Value, 1, attributesColumnIndex);
-                }
+                AddProperties(mediaType.Value.Schema, 1, attributesColumnIndex);
                 AddEmptyRow();
             }
             AddEmptyRow();
@@ -61,28 +58,7 @@ namespace OpenApi2Excel.Builders.WorksheetPartsBuilders
         {
             // current property
             AddPropertyRow(name, schema, level++);
-            if (schema.Items != null)
-            {
-                if (schema.Items.Properties.Any())
-                {
-                    // array object subproperties
-                    foreach (var property in schema.Items.Properties)
-                    {
-                        AddProperty(property.Key, property.Value, level, attributesColumnIndex);
-                    }
-                }
-                else
-                {
-                    // if array contains simple type
-                    AddProperty("element", schema.Items, level, attributesColumnIndex);
-                }
-            }
-
-            // subproperties
-            foreach (var property in schema.Properties)
-            {
-                AddProperty(property.Key, property.Value, level, attributesColumnIndex);
-            }
+            AddProperties(schema, level, attributesColumnIndex);
 
             return;
 
@@ -92,6 +68,32 @@ namespace OpenApi2Excel.Builders.WorksheetPartsBuilders
                 FillCell(propertyLevel, propertyName);
                 FillSchemaDescriptionCells(propertySchema, attributesColumnIndex);
                 ActualRow.MoveNext();
+            }
+        }
+
+        protected void AddProperties(OpenApiSchema schema, int level, int attributesColumnIndex)
+        {
+            if (schema.Items != null)
+            {
+                if (schema.Items.Properties.Any())
+                {
+                    // array of object properties
+                    foreach (var property in schema.Items.Properties)
+                    {
+                        AddProperty(property.Key, property.Value, level, attributesColumnIndex);
+                    }
+                }
+                else
+                {
+                    // if array contains simple type items
+                    AddProperty("element", schema.Items, level, attributesColumnIndex);
+                }
+            }
+
+            // subproperties
+            foreach (var property in schema.Properties)
+            {
+                AddProperty(property.Key, property.Value, level, attributesColumnIndex);
             }
         }
 
