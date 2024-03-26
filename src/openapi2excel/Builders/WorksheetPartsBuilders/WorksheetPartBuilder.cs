@@ -22,32 +22,22 @@ namespace OpenApi2Excel.Builders.WorksheetPartsBuilders
             => new(Worksheet.Cell(ActualRow, column), Options);
 
         protected CellBuilder FillHeader(int column)
-        {
-            return Fill(column).WithBackground(HeaderBackgroundColor);
-        }
+            => Fill(column).WithBackground(HeaderBackgroundColor);
 
         protected void AddPropertiesTreeForMediaTypes(IDictionary<string, OpenApiMediaType> mediaTypes, int attributesColumnIndex)
         {
+            var builder = new PropertiesTreeBuilder(attributesColumnIndex, worksheet, options);
             foreach (var mediaType in mediaTypes)
             {
-                AddResponseFormat(mediaType.Key);
-                AddResponseHeader();
-                AddProperties(mediaType.Value.Schema, 1, attributesColumnIndex);
+                AddMediaTypeFormat(mediaType.Key);
+                builder.AddPropertiesTree(ActualRow, mediaType.Value.Schema);
                 AddEmptyRow();
             }
             AddEmptyRow();
 
             return;
 
-            void AddResponseHeader()
-            {
-                var lastUsedColumn = FillSchemaDescriptionHeaderCells(attributesColumnIndex);
-                ActualRow.MovePrev();
-                FillHeaderBackground(1, lastUsedColumn);
-                ActualRow.MoveNext(2);
-            }
-
-            void AddResponseFormat(string name)
+            void AddMediaTypeFormat(string name)
             {
                 Fill(1).WithText($"Format: {name}").WithBoldStyle();
                 ActualRow.MoveNext();
@@ -131,15 +121,6 @@ namespace OpenApi2Excel.Builders.WorksheetPartsBuilders
                 cellBuilder.WithBackground(backgoundColor);
             }
             cellBuilder.WithHorizontalAlignment(alignment);
-        }
-
-        protected void FillCell(int column, bool value, XLColor? backgoundColor = null)
-        {
-            var cellBuilder = Fill(column).WithText(Options.Language.Get(value));
-            if (backgoundColor is not null)
-            {
-                cellBuilder.WithBackground(backgoundColor);
-            }
         }
 
         protected void FillBackground(int startColumn, int endColumn, XLColor backgroundColor)
