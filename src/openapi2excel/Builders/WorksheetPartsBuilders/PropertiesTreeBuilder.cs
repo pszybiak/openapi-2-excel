@@ -9,8 +9,7 @@ internal class PropertiesTreeBuilder(int attributesColumnIndex, IXLWorksheet wor
     protected OpenApiDocumentationOptions Options { get; } = options;
     protected IXLWorksheet Worksheet { get; } = worksheet;
     private RowPointer ActualRow { get; set; } = null!;
-    protected XLColor HeaderBackgroundColor
-        => XLColor.LightGray;
+    protected XLColor HeaderBackgroundColor => XLColor.LightGray;
 
     public void AddPropertiesTree(RowPointer actualRow, OpenApiSchema schema)
     {

@@ -12,8 +12,7 @@ namespace OpenApi2Excel.Builders.WorksheetPartsBuilders
         protected OpenApiDocumentationOptions Options { get; } = options;
         protected RowPointer ActualRow { get; } = actualRow;
         protected IXLWorksheet Worksheet { get; } = worksheet;
-        protected XLColor HeaderBackgroundColor
-            => XLColor.LightGray;
+        protected XLColor HeaderBackgroundColor => XLColor.LightGray;
 
         protected void AddEmptyRow()
             => ActualRow.MoveNext();
@@ -26,7 +25,7 @@ namespace OpenApi2Excel.Builders.WorksheetPartsBuilders
 
         protected void AddPropertiesTreeForMediaTypes(IDictionary<string, OpenApiMediaType> mediaTypes, int attributesColumnIndex)
         {
-            var builder = new PropertiesTreeBuilder(attributesColumnIndex, worksheet, options);
+            var builder = new PropertiesTreeBuilder(attributesColumnIndex, Worksheet, Options);
             foreach (var mediaType in mediaTypes)
             {
                 AddMediaTypeFormat(mediaType.Key);
@@ -34,8 +33,6 @@ namespace OpenApi2Excel.Builders.WorksheetPartsBuilders
                 AddEmptyRow();
             }
             AddEmptyRow();
-
-            return;
 
             void AddMediaTypeFormat(string name)
             {

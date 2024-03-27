@@ -34,6 +34,4 @@ internal class ResponseBodyBuilder(
         }
         ActualRow.MoveNext();
     }
-
-
 }
