@@ -11,12 +11,13 @@ internal class PropertiesTreeBuilder(int attributesColumnIndex, IXLWorksheet wor
     private RowPointer ActualRow { get; set; } = null!;
     protected XLColor HeaderBackgroundColor => XLColor.LightGray;
 
-    public void AddPropertiesTree(RowPointer actualRow, OpenApiSchema schema)
+    public int AddPropertiesTree(RowPointer actualRow, OpenApiSchema schema)
     {
         ActualRow = actualRow;
-        AddSchemaDescriptionHeader();
+        var columnCount = AddSchemaDescriptionHeader();
         AddProperties(schema, 1);
         actualRow.MoveNext();
+        return columnCount;
     }
 
     protected void AddProperties(OpenApiSchema schema, int level)

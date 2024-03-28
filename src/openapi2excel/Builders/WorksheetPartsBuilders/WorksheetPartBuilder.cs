@@ -28,8 +28,10 @@ namespace OpenApi2Excel.Builders.WorksheetPartsBuilders
             var builder = new PropertiesTreeBuilder(attributesColumnIndex, Worksheet, Options);
             foreach (var mediaType in mediaTypes)
             {
+                var mediaFormatRow = ActualRow.Copy();
                 AddMediaTypeFormat(mediaType.Key);
-                builder.AddPropertiesTree(ActualRow, mediaType.Value.Schema);
+                var columnCount = builder.AddPropertiesTree(ActualRow, mediaType.Value.Schema);
+                FillBackgroundOnMediaTypeRow(mediaFormatRow, columnCount);
                 AddEmptyRow();
             }
             AddEmptyRow();
@@ -39,6 +41,14 @@ namespace OpenApi2Excel.Builders.WorksheetPartsBuilders
                 Fill(1).WithText($"Format: {name}").WithBoldStyle();
                 ActualRow.MoveNext();
             }
+        }
+
+        private void FillBackgroundOnMediaTypeRow(RowPointer mediaFormatRow, int columnCount)
+        {
+            var actualRowCopy = ActualRow.Copy();
+            ActualRow.GoTo(mediaFormatRow);
+            Fill(1).WithBackground(HeaderBackgroundColor, columnCount);
+            ActualRow.GoTo(actualRowCopy);
         }
 
         protected void AddProperty(string name, OpenApiSchema schema, int level, int attributesColumnIndex)

@@ -21,4 +21,6 @@ internal class RowPointer(int rowNumber)
     {
         return rowNumber = row;
     }
+
+    public RowPointer Copy() => new(rowNumber);
 }
