@@ -5,6 +5,16 @@ namespace OpenApi2Excel.Common;
 
 internal static class OpenApiSchemaExtension
 {
+    public static string GetTypeDescription(this OpenApiSchema schema)
+    {
+        return schema.Type switch
+        {
+            "object" => "object: " + schema.Reference.Id,
+            "array" => "array(" + schema.Items.GetTypeDescription() + ")",
+            _ => schema.Type
+        };
+    }
+
     public static string GetPropertyLengthDescription(this OpenApiSchema schema)
     {
         StringBuilder propertyTypeDescription = new();

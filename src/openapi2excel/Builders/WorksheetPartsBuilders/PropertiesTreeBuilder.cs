@@ -35,7 +35,7 @@ internal class PropertiesTreeBuilder(int attributesColumnIndex, IXLWorksheet wor
             else
             {
                 // if array contains simple type items
-                AddProperty("element", schema.Items, level);
+                AddProperty("<value>", schema.Items, level);
             }
         }
 
@@ -87,7 +87,7 @@ internal class PropertiesTreeBuilder(int attributesColumnIndex, IXLWorksheet wor
     protected void FillSchemaDescriptionCells(OpenApiSchema schema, int startColumn)
     {
         Fill(startColumn).WithText(schema.Type)
-            .Next().WithText(schema.Format)
+            .Next().WithText(schema.GetTypeDescription())
             .Next().WithText(schema.GetPropertyLengthDescription()).WithHorizontalAlignment(XLAlignmentHorizontalValues.Center)
             .Next().WithText(schema.GetPropertyRangeDescription()).WithHorizontalAlignment(XLAlignmentHorizontalValues.Center)
             .Next().WithText(schema.Pattern)
