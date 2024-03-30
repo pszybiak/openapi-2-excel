@@ -86,8 +86,8 @@ internal class PropertiesTreeBuilder(int attributesColumnIndex, IXLWorksheet wor
 
     protected void FillSchemaDescriptionCells(OpenApiSchema schema, int startColumn)
     {
-        Fill(startColumn).WithText(schema.Type)
-            .Next().WithText(schema.GetTypeDescription())
+        Fill(startColumn).WithText(schema.GetTypeDescription())
+            .Next().WithText(schema.Format)
             .Next().WithText(schema.GetPropertyLengthDescription()).WithHorizontalAlignment(XLAlignmentHorizontalValues.Center)
             .Next().WithText(schema.GetPropertyRangeDescription()).WithHorizontalAlignment(XLAlignmentHorizontalValues.Center)
             .Next().WithText(schema.Pattern)

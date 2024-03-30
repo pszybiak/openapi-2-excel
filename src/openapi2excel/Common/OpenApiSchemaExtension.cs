@@ -9,7 +9,7 @@ internal static class OpenApiSchemaExtension
     {
         return schema.Type switch
         {
-            "object" => "object: " + schema.Reference.Id,
+            "object" => schema.Reference is null ? "object" : "object: " + schema.Reference.Id,
             "array" => "array(" + schema.Items.GetTypeDescription() + ")",
             _ => schema.Type
         };
