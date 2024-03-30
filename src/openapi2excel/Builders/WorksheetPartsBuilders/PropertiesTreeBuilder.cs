@@ -15,9 +15,19 @@ internal class PropertiesTreeBuilder(int attributesColumnIndex, IXLWorksheet wor
     {
         ActualRow = actualRow;
         var columnCount = AddSchemaDescriptionHeader();
-        AddProperties(schema, 1);
+        var startColumn = SetRootElementForArray(schema) ? 2 : 1;
+        AddProperties(schema, startColumn);
         actualRow.MoveNext();
         return columnCount;
+    }
+
+    protected bool SetRootElementForArray(OpenApiSchema schema)
+    {
+        if (schema.Items == null)
+            return false;
+
+        AddPropertyRow("<array>", schema, 1);
+        return true;
     }
 
     protected void AddProperties(OpenApiSchema schema, int level)
@@ -48,20 +58,17 @@ internal class PropertiesTreeBuilder(int attributesColumnIndex, IXLWorksheet wor
 
     protected void AddProperty(string name, OpenApiSchema schema, int level)
     {
-        // current property
         AddPropertyRow(name, schema, level++);
         AddProperties(schema, level);
+    }
 
-        return;
-
-        void AddPropertyRow(string propertyName, OpenApiSchema propertySchema, int propertyLevel)
-        {
-            const int startColumn = 1;
-            Fill(startColumn).WithBackground(HeaderBackgroundColor, propertyLevel - 1);
-            Fill(propertyLevel).WithText(propertyName);
-            FillSchemaDescriptionCells(propertySchema, attributesColumnIndex);
-            ActualRow.MoveNext();
-        }
+    private void AddPropertyRow(string propertyName, OpenApiSchema propertySchema, int propertyLevel)
+    {
+        const int startColumn = 1;
+        Fill(startColumn).WithBackground(HeaderBackgroundColor, propertyLevel - 1);
+        Fill(propertyLevel).WithText(propertyName);
+        FillSchemaDescriptionCells(propertySchema, attributesColumnIndex);
+        ActualRow.MoveNext();
     }
 
     protected int AddSchemaDescriptionHeader()
