@@ -26,7 +26,7 @@ namespace OpenApi2Excel.Builders.WorksheetPartsBuilders
             if (!addIfNotExists && value is null)
                 return;
 
-            Fill(1).WithText(label)
+            Fill(1).WithText(label).WithBoldStyle()
                 .Next(attributesColumnIndex - 1)
                 .WithText(value!);
 
