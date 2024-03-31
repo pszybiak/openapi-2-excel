@@ -80,6 +80,7 @@ internal class PropertiesTreeBuilder(int attributesColumnIndex, IXLWorksheet wor
             .Next().WithText("Length").WithBoldStyle()
             .Next().WithText("Range").WithBoldStyle()
             .Next().WithText("Pattern").WithBoldStyle()
+            .Next().WithText("Deprecated").WithBoldStyle()
             .Next().WithText("Description").WithBoldStyle();
 
         var lastUsedColumn = cellBuilder.GetCellNumber();
@@ -98,7 +99,8 @@ internal class PropertiesTreeBuilder(int attributesColumnIndex, IXLWorksheet wor
             .Next().WithText(schema.GetPropertyLengthDescription()).WithHorizontalAlignment(XLAlignmentHorizontalValues.Center)
             .Next().WithText(schema.GetPropertyRangeDescription()).WithHorizontalAlignment(XLAlignmentHorizontalValues.Center)
             .Next().WithText(schema.Pattern)
-            .Next().WithText(schema.Description);
+            .Next().WithText(Options.Language.Get(schema.Deprecated)).WithHorizontalAlignment(XLAlignmentHorizontalValues.Center)
+            .Next().WithText(schema.GetPropertyDescription());
     }
 
     protected CellBuilder Fill(int column)

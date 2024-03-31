@@ -15,6 +15,14 @@ internal static class OpenApiSchemaExtension
         };
     }
 
+    public static string GetPropertyDescription(this OpenApiSchema schema)
+    {
+        if (string.IsNullOrEmpty(schema.Description))
+            return schema.Description;
+
+        return schema.Description.StartsWith('\'') ? "'" + schema.Description : schema.Description;
+    }
+
     public static string GetPropertyLengthDescription(this OpenApiSchema schema)
     {
         StringBuilder propertyTypeDescription = new();
