@@ -14,6 +14,8 @@ internal class RequestBodyBuilder(
         if (operation.RequestBody is null)
             return;
 
+        Fill(1).WithText("REQUEST").WithBoldStyle();
+        AddEmptyRow();
         AddPropertiesTreeForMediaTypes(operation.RequestBody.Content, attributesColumnIndex);
     }
 }

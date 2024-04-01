@@ -29,18 +29,13 @@ namespace OpenApi2Excel.Builders.WorksheetPartsBuilders
             foreach (var mediaType in mediaTypes)
             {
                 var mediaFormatRow = ActualRow.Copy();
-                AddMediaTypeFormat(mediaType.Key);
+                Fill(1).WithText($"Body format: {mediaType.Key}").WithBoldStyle();
+                ActualRow.MoveNext();
                 var columnCount = builder.AddPropertiesTree(ActualRow, mediaType.Value.Schema);
                 FillBackgroundOnMediaTypeRow(mediaFormatRow, columnCount);
                 AddEmptyRow();
             }
             AddEmptyRow();
-
-            void AddMediaTypeFormat(string name)
-            {
-                Fill(1).WithText($"Format: {name}").WithBoldStyle();
-                ActualRow.MoveNext();
-            }
         }
 
         private void FillBackgroundOnMediaTypeRow(RowPointer mediaFormatRow, int columnCount)
