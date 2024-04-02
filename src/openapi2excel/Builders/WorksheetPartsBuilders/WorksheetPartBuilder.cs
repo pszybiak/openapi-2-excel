@@ -89,14 +89,15 @@ namespace OpenApi2Excel.Builders.WorksheetPartsBuilders
             }
         }
 
-        protected void FillSchemaDescriptionCells(OpenApiSchema schema, int startColumn)
+        protected int FillSchemaDescriptionCells(OpenApiSchema schema, int startColumn)
         {
-            Fill(startColumn).WithText(schema.Type)
+            return Fill(startColumn).WithText(schema.Type)
                 .Next().WithText(schema.Format)
                 .Next().WithText(schema.GetPropertyLengthDescription()).WithHorizontalAlignment(XLAlignmentHorizontalValues.Center)
                 .Next().WithText(schema.GetPropertyRangeDescription()).WithHorizontalAlignment(XLAlignmentHorizontalValues.Center)
                 .Next().WithText(schema.Pattern)
-                .Next().WithText(schema.Description);
+                .Next().WithText(schema.Description)
+                .GetCellNumber();
         }
 
         protected int FillSchemaDescriptionHeaderCells(int attributesStartColumn)

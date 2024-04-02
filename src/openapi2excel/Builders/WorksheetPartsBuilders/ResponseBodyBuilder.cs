@@ -34,14 +34,25 @@ internal class ResponseBodyBuilder(
 
         Fill(1).WithText("Response headers").WithBoldStyle();
         ActualRow.MoveNext();
+
+        var nextCell = Fill(1).WithText("Name").WithBoldStyle()
+            .Next(attributesColumnIndex - 1).WithText("Required").WithBoldStyle()
+            .Next().WithText("Deprecated").WithBoldStyle()
+            .Next().GetCellNumber();
+
+        int lastUsedColumn = FillSchemaDescriptionHeaderCells(nextCell);
+        ActualRow.MovePrev();
+        FillHeaderBackground(1, lastUsedColumn);
+        ActualRow.MoveNext(2);
+
         foreach (var openApiHeader in valueHeaders)
         {
             var nextCellNumber = Fill(1).WithText(openApiHeader.Key)
-                .Next(attributesColumnIndex - 1).WithText(Options.Language.Get(openApiHeader.Value.Deprecated))
-                .Next().WithText(Options.Language.Get(openApiHeader.Value.Required))
-                .Next().WithText(openApiHeader.Value.Description)
+                .Next(attributesColumnIndex - 1).WithText(Options.Language.Get(openApiHeader.Value.Required))
+                .Next().WithText(Options.Language.Get(openApiHeader.Value.Deprecated))
                 .Next().GetCellNumber();
-            FillSchemaDescriptionCells(openApiHeader.Value.Schema, nextCellNumber);
+            nextCellNumber = FillSchemaDescriptionCells(openApiHeader.Value.Schema, nextCellNumber);
+            Fill(nextCellNumber).WithText(openApiHeader.Value.Description);
             ActualRow.MoveNext();
         }
         ActualRow.MoveNext();
