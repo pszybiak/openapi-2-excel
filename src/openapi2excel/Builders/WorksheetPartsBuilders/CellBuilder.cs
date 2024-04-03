@@ -40,10 +40,10 @@ internal class CellBuilder(IXLCell cell, OpenApiDocumentationOptions option)
     }
 
     public CellBuilder WithText(string? value)
-        => With(c => c.Value = value);
+        => With(c => c.SetValue(value));
 
     public CellBuilder WithBackground(XLColor color)
-        => With(c => c.Style.Fill.BackgroundColor = color);
+        => With(c => c.Style.Fill.SetBackgroundColor(color));
 
     public CellBuilder WithBackground(XLColor color, int endColumn)
     {
@@ -63,7 +63,7 @@ internal class CellBuilder(IXLCell cell, OpenApiDocumentationOptions option)
     }
 
     public CellBuilder WithBottomBorder()
-        => With(c => c.Style.Border.BottomBorder = XLBorderStyleValues.Medium);
+        => With(c => c.Style.Border.SetBottomBorder(XLBorderStyleValues.Medium));
 
     public CellBuilder WithBottomBorder(int endColumn)
     {
@@ -73,7 +73,7 @@ internal class CellBuilder(IXLCell cell, OpenApiDocumentationOptions option)
     }
 
     public CellBuilder WithBoldStyle()
-        => With(c => c.Style.Font.Bold = true);
+        => With(c => c.Style.Font.SetBold(true));
 
     private CellBuilder With(Action<IXLCell> action)
     {
