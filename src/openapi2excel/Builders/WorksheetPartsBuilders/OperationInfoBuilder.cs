@@ -1,36 +1,26 @@
 ﻿using ClosedXML.Excel;
 using Microsoft.OpenApi.Models;
 
-namespace OpenApi2Excel.Builders.WorksheetPartsBuilders
+namespace OpenApi2Excel.Builders.WorksheetPartsBuilders;
+
+internal class OperationInfoBuilder(RowPointer actualRow, int attributesColumnIndex, IXLWorksheet worksheet, OpenApiDocumentationOptions options)
+    : WorksheetPartBuilder(actualRow, worksheet, options)
 {
-    internal class OperationInfoBuilder(RowPointer actualRow, int attributesColumnIndex, IXLWorksheet worksheet, OpenApiDocumentationOptions options)
-        : WorksheetPartBuilder(actualRow, worksheet, options)
+    public void AddOperationInfoPart(string path, OpenApiPathItem pathItem, OperationType operationType, OpenApiOperation operation)
     {
-        public void AddOperationInfoPart(string path, OpenApiPathItem pathItem, OperationType operationType, OpenApiOperation operation)
+        using (var _ = new Section(Worksheet, ActualRow))
         {
-            AddInfoRow(Options.Language.Get(OpenApiDocumentationLanguageConst.OperationType), operationType.ToString().ToUpper());
+            var cell = Cell(1).SetTextBold("OPERATION INFORMATION")
+                .NextRow().SetTextBold("Operation type").CellRight(attributesColumnIndex).SetText(operationType.ToString().ToUpper())
+                .NextRow().SetTextBold("Path").CellRight(attributesColumnIndex).SetText(path)
+                .NextRow().SetTextBold("Path description").CellRight(attributesColumnIndex).SetText(pathItem.Description)
+                .NextRow().SetTextBold("Path summary").CellRight(attributesColumnIndex).SetText(pathItem.Summary)
+                .NextRow().SetTextBold("Operation description").CellRight(attributesColumnIndex).SetText(operation.Description)
+                .NextRow().SetTextBold("Operation summary").CellRight(attributesColumnIndex).SetText(operation.Summary)
+                .NextRow().SetTextBold("Deprecated").CellRight(attributesColumnIndex).SetText(Options.Language.Get(operation.Deprecated));
 
-            AddInfoRow(Options.Language.Get(OpenApiDocumentationLanguageConst.Path), path);
-            AddInfoRow(Options.Language.Get(OpenApiDocumentationLanguageConst.PathDescription), pathItem.Summary);
-            AddInfoRow(Options.Language.Get(OpenApiDocumentationLanguageConst.PathSummary), pathItem.Summary);
-
-            AddInfoRow(Options.Language.Get(OpenApiDocumentationLanguageConst.OperationDescription), operation.Description);
-            AddInfoRow(Options.Language.Get(OpenApiDocumentationLanguageConst.OperationSummary), operation.Summary);
-
-            AddInfoRow(Options.Language.Get(OpenApiDocumentationLanguageConst.Deprecated), Options.Language.Get(operation.Deprecated));
-            AddEmptyRow();
+            ActualRow.GoTo(cell.Address.RowNumber);
         }
-
-        private void AddInfoRow(string label, string? value, bool addIfNotExists = false)
-        {
-            if (!addIfNotExists && value is null)
-                return;
-
-            Fill(1).WithText(label).WithBoldStyle()
-                .Next(attributesColumnIndex - 1)
-                .WithText(value!);
-
-            ActualRow.MoveNext();
-        }
+        ActualRow.MoveNext();
     }
 }

@@ -17,6 +17,9 @@ namespace OpenApi2Excel.Builders.WorksheetPartsBuilders
         protected void AddEmptyRow()
             => ActualRow.MoveNext();
 
+        protected IXLCell Cell(int column)
+            => Worksheet.Cell(ActualRow.Get(), column);
+
         protected CellBuilder Fill(int column)
             => new(Worksheet.Cell(ActualRow, column), Options);
 

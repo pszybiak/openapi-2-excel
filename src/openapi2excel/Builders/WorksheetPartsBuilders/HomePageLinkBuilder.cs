@@ -8,7 +8,9 @@ internal class HomePageLinkBuilder(RowPointer actualRow, IXLWorksheet worksheet,
     public void AddHomePageLinkPart()
     {
         FillCell(1, "<<<<<");
-        Worksheet.Cell(ActualRow, 1).SetHyperlink(new XLHyperlink($"'{InfoWorksheetBuilder.Name}'!A1"));
+        Worksheet.Cell(ActualRow, 1).SetHyperlink(CreateHyperlinkToInfoWorksheet());
         ActualRow.MoveNext(2);
     }
+
+    private XLHyperlink CreateHyperlinkToInfoWorksheet() => new($"'{InfoWorksheetBuilder.Name}'!A1");
 }
