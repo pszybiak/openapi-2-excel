@@ -8,10 +8,12 @@ internal class OperationInfoBuilder(RowPointer actualRow, int attributesColumnIn
 {
     public void AddOperationInfoPart(string path, OpenApiPathItem pathItem, OperationType operationType, OpenApiOperation operation)
     {
+        Cell(1).SetTextBold("OPERATION INFORMATION");
+        ActualRow.MoveNext();
+
         using (var _ = new Section(Worksheet, ActualRow))
         {
-            var cell = Cell(1).SetTextBold("OPERATION INFORMATION")
-                .NextRow().SetTextBold("Operation type").CellRight(attributesColumnIndex).SetText(operationType.ToString().ToUpper())
+            var cell = Cell(1).SetTextBold("Operation type").CellRight(attributesColumnIndex).SetText(operationType.ToString().ToUpper())
                 .NextRow().SetTextBold("Path").CellRight(attributesColumnIndex).SetText(path)
                 .NextRow().SetTextBold("Path description").CellRight(attributesColumnIndex).SetText(pathItem.Description)
                 .NextRow().SetTextBold("Path summary").CellRight(attributesColumnIndex).SetText(pathItem.Summary)
@@ -21,6 +23,6 @@ internal class OperationInfoBuilder(RowPointer actualRow, int attributesColumnIn
 
             ActualRow.GoTo(cell.Address.RowNumber);
         }
-        ActualRow.MoveNext();
+        ActualRow.MoveNext(2);
     }
 }
