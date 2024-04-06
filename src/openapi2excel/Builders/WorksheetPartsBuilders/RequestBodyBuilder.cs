@@ -4,10 +4,10 @@ using Microsoft.OpenApi.Models;
 namespace OpenApi2Excel.Builders.WorksheetPartsBuilders;
 
 internal class RequestBodyBuilder(
-    RowPointer actualRow,
-    int attributesColumnIndex,
-    IXLWorksheet worksheet,
-    OpenApiDocumentationOptions options) : WorksheetPartBuilder(actualRow, worksheet, options)
+   RowPointer actualRow,
+   int attributesColumnIndex,
+   IXLWorksheet worksheet,
+   OpenApiDocumentationOptions options) : WorksheetPartBuilder(actualRow, worksheet, options)
 {
    public void AddRequestBodyPart(OpenApiOperation operation)
    {
@@ -21,6 +21,7 @@ internal class RequestBodyBuilder(
          AddPropertiesTreeForMediaTypes(operation.RequestBody.Content, attributesColumnIndex);
          ActualRow.MovePrev();
       }
+
       ActualRow.MoveNext(2);
    }
 }

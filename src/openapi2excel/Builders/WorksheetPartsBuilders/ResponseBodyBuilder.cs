@@ -4,10 +4,10 @@ using Microsoft.OpenApi.Models;
 namespace OpenApi2Excel.Builders.WorksheetPartsBuilders;
 
 internal class ResponseBodyBuilder(
-    RowPointer actualRow,
-    int attributesColumnIndex,
-    IXLWorksheet worksheet,
-    OpenApiDocumentationOptions options) : WorksheetPartBuilder(actualRow, worksheet, options)
+   RowPointer actualRow,
+   int attributesColumnIndex,
+   IXLWorksheet worksheet,
+   OpenApiDocumentationOptions options) : WorksheetPartBuilder(actualRow, worksheet, options)
 {
    public void AddResponseBodyPart(OpenApiOperation operation)
    {
@@ -40,9 +40,9 @@ internal class ResponseBodyBuilder(
       ActualRow.MoveNext();
 
       var nextCell = Fill(1).WithText("Name").WithBoldStyle()
-          .Next(attributesColumnIndex - 1).WithText("Required").WithBoldStyle()
-          .Next().WithText("Deprecated").WithBoldStyle()
-          .Next().GetCellNumber();
+         .Next(attributesColumnIndex - 1).WithText("Required").WithBoldStyle()
+         .Next().WithText("Deprecated").WithBoldStyle()
+         .Next().GetCellNumber();
 
       int lastUsedColumn = FillSchemaDescriptionHeaderCells(nextCell);
       ActualRow.MovePrev();
@@ -52,13 +52,14 @@ internal class ResponseBodyBuilder(
       foreach (var openApiHeader in valueHeaders)
       {
          var nextCellNumber = Fill(1).WithText(openApiHeader.Key)
-             .Next(attributesColumnIndex - 1).WithText(Options.Language.Get(openApiHeader.Value.Required))
-             .Next().WithText(Options.Language.Get(openApiHeader.Value.Deprecated))
-             .Next().GetCellNumber();
+            .Next(attributesColumnIndex - 1).WithText(Options.Language.Get(openApiHeader.Value.Required))
+            .Next().WithText(Options.Language.Get(openApiHeader.Value.Deprecated))
+            .Next().GetCellNumber();
          nextCellNumber = FillSchemaDescriptionCells(openApiHeader.Value.Schema, nextCellNumber);
          Fill(nextCellNumber).WithText(openApiHeader.Value.Description);
          ActualRow.MoveNext();
       }
+
       ActualRow.MoveNext();
    }
 
@@ -72,6 +73,7 @@ internal class ResponseBodyBuilder(
       {
          Fill(1).WithText($"Response HttpCode: {httpCode}: {description}").WithBoldStyle();
       }
+
       ActualRow.MoveNext();
    }
 }

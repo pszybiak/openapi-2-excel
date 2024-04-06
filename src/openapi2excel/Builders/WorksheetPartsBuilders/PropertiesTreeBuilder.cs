@@ -4,7 +4,10 @@ using OpenApi2Excel.Common;
 
 namespace OpenApi2Excel.Builders.WorksheetPartsBuilders;
 
-internal class PropertiesTreeBuilder(int attributesColumnIndex, IXLWorksheet worksheet, OpenApiDocumentationOptions options)
+internal class PropertiesTreeBuilder(
+   int attributesColumnIndex,
+   IXLWorksheet worksheet,
+   OpenApiDocumentationOptions options)
 {
    protected OpenApiDocumentationOptions Options { get; } = options;
    protected IXLWorksheet Worksheet { get; } = worksheet;
@@ -74,18 +77,18 @@ internal class PropertiesTreeBuilder(int attributesColumnIndex, IXLWorksheet wor
    {
       const int startColumn = 1;
       var cellBuilder = Fill(startColumn).WithText("Name").WithBoldStyle()
-          .Next(attributesColumnIndex - 1).WithText("Type").WithBoldStyle()
-          .Next().WithText("Format").WithBoldStyle()
-          .Next().WithText("Length").WithBoldStyle()
-          .Next().WithText("Range").WithBoldStyle()
-          .Next().WithText("Pattern").WithBoldStyle()
-          .Next().WithText("Deprecated").WithBoldStyle()
-          .Next().WithText("Description").WithBoldStyle();
+         .Next(attributesColumnIndex - 1).WithText("Type").WithBoldStyle()
+         .Next().WithText("Format").WithBoldStyle()
+         .Next().WithText("Length").WithBoldStyle()
+         .Next().WithText("Range").WithBoldStyle()
+         .Next().WithText("Pattern").WithBoldStyle()
+         .Next().WithText("Deprecated").WithBoldStyle()
+         .Next().WithText("Description").WithBoldStyle();
 
       var lastUsedColumn = cellBuilder.GetCellNumber();
 
       Fill(startColumn).WithBackground(HeaderBackgroundColor, lastUsedColumn)
-          .GoTo(startColumn).WithBottomBorder(lastUsedColumn);
+         .GoTo(startColumn).WithBottomBorder(lastUsedColumn);
 
       ActualRow.MoveNext();
       return lastUsedColumn;
@@ -94,14 +97,17 @@ internal class PropertiesTreeBuilder(int attributesColumnIndex, IXLWorksheet wor
    protected void FillSchemaDescriptionCells(OpenApiSchema schema, int startColumn)
    {
       Fill(startColumn).WithText(schema.GetTypeDescription())
-          .Next().WithText(schema.Format)
-          .Next().WithText(schema.GetPropertyLengthDescription()).WithHorizontalAlignment(XLAlignmentHorizontalValues.Center)
-          .Next().WithText(schema.GetPropertyRangeDescription()).WithHorizontalAlignment(XLAlignmentHorizontalValues.Center)
-          .Next().WithText(schema.Pattern)
-          .Next().WithText(Options.Language.Get(schema.Deprecated)).WithHorizontalAlignment(XLAlignmentHorizontalValues.Center)
-          .Next().WithText(schema.GetPropertyDescription());
+         .Next().WithText(schema.Format)
+         .Next().WithText(schema.GetPropertyLengthDescription())
+         .WithHorizontalAlignment(XLAlignmentHorizontalValues.Center)
+         .Next().WithText(schema.GetPropertyRangeDescription())
+         .WithHorizontalAlignment(XLAlignmentHorizontalValues.Center)
+         .Next().WithText(schema.Pattern)
+         .Next().WithText(Options.Language.Get(schema.Deprecated))
+         .WithHorizontalAlignment(XLAlignmentHorizontalValues.Center)
+         .Next().WithText(schema.GetPropertyDescription());
    }
 
    protected CellBuilder Fill(int column)
-       => new(Worksheet.Cell(ActualRow, column), Options);
+      => new(Worksheet.Cell(ActualRow, column), Options);
 }

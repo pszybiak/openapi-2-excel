@@ -5,13 +5,14 @@ using OpenApi2Excel.Builders.WorksheetPartsBuilders;
 namespace OpenApi2Excel.Builders;
 
 internal class OperationWorksheetBuilder(IXLWorkbook workbook, OpenApiDocumentationOptions options)
-    : WorksheetBuilder(options)
+   : WorksheetBuilder(options)
 {
    private readonly RowPointer _actualRowPointer = new(1);
    private IXLWorksheet _worksheet = null!;
    private int _attributesColumnsStartIndex;
 
-   public IXLWorksheet Build(string path, OpenApiPathItem pathItem, OperationType operationType, OpenApiOperation operation)
+   public IXLWorksheet Build(string path, OpenApiPathItem pathItem, OperationType operationType,
+      OpenApiOperation operation)
    {
       CreateNewWorksheet(operation);
       _actualRowPointer.GoTo(1);
@@ -46,21 +47,22 @@ internal class OperationWorksheetBuilder(IXLWorkbook workbook, OpenApiDocumentat
       if (operation.RequestBody is not null)
       {
          _attributesColumnsStartIndex = operation.RequestBody.Content
-             .Select(openApiMediaType => openApiMediaType.Value.Schema)
-             .Select(schema => EstablishMaxTreeLevel(schema, 0))
-             .Prepend(1)
-             .Max();
+            .Select(openApiMediaType => openApiMediaType.Value.Schema)
+            .Select(schema => EstablishMaxTreeLevel(schema, 0))
+            .Prepend(1)
+            .Max();
       }
 
       foreach (var maxLevel in operation.Responses.Select(operationResponse => operationResponse.Value.Content
-                   .Select(openApiMediaType => openApiMediaType.Value.Schema)
-                   .Select(schema => EstablishMaxTreeLevel(schema, 0))
-                   .Prepend(1)
-                   .Max())
-                   .Where(maxLevel => maxLevel > _attributesColumnsStartIndex))
+                     .Select(openApiMediaType => openApiMediaType.Value.Schema)
+                     .Select(schema => EstablishMaxTreeLevel(schema, 0))
+                     .Prepend(1)
+                     .Max())
+                  .Where(maxLevel => maxLevel > _attributesColumnsStartIndex))
       {
          _attributesColumnsStartIndex = maxLevel;
       }
+
       return;
 
       int EstablishMaxTreeLevel(OpenApiSchema schema, int currentLevel)
@@ -70,12 +72,13 @@ internal class OperationWorksheetBuilder(IXLWorkbook workbook, OpenApiDocumentat
          {
             return Math.Max(currentLevel, EstablishMaxTreeLevel(schema.Items, currentLevel));
          }
+
          return schema.Properties?.Any() != true
-             ? currentLevel
-             : schema.Properties
-                 .Select(schemaProperty => EstablishMaxTreeLevel(schemaProperty.Value, currentLevel))
-                 .Prepend(currentLevel)
-                 .Max();
+            ? currentLevel
+            : schema.Properties
+               .Select(schemaProperty => EstablishMaxTreeLevel(schemaProperty.Value, currentLevel))
+               .Prepend(currentLevel)
+               .Max();
       }
    }
 
@@ -92,22 +95,23 @@ internal class OperationWorksheetBuilder(IXLWorkbook workbook, OpenApiDocumentat
       _worksheet.Column(_attributesColumnsStartIndex - 1).AdjustToContents();
    }
 
-   private void AddOperationInfos(string path, OpenApiPathItem pathItem, OperationType operationType, OpenApiOperation operation) =>
-       new OperationInfoBuilder(_actualRowPointer, _attributesColumnsStartIndex, _worksheet, Options)
-           .AddOperationInfoPart(path, pathItem, operationType, operation);
+   private void AddOperationInfos(string path, OpenApiPathItem pathItem, OperationType operationType,
+      OpenApiOperation operation) =>
+      new OperationInfoBuilder(_actualRowPointer, _attributesColumnsStartIndex, _worksheet, Options)
+         .AddOperationInfoPart(path, pathItem, operationType, operation);
 
    private void AddRequestParameters(OpenApiOperation operation) =>
-       new RequestParametersBuilder(_actualRowPointer, _attributesColumnsStartIndex, _worksheet, Options)
-           .AddRequestParametersPart(operation);
+      new RequestParametersBuilder(_actualRowPointer, _attributesColumnsStartIndex, _worksheet, Options)
+         .AddRequestParametersPart(operation);
 
    private void AddRequestBody(OpenApiOperation operation) =>
-       new RequestBodyBuilder(_actualRowPointer, _attributesColumnsStartIndex, _worksheet, Options)
-           .AddRequestBodyPart(operation);
+      new RequestBodyBuilder(_actualRowPointer, _attributesColumnsStartIndex, _worksheet, Options)
+         .AddRequestBodyPart(operation);
 
    private void AddResponseBody(OpenApiOperation operation) =>
-       new ResponseBodyBuilder(_actualRowPointer, _attributesColumnsStartIndex, _worksheet, Options)
-           .AddResponseBodyPart(operation);
+      new ResponseBodyBuilder(_actualRowPointer, _attributesColumnsStartIndex, _worksheet, Options)
+         .AddResponseBodyPart(operation);
 
    private void AddHomePageLink() => new HomePageLinkBuilder(_actualRowPointer, _worksheet, Options)
-       .AddHomePageLinkPart();
+      .AddHomePageLinkPart();
 }

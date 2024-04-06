@@ -2,5 +2,5 @@
 
 internal abstract class WorksheetBuilder(OpenApiDocumentationOptions options)
 {
-    protected readonly OpenApiDocumentationOptions Options = options;
+   protected readonly OpenApiDocumentationOptions Options = options;
 }

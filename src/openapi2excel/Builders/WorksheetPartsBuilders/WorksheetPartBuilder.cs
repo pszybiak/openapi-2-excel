@@ -5,9 +5,9 @@ using OpenApi2Excel.Common;
 namespace OpenApi2Excel.Builders.WorksheetPartsBuilders
 {
    internal abstract class WorksheetPartBuilder(
-        RowPointer actualRow,
-        IXLWorksheet worksheet,
-        OpenApiDocumentationOptions options)
+      RowPointer actualRow,
+      IXLWorksheet worksheet,
+      OpenApiDocumentationOptions options)
    {
       protected OpenApiDocumentationOptions Options { get; } = options;
       protected RowPointer ActualRow { get; } = actualRow;
@@ -15,18 +15,19 @@ namespace OpenApi2Excel.Builders.WorksheetPartsBuilders
       protected XLColor HeaderBackgroundColor => XLColor.LightGray;
 
       protected void AddEmptyRow()
-          => ActualRow.MoveNext();
+         => ActualRow.MoveNext();
 
       protected IXLCell Cell(int column)
-          => Worksheet.Cell(ActualRow.Get(), column);
+         => Worksheet.Cell(ActualRow.Get(), column);
 
       protected CellBuilder Fill(int column)
-          => new(Worksheet.Cell(ActualRow, column), Options);
+         => new(Worksheet.Cell(ActualRow, column), Options);
 
       protected CellBuilder FillHeader(int column)
-          => Fill(column).WithBackground(HeaderBackgroundColor);
+         => Fill(column).WithBackground(HeaderBackgroundColor);
 
-      protected void AddPropertiesTreeForMediaTypes(IDictionary<string, OpenApiMediaType> mediaTypes, int attributesColumnIndex)
+      protected void AddPropertiesTreeForMediaTypes(IDictionary<string, OpenApiMediaType> mediaTypes,
+         int attributesColumnIndex)
       {
          var builder = new PropertiesTreeBuilder(attributesColumnIndex, Worksheet, Options);
          foreach (var mediaType in mediaTypes)
@@ -94,23 +95,25 @@ namespace OpenApi2Excel.Builders.WorksheetPartsBuilders
       protected int FillSchemaDescriptionCells(OpenApiSchema schema, int startColumn)
       {
          return Fill(startColumn).WithText(schema.Type)
-             .Next().WithText(schema.Format)
-             .Next().WithText(schema.GetPropertyLengthDescription()).WithHorizontalAlignment(XLAlignmentHorizontalValues.Center)
-             .Next().WithText(schema.GetPropertyRangeDescription()).WithHorizontalAlignment(XLAlignmentHorizontalValues.Center)
-             .Next().WithText(schema.Pattern)
-             .Next().WithText(schema.Description)
-             .GetCellNumber();
+            .Next().WithText(schema.Format)
+            .Next().WithText(schema.GetPropertyLengthDescription())
+            .WithHorizontalAlignment(XLAlignmentHorizontalValues.Center)
+            .Next().WithText(schema.GetPropertyRangeDescription())
+            .WithHorizontalAlignment(XLAlignmentHorizontalValues.Center)
+            .Next().WithText(schema.Pattern)
+            .Next().WithText(schema.Description)
+            .GetCellNumber();
       }
 
       protected int FillSchemaDescriptionHeaderCells(int attributesStartColumn)
       {
          var cellBuilder = Fill(1).WithText("Name").WithBoldStyle()
-             .Next(attributesStartColumn - 1).WithText("Type").WithBoldStyle()
-             .Next().WithText("Format").WithBoldStyle()
-             .Next().WithText("Length").WithBoldStyle()
-             .Next().WithText("Range").WithBoldStyle()
-             .Next().WithText("Pattern").WithBoldStyle()
-             .Next().WithText("Description").WithBoldStyle();
+            .Next(attributesStartColumn - 1).WithText("Type").WithBoldStyle()
+            .Next().WithText("Format").WithBoldStyle()
+            .Next().WithText("Length").WithBoldStyle()
+            .Next().WithText("Range").WithBoldStyle()
+            .Next().WithText("Pattern").WithBoldStyle()
+            .Next().WithText("Description").WithBoldStyle();
 
          var lastUsedColumn = cellBuilder.GetCell().Address.ColumnNumber;
          AddBottomBorder(1, lastUsedColumn);
@@ -118,13 +121,15 @@ namespace OpenApi2Excel.Builders.WorksheetPartsBuilders
          return lastUsedColumn;
       }
 
-      protected void FillCell(int column, string? value, XLColor? backgoundColor = null, XLAlignmentHorizontalValues alignment = XLAlignmentHorizontalValues.Left)
+      protected void FillCell(int column, string? value, XLColor? backgoundColor = null,
+         XLAlignmentHorizontalValues alignment = XLAlignmentHorizontalValues.Left)
       {
          var cellBuilder = Fill(column).WithText(value);
          if (backgoundColor is not null)
          {
             cellBuilder.WithBackground(backgoundColor);
          }
+
          cellBuilder.WithHorizontalAlignment(alignment);
       }
 
@@ -138,7 +143,7 @@ namespace OpenApi2Excel.Builders.WorksheetPartsBuilders
       }
 
       protected void FillHeaderBackground(int startColumn, int endColumn)
-          => FillBackground(startColumn, endColumn, HeaderBackgroundColor);
+         => FillBackground(startColumn, endColumn, HeaderBackgroundColor);
 
       protected void AddBottomBorder(int startColumn, int endColumn)
       {

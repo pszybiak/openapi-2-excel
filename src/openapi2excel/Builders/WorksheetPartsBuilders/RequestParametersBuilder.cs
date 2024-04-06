@@ -4,8 +4,12 @@ using OpenApi2Excel.Common;
 
 namespace OpenApi2Excel.Builders.WorksheetPartsBuilders;
 
-internal class RequestParametersBuilder(RowPointer actualRow, int attributesColumnIndex, IXLWorksheet worksheet, OpenApiDocumentationOptions options)
-    : WorksheetPartBuilder(actualRow, worksheet, options)
+internal class RequestParametersBuilder(
+   RowPointer actualRow,
+   int attributesColumnIndex,
+   IXLWorksheet worksheet,
+   OpenApiDocumentationOptions options)
+   : WorksheetPartBuilder(actualRow, worksheet, options)
 {
    public void AddRequestParametersPart(OpenApiOperation operation)
    {
@@ -27,16 +31,17 @@ internal class RequestParametersBuilder(RowPointer actualRow, int attributesColu
          operation.Parameters.ForEach(AddPropertyRow);
          ActualRow.MovePrev();
       }
+
       ActualRow.MoveNext(2);
    }
 
    private void AddPropertyRow(OpenApiParameter parameter)
    {
       var nextCell = Fill(1).WithText(parameter.Name)
-          .Next(attributesColumnIndex - 1).WithText(parameter.In.ToString()?.ToUpper())
-          .Next().WithText(parameter.Style?.ToString())
-          .Next().WithText(Options.Language.Get(parameter.Required))
-          .Next().GetCell();
+         .Next(attributesColumnIndex - 1).WithText(parameter.In.ToString()?.ToUpper())
+         .Next().WithText(parameter.Style?.ToString())
+         .Next().WithText(Options.Language.Get(parameter.Required))
+         .Next().GetCell();
 
       FillSchemaDescriptionCells(parameter.Schema, nextCell.Address.ColumnNumber);
       ActualRow.MoveNext();
