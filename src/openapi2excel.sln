@@ -3,11 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.8.34601.278
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OpenApi2Excel", "openapi2excel\OpenApi2Excel.csproj", "{90BAE74F-E824-41C6-8358-74B0781ECE75}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OpenApi2Excel", "openapi2excel\openapi2excel.csproj", "{90BAE74F-E824-41C6-8358-74B0781ECE75}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OpenApi2Excel.Tests", "openapi2excel.tests\OpenApi2Excel.Tests.csproj", "{8C149451-CDE6-4936-A261-3DD7B8B00F1C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OpenApi2Excel.Tests", "openapi2excel.tests\openapi2excel.tests.csproj", "{8C149451-CDE6-4936-A261-3DD7B8B00F1C}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OpenApi2Excel.cli", "openapi2excel.cli\OpenApi2Excel.cli.csproj", "{F41F6F53-6BB3-41DF-AB89-EC6195329632}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OpenApi2Excel.cli", "openapi2excel.cli\openapi2excel.cli.csproj", "{F41F6F53-6BB3-41DF-AB89-EC6195329632}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
