@@ -2,9 +2,25 @@
 
     <PropertyGroup>
         <OutputType>Exe</OutputType>
-        <TargetFramework>net8.0</TargetFramework>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
+        <LangVersion>latest</LangVersion>
+        <TargetFrameworks>net7.0;net8.0</TargetFrameworks>
+        <IsPackable>true</IsPackable>
+        <PackAsTool>true</PackAsTool>
+        <ToolCommandName>openapi2excel</ToolCommandName>
+        <AssemblyName>openapi2excel.cli</AssemblyName>
+        <Authors>openapi2excel Team &amp; Contributors</Authors>
+        <Copyright>Copyright (c) Paweł Szybiak</Copyright>
+        <Description>A .NET Core global tool to generate Rest API specification in a MS Excel format - human friendly document from Swagger/OpenAPI spec in YAML or JSON.</Description>
+        <PackageId>OpenApi2Excel-cli</PackageId>
+        <PackageLicenseExpression>MIT</PackageLicenseExpression>
+        <PackageProjectUrl>https://github.com/pszybiak/openapi-2-excel</PackageProjectUrl>
+        <PackageReleaseNotes>See $(PackageProjectUrl)/blob/main/CHANGELOG.md#$(VersionSuffix.Replace('.','')) for release notes.</PackageReleaseNotes>
+        <PackageVersion>$(VersionSuffix)</PackageVersion>
+        <RepositoryType>git</RepositoryType>
+        <RepositoryUrl>https://github.com/pszybiak/openapi-2-excel.git</RepositoryUrl>
+        <PackAsTool>true</PackAsTool>
     </PropertyGroup>
 
     <ItemGroup>

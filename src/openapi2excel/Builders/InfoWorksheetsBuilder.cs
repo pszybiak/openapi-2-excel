@@ -75,8 +75,7 @@ internal class InfoWorksheetBuilder(IXLWorkbook workbook, OpenApiDocumentationOp
       _infoWorksheet.Cell(_actualRowIndex, 1).Value = Options.Language.Get(languageKey);
       if (multipleRowText)
       {
-         var splitValues = value.Split('\n', '\r',
-            StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
+         var splitValues = value.Split('\n', '\r', StringSplitOptions.RemoveEmptyEntries).Select(v => v.Trim()).Where(v => !string.IsNullOrEmpty(v));
          foreach (var splitValue in splitValues)
          {
             _infoWorksheet.Cell(_actualRowIndex++, 2).Value = splitValue;
