@@ -1,0 +1,74 @@
+name: Release
+
+on:
+  workflow_dispatch
+
+jobs:
+  release:
+    name: Release
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v3.2.0
+        with:
+          dotnet-version: | 
+            6.0.x
+            7.0.x
+            8.0.x
+
+      - name: Tests
+        run: dotnet test --configuration Release
+
+      - name: Package release
+        id: package_release
+        run: |
+          VERSION=`cat semver.txt`
+          OUTPUT=${{ runner.temp }}/nupkgs
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+          echo "core_package_name=openapi2excel.$VERSION.nupkg" >> $GITHUB_OUTPUT
+          echo "core_package_filename=$OUTPUT/openapi2excel.$VERSION.nupkg" >> $GITHUB_OUTPUT
+          echo "tool_package_name=openapi2excel-cli.$VERSION.nupkg" >> $GITHUB_OUTPUT
+          echo "tool_package_filename=$OUTPUT/openapi2excel-cli.$VERSION.nupkg" >> $GITHUB_OUTPUT
+          dotnet build --configuration Release
+          dotnet pack --configuration Release /p:Version=$VERSION /p:PackageOutputPath=$OUTPUT
+
+      - name: Publish package
+        env:
+          NUGET_API_KEY: ${{ secrets.NUGET_API_KEY }}
+        run: |
+          dotnet nuget push --source https://api.nuget.org/v3/index.json --api-key "$NUGET_API_KEY" ${{ steps.package_release.outputs.core_package_filename }}
+          dotnet nuget push --source https://api.nuget.org/v3/index.json --api-key "$NUGET_API_KEY" ${{ steps.package_release.outputs.tool_package_filename }}
+
+      - name: Create github release
+        id: create_release
+        uses: actions/create-release@v1.1.4
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          release_name: ${{ steps.package_release.outputs.version }}
+          tag_name: v${{ steps.package_release.outputs.version }}
+          draft: false
+          prerelease: false
+
+      - name: Upload core package to github release
+        uses: actions/upload-release-asset@v1.0.2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ${{ steps.package_release.outputs.core_package_filename }}
+          asset_name: ${{ steps.package_release.outputs.core_package_name }}
+          asset_content_type: application/zip
+
+      - name: Upload tool package to github release
+        uses: actions/upload-release-asset@v1.0.2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ${{ steps.package_release.outputs.tool_package_filename }}
+          asset_name: ${{ steps.package_release.outputs.tool_package_name }}
+          asset_content_type: application/zip

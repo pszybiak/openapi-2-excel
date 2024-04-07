@@ -1,0 +1,38 @@
+
+name: Test
+
+on: [pull_request, workflow_dispatch]
+
+jobs:
+
+  test:
+    name: Tests for framework ${{ matrix.framework }} on ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+        framework: ['net7.0', 'net8.0']
+    timeout-minutes: 30
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: | 
+            7.0.x
+            8.0.x
+
+    - name: Restore dependencies
+      run: dotnet restore src/openapi2excel.sln
+
+    - name: Build
+      run: dotnet build src/openapi2excel.sln --no-restore
+      
+    - name: Smoke test
+      run: |
+        dotnet run --no-restore --configuration Release -v diag --framework ${{ matrix.framework }} --project src/openapi2excel.cli --file src/openapi2excel.tests/Sample/Sample1.yaml --out Sample.xlsx
+
+    - name: Tests
+      run: dotnet test --no-build --configuration Release --framework ${{ matrix.framework }}
