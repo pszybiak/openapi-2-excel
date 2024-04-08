@@ -1,7 +1,17 @@
 # OpenAPI-2-Excel
 
+<div align="center">
+    <img src="assets/logo.png" width="250px">
+</div>
+
+<div align="center">
+
+[![🚧 - Under Development](https://img.shields.io/badge/🚧-Under_Development-orange)](https://)
 [![NuGet Package](https://img.shields.io/badge/.NET%20-8.0-blue.svg)](https://dotnet.microsoft.com/en-us/download/dotnet/8.0)
 [![GitHub license](https://img.shields.io/badge/License-MIT-green.svg)](https://github.com/pszybiak/openapi-2-excel/blob/main/LICENSE.md)
+
+</div>
+
 
 Tool to generate Rest API specification in a MS Excel format - human friendly document from Swagger/OpenAPI spec in YAML or JSON. The result should be accessible to Business Analyst and software developers.
 
