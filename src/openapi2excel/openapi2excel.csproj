@@ -11,7 +11,7 @@
         <Description>The core functionality of OpenApi2Excel as a library which allows you to embed it into your own applications</Description>
         <Authors>openapi2excel Team &amp; Contributors</Authors>
         <Copyright>Copyright (c) Paweł Szybiak</Copyright>
-        <PackageId>OpenApi2Excel.Core</PackageId>
+        <PackageId>openapi2excel.core</PackageId>
         <PackageLicenseExpression>MIT</PackageLicenseExpression>
         <PackageProjectUrl>https://github.com/pszybiak/openapi-2-excel</PackageProjectUrl>
         <PackageReleaseNotes>See $(PackageProjectUrl)/blob/main/CHANGELOG.md#$(VersionSuffix.Replace('.','')) for release notes.</PackageReleaseNotes>
