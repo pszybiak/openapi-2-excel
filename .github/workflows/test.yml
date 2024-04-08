@@ -24,15 +24,9 @@ jobs:
             7.0.x
             8.0.x
 
-    - name: Restore dependencies
-      run: dotnet restore src/openapi2excel.sln
-
-    - name: Build
-      run: dotnet build src/openapi2excel.sln --no-restore
-      
     - name: Smoke test
       run: |
-        dotnet run --no-restore --configuration Release -v diag --framework ${{ matrix.framework }} --project src/openapi2excel.cli --file src/openapi2excel.tests/Sample/Sample1.yaml --out Sample.xlsx
+        dotnet run --configuration Release --framework ${{ matrix.framework }} --project src/openapi2excel.cli --file src/openapi2excel.tests/Sample/Sample1.yaml --out Sample.xlsx
 
     - name: Tests
-      run: dotnet test --no-build --configuration Release --framework ${{ matrix.framework }}
+      run: dotnet test --configuration Release --framework ${{ matrix.framework }}
