@@ -1,9 +1,12 @@
-﻿using ClosedXML.Excel;
+using ClosedXML.Excel;
 
 namespace OpenApi2Excel.Builders.WorksheetPartsBuilders;
 
 internal class CellBuilder(IXLCell cell, OpenApiDocumentationOptions option)
 {
+   // ReSharper disable once UnusedMember.Global
+   protected OpenApiDocumentationOptions Option { get; } = option;
+
    public IXLCell GetCell() => cell;
    public int GetCellNumber() => cell.Address.ColumnNumber;
 
