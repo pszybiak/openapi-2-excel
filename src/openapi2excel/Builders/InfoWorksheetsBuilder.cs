@@ -1,7 +1,7 @@
 ﻿using ClosedXML.Excel;
 using Microsoft.OpenApi.Models;
 
-namespace OpenApi2Excel.Builders;
+namespace openapi2excel.core.Builders;
 
 internal class InfoWorksheetBuilder(IXLWorkbook workbook, OpenApiDocumentationOptions options)
    : WorksheetBuilder(options)

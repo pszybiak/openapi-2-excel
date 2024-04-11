@@ -1,4 +1,4 @@
-﻿namespace OpenApi2Excel;
+﻿namespace openapi2excel.core;
 
 public class OpenApiDocumentationOptions
 {

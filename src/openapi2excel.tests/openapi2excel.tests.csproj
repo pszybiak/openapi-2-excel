@@ -22,7 +22,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\openapi2excel\openapi2excel.csproj" />
+    <ProjectReference Include="..\openapi2excel\openapi2excel.core.csproj" />
   </ItemGroup>
 
   <ItemGroup>

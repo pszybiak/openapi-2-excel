@@ -1,10 +1,10 @@
-﻿using ClosedXML.Excel;
+﻿using System.Text;
+using ClosedXML.Excel;
 using Microsoft.OpenApi.Readers;
-using OpenApi2Excel.Builders;
-using OpenApi2Excel.Common;
-using System.Text;
+using openapi2excel.core.Builders;
+using openapi2excel.core.Common;
 
-namespace OpenApi2Excel;
+namespace openapi2excel.core;
 
 public static class OpenApiDocumentationGenerator
 {

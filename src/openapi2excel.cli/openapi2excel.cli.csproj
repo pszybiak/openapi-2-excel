@@ -9,7 +9,7 @@
         <IsPackable>true</IsPackable>
         <PackAsTool>true</PackAsTool>
         <ToolCommandName>openapi2excel</ToolCommandName>
-        <AssemblyName>openapi2excel.cli</AssemblyName>
+        <AssemblyName>openapi2excel</AssemblyName>
         <Authors>openapi2excel Team &amp; Contributors</Authors>
         <Copyright>Copyright (c) Paweł Szybiak</Copyright>
         <Description>A .NET Core global tool to generate Rest API specification in a MS Excel format - human friendly document from Swagger/OpenAPI spec in YAML or JSON.</Description>
@@ -17,11 +17,16 @@
         <PackageLicenseExpression>MIT</PackageLicenseExpression>
         <PackageProjectUrl>https://github.com/pszybiak/openapi-2-excel</PackageProjectUrl>
         <PackageReleaseNotes>See $(PackageProjectUrl)/blob/main/CHANGELOG.md#$(VersionSuffix.Replace('.','')) for release notes.</PackageReleaseNotes>
+        <PackageReadmeFile>README.md</PackageReadmeFile>
         <PackageVersion>$(VersionSuffix)</PackageVersion>
         <RepositoryType>git</RepositoryType>
         <RepositoryUrl>https://github.com/pszybiak/openapi-2-excel.git</RepositoryUrl>
         <PackAsTool>true</PackAsTool>
     </PropertyGroup>
+
+    <ItemGroup>
+        <None Include="..\..\README.md" Pack="true" PackagePath="\"/>
+    </ItemGroup>
 
     <ItemGroup>
         <PackageReference Include="ClosedXML" Version="0.102.2" />
@@ -31,6 +36,6 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\openapi2excel\openapi2excel.csproj" />
+      <ProjectReference Include="..\openapi2excel\openapi2excel.core.csproj" />
     </ItemGroup>
 </Project>

@@ -1,4 +1,4 @@
-﻿namespace OpenApi2Excel.Builders;
+﻿namespace openapi2excel.core.Builders;
 
 internal abstract class WorksheetBuilder(OpenApiDocumentationOptions options)
 {

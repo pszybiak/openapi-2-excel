@@ -1,7 +1,7 @@
-﻿using Microsoft.OpenApi.Models;
-using System.Text;
+﻿using System.Text;
+using Microsoft.OpenApi.Models;
 
-namespace OpenApi2Excel.Common;
+namespace openapi2excel.core.Common;
 
 internal static class OpenApiSchemaExtension
 {

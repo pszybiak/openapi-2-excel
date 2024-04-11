@@ -1,4 +1,4 @@
-﻿namespace OpenApi2Excel.Builders.WorksheetPartsBuilders;
+﻿namespace openapi2excel.core.Builders.WorksheetPartsBuilders;
 
 internal class RowPointer(int rowNumber)
 {

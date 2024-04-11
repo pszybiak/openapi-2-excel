@@ -1,4 +1,4 @@
-﻿namespace OpenApi2Excel.Common
+﻿namespace openapi2excel.core.Common
 {
    internal static class EnumerableExtensions
    {

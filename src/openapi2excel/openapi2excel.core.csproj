@@ -15,11 +15,16 @@
         <PackageLicenseExpression>MIT</PackageLicenseExpression>
         <PackageProjectUrl>https://github.com/pszybiak/openapi-2-excel</PackageProjectUrl>
         <PackageReleaseNotes>See $(PackageProjectUrl)/blob/main/CHANGELOG.md#$(VersionSuffix.Replace('.','')) for release notes.</PackageReleaseNotes>
+        <PackageReadmeFile>README.md</PackageReadmeFile>
         <PackageVersion>$(VersionSuffix)</PackageVersion>
         <RepositoryType>git</RepositoryType>
         <RepositoryUrl>https://github.com/pszybiak/openapi-2-excel.git</RepositoryUrl>
     </PropertyGroup>
 
+    <ItemGroup>
+        <None Include="..\..\README.md" Pack="true" PackagePath="\"/>
+    </ItemGroup>
+    
     <ItemGroup>
         <PackageReference Include="ClosedXML" Version="0.102.2" />
         <PackageReference Include="Microsoft.OpenApi" Version="1.6.13" />

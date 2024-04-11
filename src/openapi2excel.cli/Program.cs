@@ -1,4 +1,5 @@
 ﻿using System.CommandLine;
+using openapi2excel.core;
 
 namespace OpenApi2Excel.cli;
 

@@ -1,3 +1,5 @@
+using openapi2excel.core;
+
 namespace OpenApi2Excel.Tests
 {
    public class OpenApiDocumentationGeneratorTest

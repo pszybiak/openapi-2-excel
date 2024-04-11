@@ -1,8 +1,8 @@
 ﻿using ClosedXML.Excel;
 using Microsoft.OpenApi.Models;
-using OpenApi2Excel.Common;
+using openapi2excel.core.Common;
 
-namespace OpenApi2Excel.Builders.WorksheetPartsBuilders
+namespace openapi2excel.core.Builders.WorksheetPartsBuilders
 {
    internal abstract class WorksheetPartBuilder(
       RowPointer actualRow,

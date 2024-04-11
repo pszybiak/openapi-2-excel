@@ -1,7 +1,7 @@
 ﻿using ClosedXML.Excel;
 using Microsoft.OpenApi.Models;
 
-namespace OpenApi2Excel.Builders.WorksheetPartsBuilders;
+namespace openapi2excel.core.Builders.WorksheetPartsBuilders;
 
 internal class RequestBodyBuilder(
    RowPointer actualRow,

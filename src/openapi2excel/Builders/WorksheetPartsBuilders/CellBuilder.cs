@@ -1,6 +1,6 @@
 using ClosedXML.Excel;
 
-namespace OpenApi2Excel.Builders.WorksheetPartsBuilders;
+namespace openapi2excel.core.Builders.WorksheetPartsBuilders;
 
 internal class CellBuilder(IXLCell cell, OpenApiDocumentationOptions option)
 {
