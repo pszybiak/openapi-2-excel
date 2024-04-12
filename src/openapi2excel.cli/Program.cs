@@ -9,7 +9,30 @@ internal static class Program
    {
       var inputFileOption = new Option<FileInfo?>(
          name: "--file",
-         description: "The path to a YAML or JSON file with Rest API specification.")
+         description: "The path or URL to a YAML or JSON file with Rest API specification.",
+         parseArgument: result =>
+         {
+            if (result.Tokens.Count == 0)
+            {
+               result.ErrorMessage = "Required argument missing for option: -f|--file.";
+               return null;
+
+            }
+            var filePath = result.Tokens.Single().Value;
+            if (File.Exists(filePath))
+               return new FileInfo(filePath);
+            if (Uri.IsWellFormedUriString(filePath, UriKind.RelativeOrAbsolute))
+            {
+               var inputFilePath = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName() + ".xlsx");
+               DownloadFileTaskAsync(new Uri(filePath), inputFilePath).GetAwaiter().GetResult();
+
+               return new FileInfo(inputFilePath);
+            }
+
+            result.ErrorMessage = "File does not exist";
+            return null;
+
+         })
       { IsRequired = true };
       inputFileOption.AddAlias("-f");
 
@@ -29,7 +52,8 @@ internal static class Program
 
    private static async Task HandleFileGeneration(FileInfo? inFile, FileInfo? outFile)
    {
-      if (!inFile!.Exists)
+      var inputFilePath = inFile!.FullName;
+      if (!inFile.Exists)
       {
          await Console.Error.WriteLineAsync("Invalid input file path.");
          return;
@@ -38,12 +62,22 @@ internal static class Program
       try
       {
          await OpenApiDocumentationGenerator
-            .GenerateDocumentation(inFile!.FullName, outFile!.FullName, new OpenApiDocumentationOptions())
+            .GenerateDocumentation(inputFilePath, outFile!.FullName, new OpenApiDocumentationOptions())
             .ConfigureAwait(false);
+
+         Console.WriteLine("Excel file saved to " + outFile!.FullName);
       }
       catch (Exception exc)
       {
-         await Console.Error.WriteLineAsync("An unexpected error occurred: " + exc.Message);
+         await Console.Error.WriteLineAsync("An unexpected error occurred: " + exc.ToString());
       }
+   }
+
+   private static async Task DownloadFileTaskAsync(Uri uri, string fileName)
+   {
+      var client = new HttpClient();
+      await using var s = await client.GetStreamAsync(uri);
+      await using var fs = new FileStream(fileName, FileMode.CreateNew);
+      await s.CopyToAsync(fs);
    }
 }

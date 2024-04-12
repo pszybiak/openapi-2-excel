@@ -1,8 +1,8 @@
-﻿using System.Text;
 using ClosedXML.Excel;
 using Microsoft.OpenApi.Readers;
 using openapi2excel.core.Builders;
 using openapi2excel.core.Common;
+using System.Text;
 
 namespace openapi2excel.core;
 
@@ -38,7 +38,7 @@ public static class OpenApiDocumentationGenerator
       {
          var errorMessageBuilder = new StringBuilder();
          errorMessageBuilder.AppendLine("Some errors occurred while processing input file.");
-         readResult.OpenApiDiagnostic.Errors.ToList().ForEach(e => errorMessageBuilder.AppendLine(e.Message));
+         readResult.OpenApiDiagnostic.Errors.ToList().ForEach(e => errorMessageBuilder.AppendLine($"{e.Message} ({e.Pointer})"));
          throw new InvalidOperationException(errorMessageBuilder.ToString());
       }
 
