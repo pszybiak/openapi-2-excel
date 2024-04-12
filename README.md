@@ -39,10 +39,10 @@ Usage:
   openapi2excel [options]
 
 Options:
-  --file <file>   The path to a YAML or JSON file with Rest API specification.
-  --out <out>     The path for output excel file.
-  --version       Show version information.
-  -?, -h, --help  Show help and usage information.
+  -f, --file <file> (REQUIRED)  The path to a YAML or JSON file with Rest API specification.
+  -o, --out <out> (REQUIRED)    The path for output excel file.
+  --version                     Show version information
+  -?, -h, --help                Show help and usage information
 ```
 
 Example
