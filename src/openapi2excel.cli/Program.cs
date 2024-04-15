@@ -9,14 +9,12 @@ internal static class Program
    {
       var inputFileOption = new Option<FileInfo?>(
          name: "--file",
-         description: "The path or URL to a YAML or JSON file with Rest API specification.",
          parseArgument: result =>
          {
             if (result.Tokens.Count == 0)
             {
                result.ErrorMessage = "Required argument missing for option: -f|--file.";
                return null;
-
             }
             var filePath = result.Tokens.Single().Value;
             if (File.Exists(filePath))
@@ -31,8 +29,8 @@ internal static class Program
 
             result.ErrorMessage = "File does not exist";
             return null;
-
-         })
+         },
+         description: "The path or URL to a YAML or JSON file with Rest API specification.")
       { IsRequired = true };
       inputFileOption.AddAlias("-f");
 
@@ -69,7 +67,7 @@ internal static class Program
       }
       catch (Exception exc)
       {
-         await Console.Error.WriteLineAsync("An unexpected error occurred: " + exc.ToString());
+         await Console.Error.WriteLineAsync("An unexpected error occurred: " + exc);
       }
    }
 
