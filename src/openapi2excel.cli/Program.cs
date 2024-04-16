@@ -1,5 +1,9 @@
 using openapi2excel.core;
+using Spectre.Console;
 using System.CommandLine;
+using System.CommandLine.Builder;
+using System.CommandLine.Help;
+using System.CommandLine.Parsing;
 
 namespace OpenApi2Excel.cli;
 
@@ -9,27 +13,7 @@ internal static class Program
    {
       var inputFileOption = new Option<FileInfo?>(
          name: "--file",
-         parseArgument: result =>
-         {
-            if (result.Tokens.Count == 0)
-            {
-               result.ErrorMessage = "Required argument missing for option: -f|--file.";
-               return null;
-            }
-            var filePath = result.Tokens.Single().Value;
-            if (File.Exists(filePath))
-               return new FileInfo(filePath);
-            if (Uri.IsWellFormedUriString(filePath, UriKind.RelativeOrAbsolute))
-            {
-               var inputFilePath = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName() + ".xlsx");
-               DownloadFileTaskAsync(new Uri(filePath), inputFilePath).GetAwaiter().GetResult();
-
-               return new FileInfo(inputFilePath);
-            }
-
-            result.ErrorMessage = "File does not exist";
-            return null;
-         },
+         parseArgument: ParseInputFileInfo,
          description: "The path or URL to a YAML or JSON file with Rest API specification.")
       { IsRequired = true };
       inputFileOption.AddAlias("-f");
@@ -45,7 +29,41 @@ internal static class Program
       rootCommand.AddOption(outputFileOption);
       rootCommand.SetHandler(HandleFileGeneration, inputFileOption, outputFileOption);
 
-      return await rootCommand.InvokeAsync(args);
+      var parser = new CommandLineBuilder(rootCommand)
+         .UseVersionOption("-v", "--version")
+         .UseDefaults()
+         .UseHelp(ctx => ctx.HelpBuilder.CustomizeLayout(
+            _ =>
+               HelpBuilder.Default
+                  .GetLayout()
+                  .Skip(1)
+                  .Prepend(_ => AnsiConsole.MarkupLine($"[blue]{Markup.Escape(GetVersionText().Trim(Environment.NewLine.ToCharArray()))}[/]"))
+         ))
+         .Build();
+
+      return await parser.InvokeAsync(args);
+   }
+
+   private static FileInfo? ParseInputFileInfo(ArgumentResult result)
+   {
+      if (result.Tokens.Count == 0)
+      {
+         result.ErrorMessage = "Required argument missing for option: -f|--file.";
+         return null;
+      }
+      var filePath = result.Tokens.Single().Value;
+      if (File.Exists(filePath))
+         return new FileInfo(filePath);
+      if (Uri.IsWellFormedUriString(filePath, UriKind.RelativeOrAbsolute))
+      {
+         var inputFilePath = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName() + ".xlsx");
+         DownloadFileTaskAsync(new Uri(filePath), inputFilePath).GetAwaiter().GetResult();
+
+         return new FileInfo(inputFilePath);
+      }
+
+      result.ErrorMessage = "File does not exist";
+      return null;
    }
 
    private static async Task HandleFileGeneration(FileInfo? inFile, FileInfo? outFile)
@@ -77,5 +95,10 @@ internal static class Program
       await using var s = await client.GetStreamAsync(uri);
       await using var fs = new FileStream(fileName, FileMode.CreateNew);
       await s.CopyToAsync(fs);
+   }
+
+   private static string GetVersionText()
+   {
+      return $"{Environment.NewLine}******   OpenApi-2-Excel   ******{Environment.NewLine}";
    }
 }
