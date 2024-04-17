@@ -37,7 +37,7 @@ internal static class Program
                HelpBuilder.Default
                   .GetLayout()
                   .Skip(1)
-                  .Prepend(_ => AnsiConsole.MarkupLine($"[blue]{Markup.Escape(GetVersionText().Trim(Environment.NewLine.ToCharArray()))}[/]"))
+                  .Prepend(_ => AnsiConsole.MarkupLine($"{Markup.Escape(GetVersionText().Trim(Environment.NewLine.ToCharArray()))}[/]"))
          ))
          .Build();
 
