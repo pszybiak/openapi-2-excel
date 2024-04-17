@@ -33,6 +33,7 @@
         <PackageReference Include="Microsoft.OpenApi" Version="1.6.13" />
         <PackageReference Include="Microsoft.OpenApi.Readers" Version="1.6.13" />
         <PackageReference Include="Spectre.Console" Version="0.48.0" />
+        <PackageReference Include="Spectre.Console.Cli" Version="0.48.0" />
         <PackageReference Include="System.CommandLine" Version="2.0.0-beta4.22272.1" />
     </ItemGroup>
 
