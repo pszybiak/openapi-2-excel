@@ -32,22 +32,34 @@ dotnet tool install --global openapi2excel.cli
 ## Usage
 
 ```text
-Description:
-  OpenApi-2-Excel
 
-Usage:
-  openapi2excel [options]
 
-Options:
-  -f, --file <file> (REQUIRED)  The path or URL to a YAML or JSON file with Rest API specification.
-  -o, --out <out> (REQUIRED)    The path for output excel file.
-  --version                     Show version information
-  -?, -h, --help                Show help and usage information
+    ██████╗ ██████╗ ███████╗███╗   ██╗ █████╗ ██████╗ ██╗    ██████╗     ███████╗██╗  ██╗ ██████╗███████╗██╗
+   ██╔═══██╗██╔══██╗██╔════╝████╗  ██║██╔══██╗██╔══██╗██║    ╚════██╗    ██╔════╝╚██╗██╔╝██╔════╝██╔════╝██║
+   ██║   ██║██████╔╝█████╗  ██╔██╗ ██║███████║██████╔╝██║     █████╔╝    █████╗   ╚███╔╝ ██║     █████╗  ██║
+   ██║   ██║██╔═══╝ ██╔══╝  ██║╚██╗██║██╔══██║██╔═══╝ ██║    ██╔═══╝     ██╔══╝   ██╔██╗ ██║     ██╔══╝  ██║
+   ╚██████╔╝██║     ███████╗██║ ╚████║██║  ██║██║     ██║    ███████╗    ███████╗██╔╝ ██╗╚██████╗███████╗███████╗
+    ╚═════╝ ╚═╝     ╚══════╝╚═╝  ╚═══╝╚═╝  ╚═╝╚═╝     ╚═╝    ╚══════╝    ╚══════╝╚═╝  ╚═╝ ╚═════╝╚══════╝╚══════╝
+
+
+DESCRIPTION:
+Generate Rest API specification in a MS Excel format
+
+USAGE:
+    OpenApi 2 Excel <INPUT_FILE> <OUTPUT_FILE> [OPTIONS]
+
+ARGUMENTS:
+    <INPUT_FILE>     The path or URL to a YAML or JSON file with Rest API specification
+    <OUTPUT_FILE>    The path for output excel file
+
+OPTIONS:
+    -h, --help       Prints help information
+    -v, --version    Prints version information
 ```
 
 Example
 ```text
-  openapi2excel --file C:\openapi-spec.yml --out C:\openapi-spec.xlsx
+  openapi2excel C:\openapi-spec.yml C:\openapi-spec.xlsx
 ```
 ## Wrap Up
 
