@@ -94,6 +94,4 @@ public class GenerateExcelCommand : Command<GenerateExcelCommand.GenerateExcelSe
       }
       return 0;
    }
-
-
 }
