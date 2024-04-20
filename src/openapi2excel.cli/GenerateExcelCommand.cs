@@ -1,7 +1,6 @@
 using openapi2excel.core;
 using Spectre.Console;
 using Spectre.Console.Cli;
-using Spectre.Console.Rendering;
 using System.ComponentModel;
 
 namespace OpenApi2Excel.cli;
@@ -18,6 +17,10 @@ public class GenerateExcelCommand : Command<GenerateExcelCommand.GenerateExcelSe
       [Description("The path for output excel file.")]
       [CommandArgument(1, "<OUTPUT_FILE>")]
       public string OutputFile { get; init; } = null!;
+
+      [Description("Run tool without logo.")]
+      [CommandOption("-n|--no-logo")]
+      public bool NoLogo { get; init; }
 
       internal FileInfo InputFileParsed { get; set; } = null!;
       internal FileInfo OutputFileParsed { get; set; } = null!;
@@ -75,10 +78,14 @@ public class GenerateExcelCommand : Command<GenerateExcelCommand.GenerateExcelSe
 
    public override int Execute(CommandContext context, GenerateExcelSettings settings)
    {
-      foreach (var renderable in CustomHelpProvider.GetHeaderText())
+      if (!settings.NoLogo)
       {
-         renderable.Render(RenderOptions.Create(AnsiConsole.Console), 500);
+         foreach (var renderable in CustomHelpProvider.GetHeaderText())
+         {
+            AnsiConsole.Write(renderable);
+         }
       }
+
       try
       {
          OpenApiDocumentationGenerator
