@@ -1,4 +1,4 @@
-﻿using ClosedXML.Excel;
+using ClosedXML.Excel;
 using Microsoft.OpenApi.Models;
 using openapi2excel.core.Common;
 
@@ -15,8 +15,9 @@ internal class RequestBodyBuilder(
       if (operation.RequestBody is null)
          return;
 
-      Fill(1).WithText("REQUEST").WithBoldStyle();
+      Cell(1).SetTextBold("REQUEST");
       ActualRow.MoveNext();
+
       using (var _ = new Section(Worksheet, ActualRow))
       {
          AddPropertiesTreeForMediaTypes(operation.RequestBody.Content, attributesColumnIndex);

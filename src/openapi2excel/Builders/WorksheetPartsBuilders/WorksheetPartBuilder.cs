@@ -1,10 +1,10 @@
-﻿using ClosedXML.Excel;
+using ClosedXML.Excel;
 using Microsoft.OpenApi.Models;
 using openapi2excel.core.Common;
 
 namespace openapi2excel.core.Builders.WorksheetPartsBuilders
 {
-    internal abstract class WorksheetPartBuilder(
+   internal abstract class WorksheetPartBuilder(
       RowPointer actualRow,
       IXLWorksheet worksheet,
       OpenApiDocumentationOptions options)
@@ -32,11 +32,12 @@ namespace openapi2excel.core.Builders.WorksheetPartsBuilders
          var builder = new PropertiesTreeBuilder(attributesColumnIndex, Worksheet, Options);
          foreach (var mediaType in mediaTypes)
          {
-            var mediaFormatRow = ActualRow.Copy();
-            Fill(1).WithText($"Body format: {mediaType.Key}").WithBoldStyle();
+            var bodyFormatRowPointer = ActualRow.Copy();
+            Cell(1).SetTextBold($"Body format: {mediaType.Key}");
             ActualRow.MoveNext();
+
             var columnCount = builder.AddPropertiesTree(ActualRow, mediaType.Value.Schema);
-            FillBackgroundOnMediaTypeRow(mediaFormatRow, columnCount);
+            FillBackgroundOnMediaTypeRow(bodyFormatRowPointer, columnCount);
             AddEmptyRow();
          }
       }

@@ -20,13 +20,12 @@ internal static class XLExtensions
    public static IXLCell NextRow(this IXLCell cell)
       => cell.Worksheet.Cell(cell.Address.RowNumber + 1, 1);
 
+   public static int GetColumnNumber(this IXLCell cell)
+      => cell.Address.ColumnNumber;
+
    public static IXLCell If(this IXLCell cell, bool condition, Func<IXLCell, IXLCell> func)
-   {
-      return condition ? func(cell) : cell;
-   }
+      => condition ? func(cell) : cell;
 
    public static IXLCell IfNotEmpty(this IXLCell cell, string text, Func<IXLCell, IXLCell> func)
-   {
-      return string.IsNullOrEmpty(text) ? cell : func(cell);
-   }
+      => string.IsNullOrEmpty(text) ? cell : func(cell);
 }

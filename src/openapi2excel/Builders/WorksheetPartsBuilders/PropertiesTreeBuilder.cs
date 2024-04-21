@@ -1,4 +1,4 @@
-﻿using ClosedXML.Excel;
+using ClosedXML.Excel;
 using Microsoft.OpenApi.Models;
 using openapi2excel.core.Common;
 
@@ -18,12 +18,12 @@ internal class PropertiesTreeBuilder(
    {
       ActualRow = actualRow;
       var columnCount = AddSchemaDescriptionHeader();
-      var startColumn = SetRootElementForArray(schema) ? 2 : 1;
+      var startColumn = CorrectRootElementIfArray(schema) ? 2 : 1;
       AddProperties(schema, startColumn);
       return columnCount;
    }
 
-   protected bool SetRootElementForArray(OpenApiSchema schema)
+   protected bool CorrectRootElementIfArray(OpenApiSchema schema)
    {
       if (schema.Items == null)
          return false;
@@ -98,13 +98,10 @@ internal class PropertiesTreeBuilder(
    {
       Fill(startColumn).WithText(schema.GetTypeDescription())
          .Next().WithText(schema.Format)
-         .Next().WithText(schema.GetPropertyLengthDescription())
-         .WithHorizontalAlignment(XLAlignmentHorizontalValues.Center)
-         .Next().WithText(schema.GetPropertyRangeDescription())
-         .WithHorizontalAlignment(XLAlignmentHorizontalValues.Center)
+         .Next().WithText(schema.GetPropertyLengthDescription()).WithHorizontalAlignment(XLAlignmentHorizontalValues.Center)
+         .Next().WithText(schema.GetPropertyRangeDescription()).WithHorizontalAlignment(XLAlignmentHorizontalValues.Center)
          .Next().WithText(schema.Pattern)
-         .Next().WithText(Options.Language.Get(schema.Deprecated))
-         .WithHorizontalAlignment(XLAlignmentHorizontalValues.Center)
+         .Next().WithText(Options.Language.Get(schema.Deprecated)).WithHorizontalAlignment(XLAlignmentHorizontalValues.Center)
          .Next().WithText(schema.GetPropertyDescription());
    }
 
