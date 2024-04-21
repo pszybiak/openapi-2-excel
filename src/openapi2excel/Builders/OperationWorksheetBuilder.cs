@@ -99,7 +99,7 @@ internal class OperationWorksheetBuilder(IXLWorkbook workbook, OpenApiDocumentat
    private void AddOperationInfos(string path, OpenApiPathItem pathItem, OperationType operationType,
       OpenApiOperation operation) =>
       new OperationInfoBuilder(_actualRowPointer, _attributesColumnsStartIndex, _worksheet, Options)
-         .AddOperationInfoPart(path, pathItem, operationType, operation);
+         .AddOperationInfoSection(path, pathItem, operationType, operation);
 
    private void AddRequestParameters(OpenApiOperation operation) =>
       new RequestParametersBuilder(_actualRowPointer, _attributesColumnsStartIndex, _worksheet, Options)
