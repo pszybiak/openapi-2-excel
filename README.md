@@ -31,31 +31,9 @@ dotnet tool install --global openapi2excel.cli
 
 ## Usage
 
-```text
-
-
-    ██████╗ ██████╗ ███████╗███╗   ██╗ █████╗ ██████╗ ██╗    ██████╗     ███████╗██╗  ██╗ ██████╗███████╗██╗
-   ██╔═══██╗██╔══██╗██╔════╝████╗  ██║██╔══██╗██╔══██╗██║    ╚════██╗    ██╔════╝╚██╗██╔╝██╔════╝██╔════╝██║
-   ██║   ██║██████╔╝█████╗  ██╔██╗ ██║███████║██████╔╝██║     █████╔╝    █████╗   ╚███╔╝ ██║     █████╗  ██║
-   ██║   ██║██╔═══╝ ██╔══╝  ██║╚██╗██║██╔══██║██╔═══╝ ██║    ██╔═══╝     ██╔══╝   ██╔██╗ ██║     ██╔══╝  ██║
-   ╚██████╔╝██║     ███████╗██║ ╚████║██║  ██║██║     ██║    ███████╗    ███████╗██╔╝ ██╗╚██████╗███████╗███████╗
-    ╚═════╝ ╚═╝     ╚══════╝╚═╝  ╚═══╝╚═╝  ╚═╝╚═╝     ╚═╝    ╚══════╝    ╚══════╝╚═╝  ╚═╝ ╚═════╝╚══════╝╚══════╝
-
-
-DESCRIPTION:
-Generate Rest API specification in a MS Excel format
-
-USAGE:
-    OpenApi 2 Excel <INPUT_FILE> <OUTPUT_FILE> [OPTIONS]
-
-ARGUMENTS:
-    <INPUT_FILE>     The path or URL to a YAML or JSON file with Rest API specification
-    <OUTPUT_FILE>    The path for output excel file
-
-OPTIONS:
-    -h, --help       Prints help information
-    -v, --version    Prints version information
-```
+<div align="center">
+    <img src="assets/usage.png" width="90%">
+</div>
 
 Example
 ```text
