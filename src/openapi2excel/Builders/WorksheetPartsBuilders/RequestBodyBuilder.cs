@@ -1,5 +1,6 @@
 ﻿using ClosedXML.Excel;
 using Microsoft.OpenApi.Models;
+using openapi2excel.core.Common;
 
 namespace openapi2excel.core.Builders.WorksheetPartsBuilders;
 

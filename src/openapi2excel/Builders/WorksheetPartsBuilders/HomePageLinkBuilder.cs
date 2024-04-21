@@ -1,4 +1,5 @@
-﻿using ClosedXML.Excel;
+using ClosedXML.Excel;
+using openapi2excel.core.Common;
 
 namespace openapi2excel.core.Builders.WorksheetPartsBuilders;
 
@@ -7,10 +8,9 @@ internal class HomePageLinkBuilder(RowPointer actualRow, IXLWorksheet worksheet,
 {
    public void AddHomePageLinkPart()
    {
-      FillCell(1, "<<<<<");
-      Worksheet.Cell(ActualRow, 1).SetHyperlink(CreateHyperlinkToInfoWorksheet());
+      var cell = Worksheet.Cell(ActualRow, 1);
+      cell.SetValue("<<<<<");
+      cell.SetHyperlink(new XLHyperlink($"'{InfoWorksheetBuilder.Name}'!A1"));
       ActualRow.MoveNext(2);
    }
-
-   private XLHyperlink CreateHyperlinkToInfoWorksheet() => new($"'{InfoWorksheetBuilder.Name}'!A1");
 }
