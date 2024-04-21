@@ -1,4 +1,4 @@
-﻿using ClosedXML.Excel;
+using ClosedXML.Excel;
 using Microsoft.OpenApi.Models;
 using openapi2excel.core.Builders.WorksheetPartsBuilders;
 using openapi2excel.core.Common;
@@ -114,5 +114,5 @@ internal class OperationWorksheetBuilder(IXLWorkbook workbook, OpenApiDocumentat
          .AddResponseBodyPart(operation);
 
    private void AddHomePageLink() => new HomePageLinkBuilder(_actualRowPointer, _worksheet, Options)
-      .AddHomePageLinkPart();
+      .AddHomePageLinkSection();
 }
