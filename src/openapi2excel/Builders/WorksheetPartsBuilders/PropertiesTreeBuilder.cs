@@ -108,3 +108,26 @@ internal class PropertiesTreeBuilder(
    protected CellBuilder Fill(int column)
       => new(Worksheet.Cell(ActualRow, column), Options);
 }
+
+internal class OpenApiSchemaDescriptor(IXLWorksheet worksheet, RowPointer actualRow)
+{/*
+   protected int AddSchemaDescriptionHeader()
+   {
+      const int startColumn = 1;
+      var cell = worksheet.Cell(actualRow, startColumn).SetTextBold("Type")
+         .NextRow().SetTextBold("Format")
+         .NextRow().SetTextBold("Length")
+         .NextRow().SetTextBold("Range")
+         .NextRow().SetTextBold("Pattern")
+         .NextRow().SetTextBold("Deprecated")
+         .NextRow().SetTextBold("Description");
+
+      var lastUsedColumn = cell..GetCellNumber();
+
+      Fill(startColumn).WithBackground(HeaderBackgroundColor, lastUsedColumn)
+         .GoTo(startColumn).WithBottomBorder(lastUsedColumn);
+
+      actualRow.MoveNext();
+      return lastUsedColumn;
+   }*/
+}
