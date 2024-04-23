@@ -28,4 +28,10 @@ internal static class XLExtensions
 
    public static IXLCell IfNotEmpty(this IXLCell cell, string text, Func<IXLCell, IXLCell> func)
       => string.IsNullOrEmpty(text) ? cell : func(cell);
+
+   public static IXLCell SetHorizontalAlignment(this IXLCell cell, XLAlignmentHorizontalValues alignment)
+   {
+      cell.Style.Alignment.SetHorizontal(alignment);
+      return cell;
+   }
 }

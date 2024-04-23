@@ -68,66 +68,28 @@ internal class PropertiesTreeBuilder(
    {
       const int startColumn = 1;
       Fill(startColumn).WithBackground(HeaderBackgroundColor, propertyLevel - 1);
-      Fill(propertyLevel).WithText(propertyName);
-      FillSchemaDescriptionCells(propertySchema, attributesColumnIndex);
+
+      var schemaDescriptor = new OpenApiSchemaDescriptor(worksheet, options);
+      schemaDescriptor.AddNameValue(propertyName, ActualRow, propertyLevel);
+      schemaDescriptor.AddSchemaDescriptionValues(propertySchema, ActualRow, attributesColumnIndex);
       ActualRow.MoveNext();
    }
 
    protected int AddSchemaDescriptionHeader()
    {
       const int startColumn = 1;
-      var cellBuilder = Fill(startColumn).WithText("Name").WithBoldStyle()
-         .Next(attributesColumnIndex - 1).WithText("Type").WithBoldStyle()
-         .Next().WithText("Format").WithBoldStyle()
-         .Next().WithText("Length").WithBoldStyle()
-         .Next().WithText("Range").WithBoldStyle()
-         .Next().WithText("Pattern").WithBoldStyle()
-         .Next().WithText("Deprecated").WithBoldStyle()
-         .Next().WithText("Description").WithBoldStyle();
 
-      var lastUsedColumn = cellBuilder.GetCellNumber();
+      var schemaDescriptor = new OpenApiSchemaDescriptor(worksheet, options);
+      schemaDescriptor.AddNameHeader(ActualRow, startColumn);
+      var lastUsedColumn = schemaDescriptor.AddSchemaDescriptionHeader(ActualRow, attributesColumnIndex);
 
       Fill(startColumn).WithBackground(HeaderBackgroundColor, lastUsedColumn)
          .GoTo(startColumn).WithBottomBorder(lastUsedColumn);
 
       ActualRow.MoveNext();
       return lastUsedColumn;
-   }
-
-   protected void FillSchemaDescriptionCells(OpenApiSchema schema, int startColumn)
-   {
-      Fill(startColumn).WithText(schema.GetTypeDescription())
-         .Next().WithText(schema.Format)
-         .Next().WithText(schema.GetPropertyLengthDescription()).WithHorizontalAlignment(XLAlignmentHorizontalValues.Center)
-         .Next().WithText(schema.GetPropertyRangeDescription()).WithHorizontalAlignment(XLAlignmentHorizontalValues.Center)
-         .Next().WithText(schema.Pattern)
-         .Next().WithText(Options.Language.Get(schema.Deprecated)).WithHorizontalAlignment(XLAlignmentHorizontalValues.Center)
-         .Next().WithText(schema.GetPropertyDescription());
    }
 
    protected CellBuilder Fill(int column)
       => new(Worksheet.Cell(ActualRow, column), Options);
-}
-
-internal class OpenApiSchemaDescriptor(IXLWorksheet worksheet, RowPointer actualRow)
-{/*
-   protected int AddSchemaDescriptionHeader()
-   {
-      const int startColumn = 1;
-      var cell = worksheet.Cell(actualRow, startColumn).SetTextBold("Type")
-         .NextRow().SetTextBold("Format")
-         .NextRow().SetTextBold("Length")
-         .NextRow().SetTextBold("Range")
-         .NextRow().SetTextBold("Pattern")
-         .NextRow().SetTextBold("Deprecated")
-         .NextRow().SetTextBold("Description");
-
-      var lastUsedColumn = cell..GetCellNumber();
-
-      Fill(startColumn).WithBackground(HeaderBackgroundColor, lastUsedColumn)
-         .GoTo(startColumn).WithBottomBorder(lastUsedColumn);
-
-      actualRow.MoveNext();
-      return lastUsedColumn;
-   }*/
 }
