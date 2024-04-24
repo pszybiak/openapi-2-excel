@@ -56,8 +56,7 @@ namespace openapi2excel.core.Builders.WorksheetPartsBuilders
          AddPropertyRow(name, schema, level++);
          AddProperties(schema, level, attributesColumnIndex);
 
-         return;
-
+         // ReSharper disable once SeparateLocalFunctionsWithJumpStatement
          void AddPropertyRow(string propertyName, OpenApiSchema propertySchema, int propertyLevel)
          {
             FillHeaderBackground(1, propertyLevel - 1);
@@ -95,30 +94,19 @@ namespace openapi2excel.core.Builders.WorksheetPartsBuilders
 
       protected int FillSchemaDescriptionCells(OpenApiSchema schema, int startColumn)
       {
-         return Fill(startColumn).WithText(schema.Type)
-            .Next().WithText(schema.Format)
-            .Next().WithText(schema.GetPropertyLengthDescription())
-            .WithHorizontalAlignment(XLAlignmentHorizontalValues.Center)
-            .Next().WithText(schema.GetPropertyRangeDescription())
-            .WithHorizontalAlignment(XLAlignmentHorizontalValues.Center)
-            .Next().WithText(schema.Pattern)
-            .Next().WithText(schema.Description)
-            .GetCellNumber();
+         var schemaDescriptor = new OpenApiSchemaDescriptor(Worksheet, Options);
+         return schemaDescriptor.AddSchemaDescriptionValues(schema, ActualRow, startColumn);
       }
 
       protected int FillSchemaDescriptionHeaderCells(int attributesStartColumn)
       {
-         var cellBuilder = Fill(1).WithText("Name").WithBoldStyle()
-            .Next(attributesStartColumn - 1).WithText("Type").WithBoldStyle()
-            .Next().WithText("Format").WithBoldStyle()
-            .Next().WithText("Length").WithBoldStyle()
-            .Next().WithText("Range").WithBoldStyle()
-            .Next().WithText("Pattern").WithBoldStyle()
-            .Next().WithText("Description").WithBoldStyle();
+         var schemaDescriptor = new OpenApiSchemaDescriptor(Worksheet, Options);
+         schemaDescriptor.AddNameHeader(ActualRow, 1);
+         var lastUsedColumn = schemaDescriptor.AddSchemaDescriptionHeader(ActualRow, attributesStartColumn);
 
-         var lastUsedColumn = cellBuilder.GetCell().Address.ColumnNumber;
-         AddBottomBorder(1, lastUsedColumn);
-         FillHeaderBackground(1, lastUsedColumn);
+         Fill(1).WithBackground(HeaderBackgroundColor, lastUsedColumn)
+            .GoTo(1).WithBottomBorder(lastUsedColumn);
+
          return lastUsedColumn;
       }
 
@@ -145,14 +133,5 @@ namespace openapi2excel.core.Builders.WorksheetPartsBuilders
 
       protected void FillHeaderBackground(int startColumn, int endColumn)
          => FillBackground(startColumn, endColumn, HeaderBackgroundColor);
-
-      protected void AddBottomBorder(int startColumn, int endColumn)
-      {
-         var cellBuilder = Fill(startColumn);
-         for (var columnIndex = startColumn; columnIndex <= endColumn; columnIndex++)
-         {
-            cellBuilder.WithBottomBorder().Next();
-         }
-      }
    }
 }

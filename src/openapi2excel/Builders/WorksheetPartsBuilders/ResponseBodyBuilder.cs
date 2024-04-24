@@ -1,4 +1,4 @@
-﻿using ClosedXML.Excel;
+using ClosedXML.Excel;
 using Microsoft.OpenApi.Models;
 using openapi2excel.core.Common;
 
@@ -42,10 +42,9 @@ internal class ResponseBodyBuilder(
 
       var nextCell = Fill(1).WithText("Name").WithBoldStyle()
          .Next(attributesColumnIndex - 1).WithText("Required").WithBoldStyle()
-         .Next().WithText("Deprecated").WithBoldStyle()
          .Next().GetCellNumber();
 
-      int lastUsedColumn = FillSchemaDescriptionHeaderCells(nextCell);
+      var lastUsedColumn = FillSchemaDescriptionHeaderCells(nextCell);
       ActualRow.MovePrev();
       FillHeaderBackground(1, lastUsedColumn);
       ActualRow.MoveNext(2);
@@ -54,7 +53,6 @@ internal class ResponseBodyBuilder(
       {
          var nextCellNumber = Fill(1).WithText(openApiHeader.Key)
             .Next(attributesColumnIndex - 1).WithText(Options.Language.Get(openApiHeader.Value.Required))
-            .Next().WithText(Options.Language.Get(openApiHeader.Value.Deprecated))
             .Next().GetCellNumber();
          nextCellNumber = FillSchemaDescriptionCells(openApiHeader.Value.Schema, nextCellNumber);
          Fill(nextCellNumber).WithText(openApiHeader.Value.Description);

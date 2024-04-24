@@ -69,7 +69,7 @@ internal class PropertiesTreeBuilder(
       const int startColumn = 1;
       Fill(startColumn).WithBackground(HeaderBackgroundColor, propertyLevel - 1);
 
-      var schemaDescriptor = new OpenApiSchemaDescriptor(worksheet, options);
+      var schemaDescriptor = new OpenApiSchemaDescriptor(Worksheet, Options);
       schemaDescriptor.AddNameValue(propertyName, ActualRow, propertyLevel);
       schemaDescriptor.AddSchemaDescriptionValues(propertySchema, ActualRow, attributesColumnIndex);
       ActualRow.MoveNext();
@@ -79,7 +79,7 @@ internal class PropertiesTreeBuilder(
    {
       const int startColumn = 1;
 
-      var schemaDescriptor = new OpenApiSchemaDescriptor(worksheet, options);
+      var schemaDescriptor = new OpenApiSchemaDescriptor(Worksheet, Options);
       schemaDescriptor.AddNameHeader(ActualRow, startColumn);
       var lastUsedColumn = schemaDescriptor.AddSchemaDescriptionHeader(ActualRow, attributesColumnIndex);
 

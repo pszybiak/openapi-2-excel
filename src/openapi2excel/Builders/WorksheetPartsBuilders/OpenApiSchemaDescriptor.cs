@@ -9,6 +9,9 @@ internal class OpenApiSchemaDescriptor(IXLWorksheet worksheet, OpenApiDocumentat
    public int AddNameHeader(RowPointer actualRow, int startColumn)
       => worksheet.Cell(actualRow, startColumn).SetTextBold("Name").GetColumnNumber();
 
+   public int AddNameValue(string name, int actualRow, int startColumn)
+      => worksheet.Cell(actualRow, startColumn).SetText(name).GetColumnNumber();
+
    public int AddSchemaDescriptionHeader(RowPointer actualRow, int startColumn)
    {
       var cell = worksheet.Cell(actualRow, startColumn).SetTextBold("Type")
@@ -34,7 +37,4 @@ internal class OpenApiSchemaDescriptor(IXLWorksheet worksheet, OpenApiDocumentat
 
       return cell.GetColumnNumber();
    }
-
-   public int AddNameValue(string name, int actualRow, int startColumn)
-      => worksheet.Cell(actualRow, startColumn).SetText(name).GetColumnNumber();
 }
