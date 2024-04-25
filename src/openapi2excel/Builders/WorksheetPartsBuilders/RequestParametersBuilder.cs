@@ -1,4 +1,4 @@
-﻿using ClosedXML.Excel;
+using ClosedXML.Excel;
 using Microsoft.OpenApi.Models;
 using openapi2excel.core.Common;
 
@@ -28,7 +28,10 @@ internal class RequestParametersBuilder(
 
          FillSchemaDescriptionHeaderCells(nextCell.Address.ColumnNumber);
          ActualRow.MoveNext();
-         operation.Parameters.ForEach(AddPropertyRow);
+         foreach (var operationParameter in operation.Parameters)
+         {
+            AddPropertyRow(operationParameter);
+         }
          ActualRow.MovePrev();
       }
 
