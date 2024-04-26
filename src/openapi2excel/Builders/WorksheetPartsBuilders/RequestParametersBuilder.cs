@@ -11,22 +11,28 @@ internal class RequestParametersBuilder(
    OpenApiDocumentationOptions options)
    : WorksheetPartBuilder(actualRow, worksheet, options)
 {
+   private readonly OpenApiSchemaDescriptor _schemaDescriptor = new(worksheet, options);
+
    public void AddRequestParametersPart(OpenApiOperation operation)
    {
       if (!operation.Parameters.Any())
          return;
 
-      Fill(1).WithText("PARAMETERS").WithBoldStyle();
+      Cell(1).SetTextBold("PARAMETERS");
       ActualRow.MoveNext();
       using (var _ = new Section(Worksheet, ActualRow))
       {
-         var nextCell = Fill(1).WithText("Name").WithBoldStyle()
-            .Next(attributesColumnIndex - 1).WithText("Location").WithBoldStyle()
-            .Next().WithText("Serialization").WithBoldStyle()
-            .Next().WithText("Required").WithBoldStyle()
-            .Next().GetCell();
+         var nextCell = Cell(1).SetTextBold("Name")
+            .CellRight(attributesColumnIndex - 1).SetTextBold("Location")
+            .CellRight().SetTextBold("Serialization")
+            .CellRight().SetTextBold("Required")
+            .CellRight();
 
-         FillSchemaDescriptionHeaderCells(nextCell.Address.ColumnNumber);
+         var lastUsedColumn = _schemaDescriptor.AddSchemaDescriptionHeader(ActualRow, nextCell.Address.ColumnNumber);
+
+         Cell(1).SetBackground(lastUsedColumn, HeaderBackgroundColor)
+            .SetBottomBorder(lastUsedColumn);
+
          ActualRow.MoveNext();
          foreach (var operationParameter in operation.Parameters)
          {
@@ -40,13 +46,13 @@ internal class RequestParametersBuilder(
 
    private void AddPropertyRow(OpenApiParameter parameter)
    {
-      var nextCell = Fill(1).WithText(parameter.Name)
-         .Next(attributesColumnIndex - 1).WithText(parameter.In.ToString()?.ToUpper())
-         .Next().WithText(parameter.Style?.ToString())
-         .Next().WithText(Options.Language.Get(parameter.Required))
-         .Next().GetCell();
+      var nextCell = Cell(1).SetText(parameter.Name)
+         .CellRight(attributesColumnIndex - 1).SetText(parameter.In.ToString()?.ToUpper())
+         .CellRight().SetText(parameter.Style?.ToString())
+         .CellRight().SetText(Options.Language.Get(parameter.Required))
+         .CellRight();
 
-      FillSchemaDescriptionCells(parameter.Schema, nextCell.Address.ColumnNumber);
+      _schemaDescriptor.AddSchemaDescriptionValues(parameter.Schema, ActualRow, nextCell.Address.ColumnNumber);
       ActualRow.MoveNext();
    }
 }

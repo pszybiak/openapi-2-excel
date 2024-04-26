@@ -11,10 +11,10 @@ internal static class XLExtensions
       return cell;
    }
 
-   public static IXLCell SetText(this IXLCell cell, string value)
+   public static IXLCell SetText(this IXLCell cell, string? value)
       => cell.SetValue(value);
 
-   public static IXLCell SetTextBold(this IXLCell cell, string value)
+   public static IXLCell SetTextBold(this IXLCell cell, string? value)
       => cell.SetBoldStyle().SetValue(value);
 
    public static IXLCell NextRow(this IXLCell cell)
@@ -32,6 +32,36 @@ internal static class XLExtensions
    public static IXLCell SetHorizontalAlignment(this IXLCell cell, XLAlignmentHorizontalValues alignment)
    {
       cell.Style.Alignment.SetHorizontal(alignment);
+      return cell;
+   }
+
+   public static IXLCell SetBackground(this IXLCell cell, XLColor color)
+   {
+      cell.Style.Fill.SetBackgroundColor(color);
+      return cell;
+   }
+
+   public static IXLCell SetBackground(this IXLCell cell, int toColumn, XLColor color)
+   {
+      var tmpCell = cell;
+      while (tmpCell.Address.ColumnNumber <= toColumn)
+         tmpCell = tmpCell.SetBackground(color).CellRight();
+
+      return cell;
+   }
+
+   public static IXLCell SetBottomBorder(this IXLCell cell)
+   {
+      cell.Style.Border.SetBottomBorder(XLBorderStyleValues.Medium);
+      return cell;
+   }
+
+   public static IXLCell SetBottomBorder(this IXLCell cell, int toColumn)
+   {
+      var tmpCell = cell;
+      while (tmpCell.Address.ColumnNumber <= toColumn)
+         tmpCell = tmpCell.SetBottomBorder().CellRight();
+
       return cell;
    }
 }
