@@ -37,17 +37,9 @@ namespace openapi2excel.core.Builders.WorksheetPartsBuilders
             ActualRow.MoveNext();
 
             var columnCount = builder.AddPropertiesTree(ActualRow, mediaType.Value.Schema);
-            FillBackgroundOnMediaTypeRow(bodyFormatRowPointer, columnCount);
+            Worksheet.Cell(bodyFormatRowPointer, 1).SetBackground(columnCount, HeaderBackgroundColor);
             AddEmptyRow();
          }
-      }
-
-      private void FillBackgroundOnMediaTypeRow(RowPointer mediaFormatRow, int columnCount)
-      {
-         var actualRowCopy = ActualRow.Copy();
-         ActualRow.GoTo(mediaFormatRow);
-         Fill(1).WithBackground(HeaderBackgroundColor, columnCount);
-         ActualRow.GoTo(actualRowCopy);
       }
 
       protected void AddProperty(string name, OpenApiSchema schema, int level, int attributesColumnIndex)
