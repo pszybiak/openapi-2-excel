@@ -23,9 +23,6 @@ namespace openapi2excel.core.Builders.WorksheetPartsBuilders
       protected CellBuilder Fill(int column)
          => new(Worksheet.Cell(ActualRow, column), Options);
 
-      protected CellBuilder FillHeader(int column)
-         => Fill(column).WithBackground(HeaderBackgroundColor);
-
       protected void AddPropertiesTreeForMediaTypes(IDictionary<string, OpenApiMediaType> mediaTypes,
          int attributesColumnIndex)
       {
