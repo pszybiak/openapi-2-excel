@@ -34,28 +34,33 @@ public static class OpenApiDocumentationGenerator
       OpenApiDocumentationOptions options)
    {
       var readResult = await new OpenApiStreamReader().ReadAsync(openApiFileStream);
-      if (readResult.OpenApiDiagnostic.Errors.Any())
-      {
-         var errorMessageBuilder = new StringBuilder();
-         errorMessageBuilder.AppendLine("Some errors occurred while processing input file.");
-         readResult.OpenApiDiagnostic.Errors.ToList().ForEach(e => errorMessageBuilder.AppendLine($"{e.Message} ({e.Pointer})"));
-         throw new InvalidOperationException(errorMessageBuilder.ToString());
-      }
+      AssertReadResult(readResult);
 
       using var workbook = new XLWorkbook();
       var infoWorksheetsBuilder = new InfoWorksheetBuilder(workbook, options);
-      var worksheetBuilder = new OperationWorksheetBuilder(workbook, options);
-
       infoWorksheetsBuilder.Build(readResult.OpenApiDocument);
+
+      var worksheetBuilder = new OperationWorksheetBuilder(workbook, options);
       readResult.OpenApiDocument.Paths.ForEach(path
          => path.Value.Operations.ForEach(operation
                =>
-            {
-               var worksheet = worksheetBuilder.Build(path.Key, path.Value, operation.Key, operation.Value);
-               infoWorksheetsBuilder.AddLink(operation.Key, path.Key, worksheet);
-            }
+               {
+                  var worksheet = worksheetBuilder.Build(path.Key, path.Value, operation.Key, operation.Value);
+                  infoWorksheetsBuilder.AddLink(operation.Key, path.Key, worksheet);
+               }
          ));
 
       workbook.SaveAs(new FileInfo(outputFile).FullName);
+   }
+
+   private static void AssertReadResult(ReadResult readResult)
+   {
+      if (!readResult.OpenApiDiagnostic.Errors.Any())
+         return;
+
+      var errorMessageBuilder = new StringBuilder();
+      errorMessageBuilder.AppendLine("Some errors occurred while processing input file.");
+      readResult.OpenApiDiagnostic.Errors.ToList().ForEach(e => errorMessageBuilder.AppendLine($"{e.Message} ({e.Pointer})"));
+      throw new InvalidOperationException(errorMessageBuilder.ToString());
    }
 }
