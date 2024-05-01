@@ -1,7 +1,6 @@
 using ClosedXML.Excel;
-using openapi2excel.core.Common;
 
-namespace openapi2excel.core.Builders.WorksheetPartsBuilders;
+namespace openapi2excel.core.Common;
 
 [System.Diagnostics.CodeAnalysis.SuppressMessage("Major Code Smell", "S3881:\"IDisposable\" should be implemented correctly", Justification = "<Pending>")]
 internal class Section(IXLWorksheet worksheet, RowPointer actualRow) : IDisposable
