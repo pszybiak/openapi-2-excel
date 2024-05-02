@@ -1,5 +1,6 @@
 using ClosedXML.Excel;
 using Microsoft.OpenApi.Models;
+using openapi2excel.core.Builders.WorksheetPartsBuilders.Common;
 using openapi2excel.core.Common;
 
 namespace openapi2excel.core.Builders.WorksheetPartsBuilders;
@@ -15,8 +16,8 @@ internal class ResponseBodyBuilder(
       if (!operation.Responses.Any())
          return;
 
-      Fill(1).WithText("RESPONSE").WithBoldStyle();
-      AddEmptyRow();
+      Cell(1).SetTextBold("RESPONSE");
+      ActualRow.MoveNext();
       using (var _ = new Section(Worksheet, ActualRow))
       {
          foreach (var response in operation.Responses)
@@ -26,8 +27,7 @@ internal class ResponseBodyBuilder(
             AddPropertiesTreeForMediaTypes(response.Value.Content, attributesColumnIndex);
          }
       }
-
-      AddEmptyRow();
+      ActualRow.MoveNext();
    }
 
    private void AddReponseHeaders(IDictionary<string, OpenApiHeader> valueHeaders)
@@ -35,27 +35,33 @@ internal class ResponseBodyBuilder(
       if (!valueHeaders.Any())
          return;
 
-      AddEmptyRow();
-
-      Fill(1).WithText("Response headers").WithBoldStyle();
       ActualRow.MoveNext();
 
-      var nextCell = Fill(1).WithText("Name").WithBoldStyle()
-         .Next(attributesColumnIndex - 1).WithText("Required").WithBoldStyle()
-         .Next().GetCellNumber();
+      Cell(1).SetTextBold("Response headers");
+      ActualRow.MoveNext();
 
-      var lastUsedColumn = FillSchemaDescriptionHeaderCells(nextCell);
-      ActualRow.MovePrev();
-      FillHeaderBackground(1, lastUsedColumn);
-      ActualRow.MoveNext(2);
+      var nextCell = Cell(1).SetTextBold("Name")
+         .CellRight(attributesColumnIndex - 1).SetTextBold("Required")
+         .CellRight().GetColumnNumber();
+
+      var schemaDescriptor = new OpenApiSchemaDescriptor(Worksheet, Options);
+      var lastUsedColumn = schemaDescriptor.AddSchemaDescriptionHeader(ActualRow, nextCell);
+
+      Worksheet.Cell(ActualRow, 1)
+         .SetBackground(lastUsedColumn, HeaderBackgroundColor)
+         .SetBottomBorder(lastUsedColumn);
+
+      ActualRow.MoveNext();
 
       foreach (var openApiHeader in valueHeaders)
       {
-         var nextCellNumber = Fill(1).WithText(openApiHeader.Key)
-            .Next(attributesColumnIndex - 1).WithText(Options.Language.Get(openApiHeader.Value.Required))
-            .Next().GetCellNumber();
-         nextCellNumber = FillSchemaDescriptionCells(openApiHeader.Value.Schema, nextCellNumber);
-         Fill(nextCellNumber).WithText(openApiHeader.Value.Description);
+         var nextCellNumber = Cell(1).SetText(openApiHeader.Key)
+            .CellRight(attributesColumnIndex - 1).SetText(Options.Language.Get(openApiHeader.Value.Required))
+            .CellRight().GetColumnNumber();
+
+         nextCellNumber = schemaDescriptor.AddSchemaDescriptionValues(openApiHeader.Value.Schema, ActualRow, nextCellNumber);
+         Cell(nextCellNumber).SetText(openApiHeader.Value.Description);
+
          ActualRow.MoveNext();
       }
 
@@ -64,14 +70,9 @@ internal class ResponseBodyBuilder(
 
    private void AddResponseHttpCode(string httpCode, string? description)
    {
-      if (string.IsNullOrEmpty(description))
-      {
-         Fill(1).WithText($"Response HttpCode: {httpCode}").WithBoldStyle();
-      }
-      else
-      {
-         Fill(1).WithText($"Response HttpCode: {httpCode}: {description}").WithBoldStyle();
-      }
+      Cell(1).SetTextBold(string.IsNullOrEmpty(description)
+         ? $"Response HttpCode: {httpCode}"
+         : $"Response HttpCode: {httpCode}: {description}");
 
       ActualRow.MoveNext();
    }

@@ -1,6 +1,7 @@
 using ClosedXML.Excel;
 using Microsoft.OpenApi.Models;
 using openapi2excel.core.Builders.WorksheetPartsBuilders;
+using openapi2excel.core.Builders.WorksheetPartsBuilders.Common;
 using openapi2excel.core.Common;
 
 namespace openapi2excel.core.Builders;
@@ -18,7 +19,7 @@ internal class OperationWorksheetBuilder(IXLWorkbook workbook, OpenApiDocumentat
       CreateNewWorksheet(operation);
       _actualRowPointer.GoTo(1);
 
-      SetMaxTreeLevel(operation);
+      _attributesColumnsStartIndex = MaxPropertiesTreeLevel.Calculate(operation);
       AdjustColumnsWidthToRequestTreeLevel();
 
       AddHomePageLink();
@@ -38,49 +39,6 @@ internal class OperationWorksheetBuilder(IXLWorkbook workbook, OpenApiDocumentat
       _worksheet.Style.Font.FontName = "Arial";
       _worksheet.Outline.SummaryHLocation = XLOutlineSummaryHLocation.Left;
       _worksheet.Outline.SummaryVLocation = XLOutlineSummaryVLocation.Top;
-   }
-
-   private void SetMaxTreeLevel(OpenApiOperation operation)
-   {
-      if (operation.RequestBody is null && !operation.Responses.Any())
-         return;
-
-      if (operation.RequestBody is not null)
-      {
-         _attributesColumnsStartIndex = operation.RequestBody.Content
-            .Select(openApiMediaType => openApiMediaType.Value.Schema)
-            .Select(schema => EstablishMaxTreeLevel(schema, 0))
-            .Prepend(1)
-            .Max();
-      }
-
-      foreach (var maxLevel in operation.Responses.Select(operationResponse => operationResponse.Value.Content
-                     .Select(openApiMediaType => openApiMediaType.Value.Schema)
-                     .Select(schema => EstablishMaxTreeLevel(schema, 0))
-                     .Prepend(1)
-                     .Max())
-                  .Where(maxLevel => maxLevel > _attributesColumnsStartIndex))
-      {
-         _attributesColumnsStartIndex = maxLevel;
-      }
-
-      return;
-
-      int EstablishMaxTreeLevel(OpenApiSchema schema, int currentLevel)
-      {
-         currentLevel++;
-         if (schema.Items != null)
-         {
-            return Math.Max(currentLevel, EstablishMaxTreeLevel(schema.Items, currentLevel));
-         }
-
-         return schema.Properties?.Any() != true
-            ? currentLevel
-            : schema.Properties
-               .Select(schemaProperty => EstablishMaxTreeLevel(schemaProperty.Value, currentLevel))
-               .Prepend(currentLevel)
-               .Max();
-      }
    }
 
    private void AdjustColumnsWidthToRequestTreeLevel()

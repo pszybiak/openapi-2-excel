@@ -2,7 +2,7 @@ using ClosedXML.Excel;
 using Microsoft.OpenApi.Models;
 using openapi2excel.core.Common;
 
-namespace openapi2excel.core.Builders.WorksheetPartsBuilders;
+namespace openapi2excel.core.Builders.WorksheetPartsBuilders.Common;
 
 internal class OpenApiSchemaDescriptor(IXLWorksheet worksheet, OpenApiDocumentationOptions options)
 {
