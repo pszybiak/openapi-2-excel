@@ -2,7 +2,7 @@ using Microsoft.OpenApi.Models;
 
 namespace openapi2excel.core.Builders.WorksheetPartsBuilders.Common;
 
-internal class MaxPropertiesTreeLevel
+internal static class MaxPropertiesTreeLevel
 {
    public static int Calculate(OpenApiOperation operation)
    {
