@@ -21,7 +21,8 @@ internal class RequestBodyBuilder(
 
       using (var _ = new Section(Worksheet, ActualRow))
       {
-         AddPropertiesTreeForMediaTypes(operation.RequestBody.Content, attributesColumnIndex);
+         var builder = new PropertiesTreeBuilder(attributesColumnIndex, Worksheet, Options);
+         builder.AddPropertiesTreeForMediaTypes(ActualRow, operation.RequestBody.Content);
          ActualRow.MovePrev();
       }
 

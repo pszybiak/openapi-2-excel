@@ -20,11 +20,12 @@ internal class ResponseBodyBuilder(
       ActualRow.MoveNext();
       using (var _ = new Section(Worksheet, ActualRow))
       {
+         var builder = new PropertiesTreeBuilder(attributesColumnIndex, Worksheet, Options);
          foreach (var response in operation.Responses)
          {
             AddResponseHttpCode(response.Key, response.Value.Description);
             AddReponseHeaders(response.Value.Headers);
-            AddPropertiesTreeForMediaTypes(response.Value.Content, attributesColumnIndex);
+            builder.AddPropertiesTreeForMediaTypes(ActualRow, response.Value.Content);
          }
       }
       ActualRow.MoveNext();

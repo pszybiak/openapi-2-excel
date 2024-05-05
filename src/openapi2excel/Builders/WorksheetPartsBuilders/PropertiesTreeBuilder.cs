@@ -15,6 +15,21 @@ internal class PropertiesTreeBuilder(
    private RowPointer ActualRow { get; set; } = null!;
    protected XLColor HeaderBackgroundColor => XLColor.LightGray;
 
+   public void AddPropertiesTreeForMediaTypes(RowPointer actualRow, IDictionary<string, OpenApiMediaType> mediaTypes)
+   {
+      ActualRow = actualRow;
+      foreach (var mediaType in mediaTypes)
+      {
+         var bodyFormatRowPointer = ActualRow.Copy();
+         Worksheet.Cell(ActualRow, 1).SetTextBold($"Body format: {mediaType.Key}");
+         ActualRow.MoveNext();
+
+         var columnCount = AddPropertiesTree(ActualRow, mediaType.Value.Schema);
+         Worksheet.Cell(bodyFormatRowPointer, 1).SetBackground(columnCount, HeaderBackgroundColor);
+         ActualRow.MoveNext();
+      }
+   }
+
    public int AddPropertiesTree(RowPointer actualRow, OpenApiSchema schema)
    {
       ActualRow = actualRow;
