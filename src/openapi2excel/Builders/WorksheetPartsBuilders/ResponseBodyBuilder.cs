@@ -65,7 +65,6 @@ internal class ResponseBodyBuilder(
 
          ActualRow.MoveNext();
       }
-
       ActualRow.MoveNext();
    }
 
