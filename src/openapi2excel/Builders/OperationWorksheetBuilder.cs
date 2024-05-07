@@ -51,7 +51,10 @@ internal class OperationWorksheetBuilder(IXLWorkbook workbook, OpenApiDocumentat
 
    private void AdjustLastNamesColumnToContents()
    {
-      _worksheet.Column(_attributesColumnsStartIndex - 1).AdjustToContents();
+      if (_attributesColumnsStartIndex > 1)
+      {
+         _worksheet.Column(_attributesColumnsStartIndex - 1).AdjustToContents();
+      }
    }
 
    private void AddOperationInfos(string path, OpenApiPathItem pathItem, OperationType operationType,
