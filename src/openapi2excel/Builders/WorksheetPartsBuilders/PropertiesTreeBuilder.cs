@@ -10,10 +10,12 @@ internal class PropertiesTreeBuilder(
    IXLWorksheet worksheet,
    OpenApiDocumentationOptions options)
 {
+   private readonly int _attributesColumnIndex = attributesColumnIndex + 3;
    protected OpenApiDocumentationOptions Options { get; } = options;
    protected IXLWorksheet Worksheet { get; } = worksheet;
    private RowPointer ActualRow { get; set; } = null!;
    protected XLColor HeaderBackgroundColor => XLColor.LightGray;
+
 
    public void AddPropertiesTreeForMediaTypes(RowPointer actualRow, IDictionary<string, OpenApiMediaType> mediaTypes)
    {
@@ -87,7 +89,7 @@ internal class PropertiesTreeBuilder(
 
       var schemaDescriptor = new OpenApiSchemaDescriptor(Worksheet, Options);
       schemaDescriptor.AddNameValue(propertyName, ActualRow, propertyLevel);
-      schemaDescriptor.AddSchemaDescriptionValues(propertySchema, ActualRow, attributesColumnIndex);
+      schemaDescriptor.AddSchemaDescriptionValues(propertySchema, ActualRow, _attributesColumnIndex);
       ActualRow.MoveNext();
    }
 
@@ -97,7 +99,7 @@ internal class PropertiesTreeBuilder(
 
       var schemaDescriptor = new OpenApiSchemaDescriptor(Worksheet, Options);
       schemaDescriptor.AddNameHeader(ActualRow, startColumn);
-      var lastUsedColumn = schemaDescriptor.AddSchemaDescriptionHeader(ActualRow, attributesColumnIndex);
+      var lastUsedColumn = schemaDescriptor.AddSchemaDescriptionHeader(ActualRow, _attributesColumnIndex);
 
       Worksheet.Cell(ActualRow, startColumn)
          .SetBackground(lastUsedColumn, HeaderBackgroundColor)
