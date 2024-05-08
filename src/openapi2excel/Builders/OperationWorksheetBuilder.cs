@@ -28,6 +28,7 @@ internal class OperationWorksheetBuilder(IXLWorkbook workbook, OpenApiDocumentat
       AddRequestBody(operation);
       AddResponseBody(operation);
       AdjustLastNamesColumnToContents();
+      AdjustDescriptionColumnToContents();
 
       return _worksheet;
    }
@@ -55,6 +56,11 @@ internal class OperationWorksheetBuilder(IXLWorkbook workbook, OpenApiDocumentat
       {
          _worksheet.Column(_attributesColumnsStartIndex - 1).AdjustToContents();
       }
+   }
+
+   private void AdjustDescriptionColumnToContents()
+   {
+      _worksheet.LastColumnUsed().AdjustToContents();
    }
 
    private void AddOperationInfos(string path, OpenApiPathItem pathItem, OperationType operationType,
