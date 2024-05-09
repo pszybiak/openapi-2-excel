@@ -57,7 +57,7 @@ internal class ResponseBodyBuilder(
       foreach (var openApiHeader in valueHeaders)
       {
          var nextCellNumber = Cell(1).SetText(openApiHeader.Key)
-            .CellRight(attributesColumnIndex + 1).SetText(Options.Language.Get(openApiHeader.Value.Required))
+            .CellRight(attributesColumnIndex + 1).SetText(Options.Language.Get(openApiHeader.Value.Required)).SetHorizontalAlignment(XLAlignmentHorizontalValues.Center)
             .CellRight().GetColumnNumber();
 
          nextCellNumber = schemaDescriptor.AddSchemaDescriptionValues(openApiHeader.Value.Schema, ActualRow, nextCellNumber);
