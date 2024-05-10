@@ -16,7 +16,8 @@ internal class OperationWorksheetBuilder(IXLWorkbook workbook, OpenApiDocumentat
    public IXLWorksheet Build(string path, OpenApiPathItem pathItem, OperationType operationType,
       OpenApiOperation operation)
    {
-      CreateNewWorksheet(operation);
+      var worksheet = GetWorksheetName(path, operation);
+      CreateNewWorksheet(worksheet);
       _actualRowPointer.GoTo(1);
 
       _attributesColumnsStartIndex = MaxPropertiesTreeLevel.Calculate(operation);
@@ -33,9 +34,19 @@ internal class OperationWorksheetBuilder(IXLWorkbook workbook, OpenApiDocumentat
       return _worksheet;
    }
 
-   private void CreateNewWorksheet(OpenApiOperation operation)
+   private static string GetWorksheetName(string path, OpenApiOperation operation)
    {
-      _worksheet = workbook.Worksheets.Add(operation.OperationId);
+      if (!string.IsNullOrEmpty(operation.OperationId))
+      {
+         return operation.OperationId;
+      }
+      var startIndex = path.LastIndexOf("/", StringComparison.Ordinal) + 1;
+      return path[startIndex..];
+   }
+
+   private void CreateNewWorksheet(string operation)
+   {
+      _worksheet = workbook.Worksheets.Add(operation);
       _worksheet.Style.Font.FontSize = 10;
       _worksheet.Style.Font.FontName = "Arial";
       _worksheet.Outline.SummaryHLocation = XLOutlineSummaryHLocation.Left;
