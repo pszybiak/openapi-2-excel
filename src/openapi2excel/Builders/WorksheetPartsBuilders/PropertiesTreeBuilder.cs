@@ -57,10 +57,7 @@ internal class PropertiesTreeBuilder(
          if (schema.Items.Properties.Any())
          {
             // array of object properties
-            foreach (var property in schema.Items.Properties)
-            {
-               AddProperty(property.Key, property.Value, level);
-            }
+            AddSubProperties(schema.Items, level);
          }
          else
          {
@@ -70,6 +67,19 @@ internal class PropertiesTreeBuilder(
       }
 
       // subproperties
+      AddSubProperties(schema, level);
+   }
+
+   private void AddSubProperties(OpenApiSchema schema, int level)
+   {
+      if (schema.AllOf.Count == 1)
+      {
+         AddSubProperties(schema.AllOf[0], level);
+      }
+      if (schema.AnyOf.Count == 1)
+      {
+         AddSubProperties(schema.AnyOf[0], level);
+      }
       foreach (var property in schema.Properties)
       {
          AddProperty(property.Key, property.Value, level);
