@@ -89,16 +89,23 @@ public class GenerateExcelCommand : Command<GenerateExcelCommand.GenerateExcelSe
       try
       {
          OpenApiDocumentationGenerator
-            .GenerateDocumentation(settings.InputFileParsed.FullName, settings.OutputFileParsed.FullName, new OpenApiDocumentationOptions())
+            .GenerateDocumentation(settings.InputFileParsed.FullName, settings.OutputFileParsed.FullName,
+               new OpenApiDocumentationOptions())
             .ConfigureAwait(false).GetAwaiter().GetResult();
 
          AnsiConsole.MarkupLine($"Excel file saved to [green]{settings.OutputFileParsed.FullName}[/]");
+      }
+      catch (IOException exc)
+      {
+         AnsiConsole.MarkupLine($"[red]{exc.Message}[/]");
+         return 1;
       }
       catch (Exception exc)
       {
          AnsiConsole.MarkupLine($"[red]An unexpected error occurred: {exc}[/]");
          return 1;
       }
+
       return 0;
    }
 }
