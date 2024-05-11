@@ -12,10 +12,10 @@ internal static class XLExtensions
    }
 
    public static IXLCell SetText(this IXLCell cell, string? value)
-      => cell.SetValue(value);
+      => cell.SetValue(value?.Trim());
 
    public static IXLCell SetTextBold(this IXLCell cell, string? value)
-      => cell.SetBoldStyle().SetValue(value);
+      => cell.SetBoldStyle().SetValue(value?.Trim());
 
    public static IXLCell NextRow(this IXLCell cell)
       => cell.Worksheet.Cell(cell.Address.RowNumber + 1, 1);
