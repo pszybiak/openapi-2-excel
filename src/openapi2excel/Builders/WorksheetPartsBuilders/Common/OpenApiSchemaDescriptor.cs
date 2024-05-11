@@ -35,7 +35,7 @@ internal class OpenApiSchemaDescriptor(IXLWorksheet worksheet, OpenApiDocumentat
          .CellRight().SetText(schema.GetPropertyRangeDescription()).SetHorizontalAlignment(XLAlignmentHorizontalValues.Center)
          .CellRight().SetText(schema.Pattern)
          .CellRight().SetText(options.Language.Get(schema.Deprecated)).SetHorizontalAlignment(XLAlignmentHorizontalValues.Center)
-         .CellRight().SetText(schema.Description);
+         .CellRight().SetText(schema.Description.StripHtmlTags());
 
       return cell.GetColumnNumber();
    }
