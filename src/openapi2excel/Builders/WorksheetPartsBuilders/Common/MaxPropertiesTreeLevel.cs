@@ -28,16 +28,33 @@ internal static class MaxPropertiesTreeLevel
 
    private static int EstablishMaxTreeLevel(OpenApiSchema schema, int currentLevel)
    {
+      var max = currentLevel;
       if (schema.Items != null)
       {
-         return Math.Max(currentLevel, EstablishMaxTreeLevel(schema.Items, currentLevel + 1));
+         max = Math.Max(currentLevel, EstablishMaxTreeLevel(schema.Items, currentLevel + 1));
       }
 
-      return schema.Properties?.Any() != true
-         ? currentLevel
+      max = !schema.AllOf.Any()
+         ? max
+         : schema.AllOf
+            .Select(schemaProperty => EstablishMaxTreeLevel(schemaProperty, currentLevel))
+            .Prepend(max)
+            .Max();
+
+      max = !schema.AnyOf.Any()
+         ? max
+         : schema.AnyOf
+            .Select(schemaProperty => EstablishMaxTreeLevel(schemaProperty, currentLevel))
+            .Prepend(max)
+            .Max();
+
+      max = schema.Properties?.Any() != true
+         ? max
          : schema.Properties
             .Select(schemaProperty => EstablishMaxTreeLevel(schemaProperty.Value, currentLevel + 1))
-            .Prepend(currentLevel)
+            .Prepend(max)
             .Max();
+
+      return max;
    }
 }
