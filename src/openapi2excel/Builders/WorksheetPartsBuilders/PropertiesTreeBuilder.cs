@@ -16,7 +16,6 @@ internal class PropertiesTreeBuilder(
    private RowPointer ActualRow { get; set; } = null!;
    protected XLColor HeaderBackgroundColor => XLColor.LightGray;
 
-
    public void AddPropertiesTreeForMediaTypes(RowPointer actualRow, IDictionary<string, OpenApiMediaType> mediaTypes)
    {
       ActualRow = actualRow;
@@ -54,35 +53,33 @@ internal class PropertiesTreeBuilder(
    {
       if (schema.Items != null)
       {
-         if (schema.Items.Properties.Any())
-         {
-            // array of object properties
-            AddSubProperties(schema.Items, level);
-         }
-         else
-         {
-            // if array contains simple type items
-            AddProperty("<value>", schema.Items, level);
-         }
+         AddPropertiesForArray(schema, level);
       }
-
-      // subproperties
-      AddSubProperties(schema, level);
-   }
-
-   private void AddSubProperties(OpenApiSchema schema, int level)
-   {
       if (schema.AllOf.Count == 1)
       {
-         AddSubProperties(schema.AllOf[0], level);
+         AddProperties(schema.AllOf[0], level);
       }
       if (schema.AnyOf.Count == 1)
       {
-         AddSubProperties(schema.AnyOf[0], level);
+         AddProperties(schema.AnyOf[0], level);
       }
       foreach (var property in schema.Properties)
       {
          AddProperty(property.Key, property.Value, level);
+      }
+   }
+
+   private void AddPropertiesForArray(OpenApiSchema schema, int level)
+   {
+      if (schema.Items.Properties.Any())
+      {
+         // array of object properties
+         AddProperties(schema.Items, level);
+      }
+      else
+      {
+         // if array contains simple type items
+         AddProperty("<value>", schema.Items, level);
       }
    }
 
