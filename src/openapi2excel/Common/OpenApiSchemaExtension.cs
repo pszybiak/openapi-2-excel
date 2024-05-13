@@ -1,5 +1,7 @@
-﻿using System.Text;
+using Microsoft.OpenApi.Any;
 using Microsoft.OpenApi.Models;
+using System.Globalization;
+using System.Text;
 
 namespace openapi2excel.core.Common;
 
@@ -73,5 +75,36 @@ internal static class OpenApiSchemaExtension
       }
 
       return propertyTypeDescription.ToString();
+   }
+
+   public static string GetEnumDescription(this OpenApiSchema schema)
+   {
+      if (!schema.Enum.Any())
+      {
+         return string.Empty;
+      }
+
+      return string.Join(", ", schema.Enum.Select(GetEnumValue));
+
+      string GetEnumValue(IOpenApiAny value)
+      {
+         if (value is not IOpenApiPrimitive)
+            return "";
+
+         return value switch
+         {
+            OpenApiString val => val.Value,
+            OpenApiInteger val => val.Value.ToString(),
+            OpenApiBoolean val => val.Value.ToString(),
+            OpenApiByte val => val.Value.ToString(),
+            OpenApiDate val => val.Value.ToShortDateString(),
+            OpenApiDateTime val => val.Value.ToString(CultureInfo.CurrentCulture),
+            OpenApiDouble val => val.Value.ToString(CultureInfo.CurrentCulture),
+            OpenApiFloat val => val.Value.ToString(CultureInfo.CurrentCulture),
+            OpenApiLong val => val.Value.ToString(CultureInfo.CurrentCulture),
+            OpenApiPassword val => val.Value,
+            _ => ""
+         };
+      }
    }
 }

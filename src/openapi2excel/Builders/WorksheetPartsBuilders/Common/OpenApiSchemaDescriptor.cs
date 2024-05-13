@@ -20,6 +20,7 @@ internal class OpenApiSchemaDescriptor(IXLWorksheet worksheet, OpenApiDocumentat
          .CellRight().SetTextBold("Nullable")
          .CellRight().SetTextBold("Range")
          .CellRight().SetTextBold("Pattern")
+         .CellRight().SetTextBold("Enum")
          .CellRight().SetTextBold("Deprecated")
          .CellRight().SetTextBold("Description");
 
@@ -34,6 +35,7 @@ internal class OpenApiSchemaDescriptor(IXLWorksheet worksheet, OpenApiDocumentat
          .CellRight().SetText(options.Language.Get(schema.Nullable)).SetHorizontalAlignment(XLAlignmentHorizontalValues.Center)
          .CellRight().SetText(schema.GetPropertyRangeDescription()).SetHorizontalAlignment(XLAlignmentHorizontalValues.Center)
          .CellRight().SetText(schema.Pattern)
+         .CellRight().SetText(schema.GetEnumDescription())
          .CellRight().SetText(options.Language.Get(schema.Deprecated)).SetHorizontalAlignment(XLAlignmentHorizontalValues.Center)
          .CellRight().SetText(schema.Description.StripHtmlTags());
 
