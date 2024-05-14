@@ -79,14 +79,9 @@ internal static class OpenApiSchemaExtension
 
    public static string GetEnumDescription(this OpenApiSchema schema)
    {
-      if (!schema.Enum.Any())
-      {
-         return string.Empty;
-      }
+      return !schema.Enum.Any() ? string.Empty : string.Join(", ", schema.Enum.Select(GetEnumValue));
 
-      return string.Join(", ", schema.Enum.Select(GetEnumValue));
-
-      string GetEnumValue(IOpenApiAny value)
+      static string GetEnumValue(IOpenApiAny value)
       {
          if (value is not IOpenApiPrimitive)
             return "";
