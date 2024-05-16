@@ -41,29 +41,34 @@ internal class ResponseBodyBuilder(
       Cell(1).SetTextBold("Response headers");
       ActualRow.MoveNext();
 
-      var nextCell = Cell(1).SetTextBold("Name")
-         .CellRight(attributesColumnIndex + 1).SetTextBold("Required")
-         .CellRight().GetColumnNumber();
-
-      var schemaDescriptor = new OpenApiSchemaDescriptor(Worksheet, Options);
-      var lastUsedColumn = schemaDescriptor.AddSchemaDescriptionHeader(ActualRow, nextCell);
-
-      Worksheet.Cell(ActualRow, 1)
-         .SetBackground(lastUsedColumn, HeaderBackgroundColor)
-         .SetBottomBorder(lastUsedColumn);
-
-      ActualRow.MoveNext();
-
-      foreach (var openApiHeader in valueHeaders)
+      using (var _ = new Section(Worksheet, ActualRow))
       {
-         var nextCellNumber = Cell(1).SetText(openApiHeader.Key)
-            .CellRight(attributesColumnIndex + 1).SetText(Options.Language.Get(openApiHeader.Value.Required)).SetHorizontalAlignment(XLAlignmentHorizontalValues.Center)
+         var nextCell = Cell(1).SetTextBold("Name")
+            .CellRight(attributesColumnIndex + 1).SetTextBold("Required")
             .CellRight().GetColumnNumber();
 
-         nextCellNumber = schemaDescriptor.AddSchemaDescriptionValues(openApiHeader.Value.Schema, ActualRow, nextCellNumber);
-         Cell(nextCellNumber).SetText(openApiHeader.Value.Description);
+         var schemaDescriptor = new OpenApiSchemaDescriptor(Worksheet, Options);
+         var lastUsedColumn = schemaDescriptor.AddSchemaDescriptionHeader(ActualRow, nextCell);
+
+         Worksheet.Cell(ActualRow, 1)
+            .SetBackground(lastUsedColumn, HeaderBackgroundColor)
+            .SetBottomBorder(lastUsedColumn);
 
          ActualRow.MoveNext();
+
+         foreach (var openApiHeader in valueHeaders)
+         {
+            var nextCellNumber = Cell(1).SetText(openApiHeader.Key)
+               .CellRight(attributesColumnIndex + 1).SetText(Options.Language.Get(openApiHeader.Value.Required))
+               .SetHorizontalAlignment(XLAlignmentHorizontalValues.Center)
+               .CellRight().GetColumnNumber();
+
+            nextCellNumber =
+               schemaDescriptor.AddSchemaDescriptionValues(openApiHeader.Value.Schema, ActualRow, nextCellNumber);
+            Cell(nextCellNumber).SetText(openApiHeader.Value.Description);
+
+            ActualRow.MoveNext();
+         }
       }
       ActualRow.MoveNext();
    }
