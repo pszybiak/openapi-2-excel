@@ -102,7 +102,7 @@ public class GenerateExcelCommand : Command<GenerateExcelCommand.GenerateExcelSe
       }
       catch (Exception exc)
       {
-         AnsiConsole.MarkupLine($"[red]An unexpected error occurred: {exc}[/]");
+         AnsiConsole.MarkupLine($"[red]An unexpected error occurred: {exc.Message}[/]");
          return 1;
       }
 
