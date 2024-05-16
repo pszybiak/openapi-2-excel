@@ -39,6 +39,29 @@ Example
 ```text
   openapi2excel C:\openapi-spec.yml C:\openapi-spec.xlsx
 ```
+
+## Result
+
+To show how the application works, let's use the official example used on the [Swagger Editor website](https://editor.swagger.io/).
+
+```
+  openapi2excel https://raw.githubusercontent.com/swagger-api/swagger-petstore/master/src/main/resources/openapi.yaml C:\openapi.xlsx
+```
+
+The first tab is an information tab, presenting document details and a list of available operations.
+
+<div align="center">
+    <img src="assets/info_worksheet.png" width="90%">
+</div>
+
+The next tabs contain details of individual operation.
+
+<div align="center">
+    <img src="assets/operation_details.png" width="90%">
+</div>
+
+
+
 ## Wrap Up
 
 If you think the repository can be improved, please open a PR with any updates and submit any issues.
