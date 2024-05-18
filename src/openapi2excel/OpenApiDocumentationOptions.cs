@@ -1,4 +1,4 @@
-﻿namespace openapi2excel.core;
+namespace openapi2excel.core;
 
 public class OpenApiDocumentationOptions
 {
@@ -17,9 +17,13 @@ public class OpenApiDocumentationLanguage : Dictionary<string, string>
       => TryGetValue(key, out var result) ? result : "<LANG_ERROR>";
 
    public string Get(bool value)
-      => value
-         ? (TryGetValue(OpenApiDocumentationLanguageConst.Yes, out var yesResult) ? yesResult : "<LANG_ERROR>")
-         : (TryGetValue(OpenApiDocumentationLanguageConst.No, out var noResult) ? noResult : "<LANG_ERROR>");
+   {
+      if (value)
+      {
+         return TryGetValue(OpenApiDocumentationLanguageConst.Yes, out var yesResult) ? yesResult : "<LANG_ERROR>";
+      }
+      return TryGetValue(OpenApiDocumentationLanguageConst.No, out var noResult) ? noResult : "<LANG_ERROR>";
+   }
 
    internal static OpenApiDocumentationLanguage Default
       => new()
