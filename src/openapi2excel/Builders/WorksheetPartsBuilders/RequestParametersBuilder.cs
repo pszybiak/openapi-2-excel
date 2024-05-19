@@ -16,6 +16,7 @@ internal class RequestParametersBuilder(
 
    public void AddRequestParametersPart(OpenApiOperation operation)
    {
+      attributesColumnIndex = attributesColumnIndex > 1 ? attributesColumnIndex : 2;
       if (!operation.Parameters.Any())
          return;
 
@@ -26,7 +27,6 @@ internal class RequestParametersBuilder(
          var nextCell = Cell(1).SetTextBold("Name")
             .CellRight(attributesColumnIndex - 1).SetTextBold("Location")
             .CellRight().SetTextBold("Serialization")
-            .CellRight().SetTextBold("Required")
             .CellRight();
 
          var lastUsedColumn = _schemaDescriptor.AddSchemaDescriptionHeader(ActualRow, nextCell.Address.ColumnNumber);
@@ -50,10 +50,9 @@ internal class RequestParametersBuilder(
       var nextCell = Cell(1).SetText(parameter.Name)
          .CellRight(attributesColumnIndex - 1).SetText(parameter.In.ToString()?.ToUpper())
          .CellRight().SetText(parameter.Style?.ToString())
-         .CellRight().SetText(Options.Language.Get(parameter.Required))
          .CellRight();
 
-      _schemaDescriptor.AddSchemaDescriptionValues(parameter.Schema, ActualRow, nextCell.Address.ColumnNumber);
+      _schemaDescriptor.AddSchemaDescriptionValues(parameter.Schema, parameter.Required, ActualRow, nextCell.Address.ColumnNumber);
       ActualRow.MoveNext();
    }
 }

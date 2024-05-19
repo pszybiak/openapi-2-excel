@@ -44,8 +44,7 @@ internal class ResponseBodyBuilder(
       using (var _ = new Section(Worksheet, ActualRow))
       {
          var nextCell = Cell(1).SetTextBold("Name")
-            .CellRight(attributesColumnIndex + 1).SetTextBold("Required")
-            .CellRight().GetColumnNumber();
+            .CellRight(attributesColumnIndex + 1).GetColumnNumber();
 
          var schemaDescriptor = new OpenApiSchemaDescriptor(Worksheet, Options);
          var lastUsedColumn = schemaDescriptor.AddSchemaDescriptionHeader(ActualRow, nextCell);
@@ -59,12 +58,10 @@ internal class ResponseBodyBuilder(
          foreach (var openApiHeader in valueHeaders)
          {
             var nextCellNumber = Cell(1).SetText(openApiHeader.Key)
-               .CellRight(attributesColumnIndex + 1).SetText(Options.Language.Get(openApiHeader.Value.Required))
-               .SetHorizontalAlignment(XLAlignmentHorizontalValues.Center)
-               .CellRight().GetColumnNumber();
+               .CellRight(attributesColumnIndex + 1).GetColumnNumber();
 
             nextCellNumber =
-               schemaDescriptor.AddSchemaDescriptionValues(openApiHeader.Value.Schema, ActualRow, nextCellNumber);
+               schemaDescriptor.AddSchemaDescriptionValues(openApiHeader.Value.Schema, openApiHeader.Value.Required, ActualRow, nextCellNumber);
             Cell(nextCellNumber).SetText(openApiHeader.Value.Description);
 
             ActualRow.MoveNext();

@@ -17,6 +17,7 @@ internal class OpenApiSchemaDescriptor(IXLWorksheet worksheet, OpenApiDocumentat
       var cell = worksheet.Cell(actualRow, startColumn).SetTextBold("Type")
          .CellRight().SetTextBold("Format")
          .CellRight().SetTextBold("Length")
+         .CellRight().SetTextBold("Required")
          .CellRight().SetTextBold("Nullable")
          .CellRight().SetTextBold("Range")
          .CellRight().SetTextBold("Pattern")
@@ -27,11 +28,12 @@ internal class OpenApiSchemaDescriptor(IXLWorksheet worksheet, OpenApiDocumentat
       return cell.GetColumnNumber();
    }
 
-   public int AddSchemaDescriptionValues(OpenApiSchema schema, RowPointer actualRow, int startColumn)
+   public int AddSchemaDescriptionValues(OpenApiSchema schema, bool required, RowPointer actualRow, int startColumn)
    {
       var cell = worksheet.Cell(actualRow, startColumn).SetText(schema.Type)
          .CellRight().SetText(schema.Format)
          .CellRight().SetText(schema.GetPropertyLengthDescription()).SetHorizontalAlignment(XLAlignmentHorizontalValues.Center)
+         .CellRight().SetText(options.Language.Get(required)).SetHorizontalAlignment(XLAlignmentHorizontalValues.Center)
          .CellRight().SetText(options.Language.Get(schema.Nullable)).SetHorizontalAlignment(XLAlignmentHorizontalValues.Center)
          .CellRight().SetText(schema.GetPropertyRangeDescription()).SetHorizontalAlignment(XLAlignmentHorizontalValues.Center)
          .CellRight().SetText(schema.Pattern)

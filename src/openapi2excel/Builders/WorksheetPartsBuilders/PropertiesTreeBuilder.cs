@@ -10,7 +10,7 @@ internal class PropertiesTreeBuilder(
    IXLWorksheet worksheet,
    OpenApiDocumentationOptions options)
 {
-   private readonly int _attributesColumnIndex = attributesColumnIndex + 3;
+   private readonly int _attributesColumnIndex = attributesColumnIndex + 2;
    protected OpenApiDocumentationOptions Options { get; } = options;
    protected IXLWorksheet Worksheet { get; } = worksheet;
    private RowPointer ActualRow { get; set; } = null!;
@@ -54,7 +54,7 @@ internal class PropertiesTreeBuilder(
       if (schema.Items == null)
          return false;
 
-      AddPropertyRow("<array>", schema, 1);
+      AddPropertyRow("<array>", schema, false, 1);
       return true;
    }
 
@@ -74,7 +74,7 @@ internal class PropertiesTreeBuilder(
       }
       foreach (var property in schema.Properties)
       {
-         AddProperty(property.Key, property.Value, level);
+         AddProperty(property.Key, property.Value, schema.Required.Contains(property.Key), level);
       }
    }
 
@@ -88,24 +88,24 @@ internal class PropertiesTreeBuilder(
       else
       {
          // if array contains simple type items
-         AddProperty("<value>", schema.Items, level);
+         AddProperty("<value>", schema.Items, false, level);
       }
    }
 
-   protected void AddProperty(string name, OpenApiSchema schema, int level)
+   protected void AddProperty(string name, OpenApiSchema schema, bool required, int level)
    {
-      AddPropertyRow(name, schema, level++);
+      AddPropertyRow(name, schema, required, level++);
       AddProperties(schema, level);
    }
 
-   private void AddPropertyRow(string propertyName, OpenApiSchema propertySchema, int propertyLevel)
+   private void AddPropertyRow(string propertyName, OpenApiSchema propertySchema, bool required, int propertyLevel)
    {
       const int startColumn = 1;
       Worksheet.Cell(ActualRow, startColumn).SetBackground(propertyLevel - 1, HeaderBackgroundColor);
 
       var schemaDescriptor = new OpenApiSchemaDescriptor(Worksheet, Options);
       schemaDescriptor.AddNameValue(propertyName, ActualRow, propertyLevel);
-      schemaDescriptor.AddSchemaDescriptionValues(propertySchema, ActualRow, _attributesColumnIndex);
+      schemaDescriptor.AddSchemaDescriptionValues(propertySchema, required, ActualRow, _attributesColumnIndex);
       ActualRow.MoveNext();
    }
 
