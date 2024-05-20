@@ -38,6 +38,7 @@ internal class ResponseBodyBuilder(
 
       ActualRow.MoveNext();
 
+      var responseHeadertRowPointer = ActualRow.Copy();
       Cell(1).SetTextBold("Response headers");
       ActualRow.MoveNext();
 
@@ -52,6 +53,9 @@ internal class ResponseBodyBuilder(
          Worksheet.Cell(ActualRow, 1)
             .SetBackground(lastUsedColumn, HeaderBackgroundColor)
             .SetBottomBorder(lastUsedColumn);
+
+         Worksheet.Cell(responseHeadertRowPointer, 1)
+            .SetBackground(lastUsedColumn, HeaderBackgroundColor);
 
          ActualRow.MoveNext();
 

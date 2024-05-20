@@ -25,17 +25,10 @@ internal class PropertiesTreeBuilder(
          Worksheet.Cell(ActualRow, 1).SetTextBold($"Body format: {mediaType.Key}");
          ActualRow.MoveNext();
 
-         if (mediaTypes.Count > 1)
-         {
-            using var _ = new Section(Worksheet, ActualRow);
-            var columnCount = AddPropertiesTree(ActualRow, mediaType.Value.Schema);
-            Worksheet.Cell(bodyFormatRowPointer, 1).SetBackground(columnCount, HeaderBackgroundColor);
-         }
-         else
-         {
-            var columnCount = AddPropertiesTree(ActualRow, mediaType.Value.Schema);
-            Worksheet.Cell(bodyFormatRowPointer, 1).SetBackground(columnCount, HeaderBackgroundColor);
-         }
+         using var _ = new Section(Worksheet, ActualRow);
+         var columnCount = AddPropertiesTree(ActualRow, mediaType.Value.Schema);
+         Worksheet.Cell(bodyFormatRowPointer, 1).SetBackground(columnCount, HeaderBackgroundColor);
+
          ActualRow.MoveNext();
       }
    }
