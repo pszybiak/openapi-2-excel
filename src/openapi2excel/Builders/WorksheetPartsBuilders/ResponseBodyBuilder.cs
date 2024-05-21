@@ -44,10 +44,24 @@ internal class ResponseBodyBuilder(
 
       using (var _ = new Section(Worksheet, ActualRow))
       {
+         var schemaDescriptor = new OpenApiSchemaDescriptor(Worksheet, Options);
+
+         InsertHeader(schemaDescriptor);
+         ActualRow.MoveNext();
+
+         foreach (var openApiHeader in valueHeaders)
+         {
+            InsertProperty(openApiHeader, schemaDescriptor);
+            ActualRow.MoveNext();
+         }
+      }
+      ActualRow.MoveNext();
+
+      void InsertHeader(OpenApiSchemaDescriptor schemaDescriptor)
+      {
          var nextCell = Cell(1).SetTextBold("Name")
             .CellRight(attributesColumnIndex + 1).GetColumnNumber();
 
-         var schemaDescriptor = new OpenApiSchemaDescriptor(Worksheet, Options);
          var lastUsedColumn = schemaDescriptor.AddSchemaDescriptionHeader(ActualRow, nextCell);
 
          Worksheet.Cell(ActualRow, 1)
@@ -56,22 +70,17 @@ internal class ResponseBodyBuilder(
 
          Worksheet.Cell(responseHeadertRowPointer, 1)
             .SetBackground(lastUsedColumn, HeaderBackgroundColor);
-
-         ActualRow.MoveNext();
-
-         foreach (var openApiHeader in valueHeaders)
-         {
-            var nextCellNumber = Cell(1).SetText(openApiHeader.Key)
-               .CellRight(attributesColumnIndex + 1).GetColumnNumber();
-
-            nextCellNumber =
-               schemaDescriptor.AddSchemaDescriptionValues(openApiHeader.Value.Schema, openApiHeader.Value.Required, ActualRow, nextCellNumber);
-            Cell(nextCellNumber).SetText(openApiHeader.Value.Description);
-
-            ActualRow.MoveNext();
-         }
       }
-      ActualRow.MoveNext();
+
+      void InsertProperty(KeyValuePair<string, OpenApiHeader> openApiHeader, OpenApiSchemaDescriptor schemaDescriptor)
+      {
+         var nextCellNumber = Cell(1).SetText(openApiHeader.Key)
+            .CellRight(attributesColumnIndex + 1).GetColumnNumber();
+
+         nextCellNumber = schemaDescriptor.AddSchemaDescriptionValues(openApiHeader.Value.Schema, openApiHeader.Value.Required, ActualRow, nextCellNumber);
+
+         Cell(nextCellNumber).SetText(openApiHeader.Value.Description);
+      }
    }
 
    private void AddResponseHttpCode(string httpCode, string? description)
