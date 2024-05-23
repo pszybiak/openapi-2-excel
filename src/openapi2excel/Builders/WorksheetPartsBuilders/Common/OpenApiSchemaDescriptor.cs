@@ -28,19 +28,37 @@ internal class OpenApiSchemaDescriptor(IXLWorksheet worksheet, OpenApiDocumentat
       return cell.GetColumnNumber();
    }
 
-   public int AddSchemaDescriptionValues(OpenApiSchema schema, bool required, RowPointer actualRow, int startColumn)
+   public int AddSchemaDescriptionValues(OpenApiSchema schema, bool required, RowPointer actualRow, int startColumn, bool includeArrayItemType = false)
    {
-      var cell = worksheet.Cell(actualRow, startColumn).SetText(schema.Type)
-         .CellRight().SetText(schema.Format)
-         .CellRight().SetText(schema.GetPropertyLengthDescription()).SetHorizontalAlignment(XLAlignmentHorizontalValues.Center)
-         .CellRight().SetText(options.Language.Get(required)).SetHorizontalAlignment(XLAlignmentHorizontalValues.Center)
-         .CellRight().SetText(options.Language.Get(schema.Nullable)).SetHorizontalAlignment(XLAlignmentHorizontalValues.Center)
-         .CellRight().SetText(schema.GetPropertyRangeDescription()).SetHorizontalAlignment(XLAlignmentHorizontalValues.Center)
-         .CellRight().SetText(schema.Pattern)
-         .CellRight().SetText(schema.GetEnumDescription())
-         .CellRight().SetText(options.Language.Get(schema.Deprecated)).SetHorizontalAlignment(XLAlignmentHorizontalValues.Center)
-         .CellRight().SetText(schema.Description.StripHtmlTags());
+      if (schema.Items != null && includeArrayItemType)
+      {
+         var cell = worksheet.Cell(actualRow, startColumn).SetText("array of " + schema.Items.Type)
+            .CellRight().SetText(schema.Items.Format)
+            .CellRight().SetText(schema.GetPropertyLengthDescription()).SetHorizontalAlignment(XLAlignmentHorizontalValues.Center)
+            .CellRight().SetText(options.Language.Get(required)).SetHorizontalAlignment(XLAlignmentHorizontalValues.Center)
+            .CellRight().SetText(options.Language.Get(schema.Nullable)).SetHorizontalAlignment(XLAlignmentHorizontalValues.Center)
+            .CellRight().SetText(schema.GetPropertyRangeDescription()).SetHorizontalAlignment(XLAlignmentHorizontalValues.Center)
+            .CellRight().SetText(schema.Items.Pattern)
+            .CellRight().SetText(schema.Items.GetEnumDescription())
+            .CellRight().SetText(options.Language.Get(schema.Deprecated)).SetHorizontalAlignment(XLAlignmentHorizontalValues.Center)
+            .CellRight().SetText(schema.Description.StripHtmlTags());
 
-      return cell.GetColumnNumber();
+         return cell.GetColumnNumber();
+      }
+      else
+      {
+         var cell = worksheet.Cell(actualRow, startColumn).SetText(schema.Type)
+            .CellRight().SetText(schema.Format)
+            .CellRight().SetText(schema.GetPropertyLengthDescription()).SetHorizontalAlignment(XLAlignmentHorizontalValues.Center)
+            .CellRight().SetText(options.Language.Get(required)).SetHorizontalAlignment(XLAlignmentHorizontalValues.Center)
+            .CellRight().SetText(options.Language.Get(schema.Nullable)).SetHorizontalAlignment(XLAlignmentHorizontalValues.Center)
+            .CellRight().SetText(schema.GetPropertyRangeDescription()).SetHorizontalAlignment(XLAlignmentHorizontalValues.Center)
+            .CellRight().SetText(schema.Pattern)
+            .CellRight().SetText(schema.GetEnumDescription())
+            .CellRight().SetText(options.Language.Get(schema.Deprecated)).SetHorizontalAlignment(XLAlignmentHorizontalValues.Center)
+            .CellRight().SetText(schema.Description.StripHtmlTags());
+
+         return cell.GetColumnNumber();
+      }
    }
 }

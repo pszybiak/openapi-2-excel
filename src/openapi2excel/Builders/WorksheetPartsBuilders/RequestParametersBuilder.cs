@@ -52,7 +52,7 @@ internal class RequestParametersBuilder(
          .CellRight().SetText(parameter.Style?.ToString())
          .CellRight();
 
-      _schemaDescriptor.AddSchemaDescriptionValues(parameter.Schema, parameter.Required, ActualRow, nextCell.Address.ColumnNumber);
+      _schemaDescriptor.AddSchemaDescriptionValues(parameter.Schema, parameter.Required, ActualRow, nextCell.Address.ColumnNumber, true);
       ActualRow.MoveNext();
    }
 }
