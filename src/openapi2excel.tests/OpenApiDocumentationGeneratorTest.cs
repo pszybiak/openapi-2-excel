@@ -9,7 +9,6 @@ namespace OpenApi2Excel.Tests
       {
          const string inputFIle = "Sample/Sample1.yaml";
          const string outputFile = "output.xlsx";
-
          await using var file = File.OpenRead(inputFIle);
 
          await OpenApiDocumentationGenerator.GenerateDocumentation(file, outputFile, new OpenApiDocumentationOptions());
