@@ -10,7 +10,6 @@ public static class StringExtensions
       {
          return null;
       }
-
       html = html.Replace("<li>", "- ");
       html = Regex.Replace(html.Replace("<li>", "- "), "<.*?>", string.Empty);
       html = Regex.Replace(html, @"[\r\n]+", "\r\n");
