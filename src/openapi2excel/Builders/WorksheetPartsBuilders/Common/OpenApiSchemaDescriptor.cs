@@ -23,6 +23,7 @@ internal class OpenApiSchemaDescriptor(IXLWorksheet worksheet, OpenApiDocumentat
          .CellRight().SetTextBold("Pattern")
          .CellRight().SetTextBold("Enum")
          .CellRight().SetTextBold("Deprecated")
+         .CellRight().SetTextBold("Example")
          .CellRight().SetTextBold("Description");
 
       return cell.GetColumnNumber();
@@ -41,6 +42,7 @@ internal class OpenApiSchemaDescriptor(IXLWorksheet worksheet, OpenApiDocumentat
             .CellRight().SetText(schema.Items.Pattern)
             .CellRight().SetText(schema.Items.GetEnumDescription())
             .CellRight().SetText(options.Language.Get(schema.Deprecated)).SetHorizontalAlignment(XLAlignmentHorizontalValues.Center)
+            .CellRight().SetText(schema.GetExampleDescription())
             .CellRight().SetText(schema.Description.StripHtmlTags());
 
          return cell.GetColumnNumber();
@@ -56,6 +58,7 @@ internal class OpenApiSchemaDescriptor(IXLWorksheet worksheet, OpenApiDocumentat
             .CellRight().SetText(schema.Pattern)
             .CellRight().SetText(schema.GetEnumDescription())
             .CellRight().SetText(options.Language.Get(schema.Deprecated)).SetHorizontalAlignment(XLAlignmentHorizontalValues.Center)
+            .CellRight().SetText(schema.GetExampleDescription())
             .CellRight().SetText(schema.Description.StripHtmlTags());
 
          return cell.GetColumnNumber();

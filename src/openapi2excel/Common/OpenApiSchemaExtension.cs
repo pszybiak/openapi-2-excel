@@ -102,4 +102,32 @@ internal static class OpenApiSchemaExtension
          };
       }
    }
+
+   public static string GetExampleDescription(this OpenApiSchema schema)
+   {
+      if (schema.Example == null)
+      {
+         return string.Empty;
+      }
+
+      if (schema.Example is not IOpenApiPrimitive)
+      {
+         // TODO
+         return "";
+      }
+      return schema.Example switch
+      {
+         OpenApiString val => val.Value,
+         OpenApiInteger val => val.Value.ToString(),
+         OpenApiBoolean val => val.Value.ToString(),
+         OpenApiByte val => val.Value.ToString(),
+         OpenApiDate val => val.Value.ToShortDateString(),
+         OpenApiDateTime val => val.Value.ToString(CultureInfo.CurrentCulture),
+         OpenApiDouble val => val.Value.ToString(CultureInfo.CurrentCulture),
+         OpenApiFloat val => val.Value.ToString(CultureInfo.CurrentCulture),
+         OpenApiLong val => val.Value.ToString(CultureInfo.CurrentCulture),
+         OpenApiPassword val => val.Value,
+         _ => ""
+      };
+   }
 }
