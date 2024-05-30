@@ -12,7 +12,6 @@ namespace OpenApi2Excel.Tests
          await using var file = File.OpenRead(inputFIle);
 
          await OpenApiDocumentationGenerator.GenerateDocumentation(file, outputFile, new OpenApiDocumentationOptions());
-
          Assert.True(File.Exists(outputFile));
       }
    }
