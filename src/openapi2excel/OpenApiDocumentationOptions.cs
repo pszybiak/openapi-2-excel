@@ -11,7 +11,7 @@ public class OpenApiDocumentationOptions
    }
 }
 
-// TODO: Create language helper
+// TODO: Create language helper and refactor all text usage
 public class OpenApiDocumentationLanguage : Dictionary<string, string>
 {
    public string Get(string key)
