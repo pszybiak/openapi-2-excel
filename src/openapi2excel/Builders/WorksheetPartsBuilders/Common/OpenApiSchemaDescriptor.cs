@@ -49,7 +49,7 @@ internal class OpenApiSchemaDescriptor(IXLWorksheet worksheet, OpenApiDocumentat
       }
       else
       {
-         var cell = worksheet.Cell(actualRow, startColumn).SetText(schema.Type)
+         var cell = worksheet.Cell(actualRow, startColumn).SetText(schema.GetTypeDescription())
             .CellRight().SetText(schema.Format)
             .CellRight().SetText(schema.GetPropertyLengthDescription()).SetHorizontalAlignment(XLAlignmentHorizontalValues.Center)
             .CellRight().SetText(options.Language.Get(required)).SetHorizontalAlignment(XLAlignmentHorizontalValues.Center)
