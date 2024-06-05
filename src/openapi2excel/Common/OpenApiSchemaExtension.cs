@@ -113,7 +113,7 @@ internal static class OpenApiSchemaExtension
 
       if (schema.Example is not IOpenApiPrimitive)
       {
-         // TODO
+         // TODO: add complex example
          return "";
       }
       return schema.Example switch
