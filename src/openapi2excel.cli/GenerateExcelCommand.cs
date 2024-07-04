@@ -22,6 +22,10 @@ public class GenerateExcelCommand : Command<GenerateExcelCommand.GenerateExcelSe
       [CommandOption("-n|--no-logo")]
       public bool NoLogo { get; init; }
 
+      [Description("Maximum depth level for documenting object hiearchies (defaults to 10).")]
+      [CommandOption("-d|--depth")]
+      public int Depth { get; init; } = 10;
+
       internal FileInfo InputFileParsed { get; set; } = null!;
       internal FileInfo OutputFileParsed { get; set; } = null!;
       public override ValidationResult Validate()
@@ -88,9 +92,10 @@ public class GenerateExcelCommand : Command<GenerateExcelCommand.GenerateExcelSe
 
       try
       {
+         var options = new OpenApiDocumentationOptions { MaxDepth = settings.Depth };
+
          OpenApiDocumentationGenerator
-            .GenerateDocumentation(settings.InputFileParsed.FullName, settings.OutputFileParsed.FullName,
-               new OpenApiDocumentationOptions())
+            .GenerateDocumentation(settings.InputFileParsed.FullName, settings.OutputFileParsed.FullName, options)
             .ConfigureAwait(false).GetAwaiter().GetResult();
 
          AnsiConsole.MarkupLine($"Excel file saved to [green]{settings.OutputFileParsed.FullName}[/]");

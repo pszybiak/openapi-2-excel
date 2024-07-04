@@ -16,7 +16,7 @@ internal class PropertiesTreeBuilder(
    private RowPointer ActualRow { get; set; } = null!;
    protected XLColor HeaderBackgroundColor => XLColor.LightGray;
 
-   public void AddPropertiesTreeForMediaTypes(RowPointer actualRow, IDictionary<string, OpenApiMediaType> mediaTypes)
+   public void AddPropertiesTreeForMediaTypes(RowPointer actualRow, IDictionary<string, OpenApiMediaType> mediaTypes, OpenApiDocumentationOptions options)
    {
       ActualRow = actualRow;
       foreach (var mediaType in mediaTypes)
@@ -27,7 +27,7 @@ internal class PropertiesTreeBuilder(
 
          using (var _ = new Section(Worksheet, ActualRow))
          {
-            var columnCount = AddPropertiesTree(ActualRow, mediaType.Value.Schema);
+            var columnCount = AddPropertiesTree(ActualRow, mediaType.Value.Schema, options);
             Worksheet.Cell(bodyFormatRowPointer, 1).SetBackground(columnCount, HeaderBackgroundColor);
             ActualRow.MovePrev();
          }
@@ -35,12 +35,12 @@ internal class PropertiesTreeBuilder(
       }
    }
 
-   public int AddPropertiesTree(RowPointer actualRow, OpenApiSchema schema)
+   public int AddPropertiesTree(RowPointer actualRow, OpenApiSchema schema, OpenApiDocumentationOptions options)
    {
       ActualRow = actualRow;
       var columnCount = AddSchemaDescriptionHeader();
       var startColumn = CorrectRootElementIfArray(schema) ? 2 : 1;
-      AddProperties(schema, startColumn);
+      AddProperties(schema, startColumn, options);
       return columnCount;
    }
 
@@ -53,44 +53,49 @@ internal class PropertiesTreeBuilder(
       return true;
    }
 
-   protected void AddProperties(OpenApiSchema schema, int level)
+   protected void AddProperties(OpenApiSchema schema, int level, OpenApiDocumentationOptions options)
    {
       if (schema.Items != null)
       {
-         AddPropertiesForArray(schema, level);
+         AddPropertiesForArray(schema, level, options);
       }
       if (schema.AllOf.Count == 1)
       {
-         AddProperties(schema.AllOf[0], level);
+         AddProperties(schema.AllOf[0], level, options);
       }
       if (schema.AnyOf.Count == 1)
       {
-         AddProperties(schema.AnyOf[0], level);
+         AddProperties(schema.AnyOf[0], level, options);
       }
       foreach (var property in schema.Properties)
       {
-         AddProperty(property.Key, property.Value, schema.Required.Contains(property.Key), level);
+         AddProperty(property.Key, property.Value, schema.Required.Contains(property.Key), level, options);
       }
    }
 
-   private void AddPropertiesForArray(OpenApiSchema schema, int level)
+   private void AddPropertiesForArray(OpenApiSchema schema, int level, OpenApiDocumentationOptions options)
    {
       if (schema.Items.Properties.Any())
       {
          // array of object properties
-         AddProperties(schema.Items, level);
+         AddProperties(schema.Items, level, options);
       }
       else
       {
          // if array contains simple type items
-         AddProperty("<value>", schema.Items, false, level);
+         AddProperty("<value>", schema.Items, false, level, options);
       }
    }
 
-   protected void AddProperty(string name, OpenApiSchema schema, bool required, int level)
+   protected void AddProperty(string name, OpenApiSchema schema, bool required, int level, OpenApiDocumentationOptions options)
    {
+      if (level >= options.MaxDepth)
+      {
+          return;
+      }
+
       AddPropertyRow(name, schema, required, level++);
-      AddProperties(schema, level);
+      AddProperties(schema, level, options);
    }
 
    private void AddPropertyRow(string propertyName, OpenApiSchema propertySchema, bool required, int propertyLevel)
