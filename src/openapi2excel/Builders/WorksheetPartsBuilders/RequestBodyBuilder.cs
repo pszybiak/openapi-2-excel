@@ -22,7 +22,7 @@ internal class RequestBodyBuilder(
       using (var _ = new Section(Worksheet, ActualRow))
       {
          var builder = new PropertiesTreeBuilder(attributesColumnIndex, Worksheet, Options);
-         builder.AddPropertiesTreeForMediaTypes(ActualRow, operation.RequestBody.Content);
+         builder.AddPropertiesTreeForMediaTypes(ActualRow, operation.RequestBody.Content, Options);
          ActualRow.MovePrev();
       }
 

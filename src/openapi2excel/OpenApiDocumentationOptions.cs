@@ -9,6 +9,8 @@ public class OpenApiDocumentationOptions
       get => _language ?? OpenApiDocumentationLanguage.Default;
       set => _language = value;
    }
+
+    public int MaxDepth { get; set; } = 10;
 }
 
 // TODO: Create language helper and refactor all text usage

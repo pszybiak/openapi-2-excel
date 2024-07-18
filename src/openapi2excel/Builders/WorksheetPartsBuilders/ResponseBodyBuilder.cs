@@ -25,7 +25,7 @@ internal class ResponseBodyBuilder(
          {
             AddResponseHttpCode(response.Key, response.Value.Description);
             AddReponseHeaders(response.Value.Headers);
-            builder.AddPropertiesTreeForMediaTypes(ActualRow, response.Value.Content);
+            builder.AddPropertiesTreeForMediaTypes(ActualRow, response.Value.Content, Options);
          }
       }
       ActualRow.MoveNext();
