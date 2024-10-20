@@ -26,6 +26,10 @@ public class GenerateExcelCommand : Command<GenerateExcelCommand.GenerateExcelSe
       [CommandOption("-d|--depth")]
       public int Depth { get; init; } = 10;
 
+      [Description("Run tool with debug mode.")]
+      [CommandOption("-g|--debug")]
+      public bool Debug { get; init; }
+
       internal FileInfo InputFileParsed { get; set; } = null!;
       internal FileInfo OutputFileParsed { get; set; } = null!;
       public override ValidationResult Validate()
@@ -102,12 +106,15 @@ public class GenerateExcelCommand : Command<GenerateExcelCommand.GenerateExcelSe
       }
       catch (IOException exc)
       {
-         AnsiConsole.MarkupLine($"[red]{exc.Message}[/]");
+         AnsiConsole.MarkupLine(settings.Debug ? $"[red]{exc}[/]" : $"[red]{exc.Message}[/]");
+
          return 1;
       }
       catch (Exception exc)
       {
-         AnsiConsole.MarkupLine($"[red]An unexpected error occurred: {exc.Message}[/]");
+         AnsiConsole.MarkupLine(settings.Debug
+            ? $"[red]An unexpected error occurred: {exc}[/]"
+            : $"[red]An unexpected error occurred: {exc.Message}[/]");
          return 1;
       }
 
