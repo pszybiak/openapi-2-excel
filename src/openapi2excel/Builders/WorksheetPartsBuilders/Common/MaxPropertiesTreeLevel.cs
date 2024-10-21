@@ -26,14 +26,14 @@ internal static class MaxPropertiesTreeLevel
          .Prepend(1)
          .Max();
 
-   private static int EstablishMaxTreeLevel(OpenApiSchema schema, int currentLevel, int maxTreeLevel)
+   private static int EstablishMaxTreeLevel(OpenApiSchema? schema, int currentLevel, int maxTreeLevel)
    {
       var max = currentLevel;
 
-        if (currentLevel >= maxTreeLevel)
-        {
-            return max;
-        }
+      if (currentLevel >= maxTreeLevel || schema == null)
+      {
+         return max;
+      }
 
       if (schema.Items != null)
       {
