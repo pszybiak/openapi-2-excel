@@ -25,13 +25,20 @@ internal class PropertiesTreeBuilder(
          Worksheet.Cell(ActualRow, 1).SetTextBold($"Body format: {mediaType.Key}");
          ActualRow.MoveNext();
 
-         using (var _ = new Section(Worksheet, ActualRow))
+         if (mediaType.Value.Schema != null)
          {
-            var columnCount = AddPropertiesTree(ActualRow, mediaType.Value.Schema, options);
-            Worksheet.Cell(bodyFormatRowPointer, 1).SetBackground(columnCount, HeaderBackgroundColor);
-            ActualRow.MovePrev();
+            using (var _ = new Section(Worksheet, ActualRow))
+            {
+               var columnCount = AddPropertiesTree(ActualRow, mediaType.Value.Schema, options);
+               Worksheet.Cell(bodyFormatRowPointer, 1).SetBackground(columnCount, HeaderBackgroundColor);
+               ActualRow.MovePrev();
+            }
+            ActualRow.MoveNext(2);
          }
-         ActualRow.MoveNext(2);
+         else
+         {
+            ActualRow.MoveNext();
+         }
       }
    }
 
@@ -53,8 +60,11 @@ internal class PropertiesTreeBuilder(
       return true;
    }
 
-   protected void AddProperties(OpenApiSchema schema, int level, OpenApiDocumentationOptions options)
+   protected void AddProperties(OpenApiSchema? schema, int level, OpenApiDocumentationOptions options)
    {
+      if (schema == null)
+         return;
+
       if (schema.Items != null)
       {
          AddPropertiesForArray(schema, level, options);
@@ -87,11 +97,11 @@ internal class PropertiesTreeBuilder(
       }
    }
 
-   protected void AddProperty(string name, OpenApiSchema schema, bool required, int level, OpenApiDocumentationOptions options)
+   protected void AddProperty(string name, OpenApiSchema? schema, bool required, int level, OpenApiDocumentationOptions options)
    {
-      if (level >= options.MaxDepth)
+      if (schema == null || level >= options.MaxDepth)
       {
-          return;
+         return;
       }
 
       AddPropertyRow(name, schema, required, level++);
