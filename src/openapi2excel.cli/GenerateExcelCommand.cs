@@ -2,6 +2,7 @@ using openapi2excel.core;
 using Spectre.Console;
 using Spectre.Console.Cli;
 using System.ComponentModel;
+using Path = System.IO.Path;
 
 namespace OpenApi2Excel.cli;
 
@@ -102,19 +103,20 @@ public class GenerateExcelCommand : Command<GenerateExcelCommand.GenerateExcelSe
             .GenerateDocumentation(settings.InputFileParsed.FullName, settings.OutputFileParsed.FullName, options)
             .ConfigureAwait(false).GetAwaiter().GetResult();
 
-         AnsiConsole.MarkupLine($"Excel file saved to [green]{settings.OutputFileParsed.FullName}[/]");
+         AnsiConsole.MarkupLine($"Excel file saved to [green]{settings.OutputFileParsed.FullName.EscapeMarkup()}[/]");
       }
       catch (IOException exc)
       {
-         AnsiConsole.MarkupLine(settings.Debug ? $"[red]{exc}[/]" : $"[red]{exc.Message}[/]");
+         AnsiConsole.MarkupLine(settings.Debug ? $"[red]{exc.ToString().EscapeMarkup()}[/]" : $"[red]{exc.Message.EscapeMarkup()}[/]");
 
          return 1;
       }
       catch (Exception exc)
       {
          AnsiConsole.MarkupLine(settings.Debug
-            ? $"[red]An unexpected error occurred: {exc}[/]"
-            : $"[red]An unexpected error occurred: {exc.Message}[/]");
+            ? $"[red]An unexpected error occurred: {exc.ToString().EscapeMarkup()}[/]"
+            : $"[red]An unexpected error occurred: {exc.Message.EscapeMarkup()}[/]");
+
          return 1;
       }
 
