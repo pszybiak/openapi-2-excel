@@ -26,9 +26,9 @@
     </ItemGroup>
     
     <ItemGroup>
-        <PackageReference Include="ClosedXML" Version="0.102.2" />
-        <PackageReference Include="Microsoft.OpenApi" Version="1.6.13" />
-        <PackageReference Include="Microsoft.OpenApi.Readers" Version="1.6.13" />
+        <PackageReference Include="ClosedXML" Version="0.104.1" />
+        <PackageReference Include="Microsoft.OpenApi" Version="1.6.22" />
+        <PackageReference Include="Microsoft.OpenApi.Readers" Version="1.6.22" />
         <PackageReference Include="System.CommandLine" Version="2.0.0-beta4.22272.1" />
     </ItemGroup>
 
