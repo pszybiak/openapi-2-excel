@@ -21,6 +21,7 @@ internal class OperationInfoBuilder(
       using (var _ = new Section(Worksheet, ActualRow))
       {
          var cell = Cell(1).SetTextBold("Operation type").CellRight(attributesColumnIndex).SetText(operationType.ToString().ToUpper())
+            .IfNotEmpty(operation.OperationId, c => c.NextRow().SetTextBold("Id").CellRight(attributesColumnIndex).SetText(operation.OperationId))
             .NextRow().SetTextBold("Path").CellRight(attributesColumnIndex).SetText(path)
             .IfNotEmpty(pathItem.Description, c => c.NextRow().SetTextBold("Path description").CellRight(attributesColumnIndex).SetText(pathItem.Description))
             .IfNotEmpty(pathItem.Summary, c => c.NextRow().SetTextBold("Path summary").CellRight(attributesColumnIndex).SetText(pathItem.Summary))
