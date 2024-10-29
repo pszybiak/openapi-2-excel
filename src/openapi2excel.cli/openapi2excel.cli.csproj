@@ -1,43 +1,49 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-    <PropertyGroup>
-        <OutputType>Exe</OutputType>
-        <ImplicitUsings>enable</ImplicitUsings>
-        <Nullable>enable</Nullable>
-        <LangVersion>latest</LangVersion>
-        <TargetFrameworks>net7.0;net8.0</TargetFrameworks>
-        <IsPackable>true</IsPackable>
-        <PackAsTool>true</PackAsTool>
-        <ToolCommandName>openapi2excel</ToolCommandName>
-        <AssemblyName>openapi2excel</AssemblyName>
-        <Authors>openapi2excel Team &amp; Contributors</Authors>
-        <Copyright>Copyright (c) Paweł Szybiak</Copyright>
-        <Description>A .NET Core global tool to generate Rest API specification in a MS Excel format - human friendly document from Swagger/OpenAPI spec in YAML or JSON.</Description>
-        <PackageId>openapi2excel.cli</PackageId>
-        <PackageLicenseExpression>MIT</PackageLicenseExpression>
-        <PackageProjectUrl>https://github.com/pszybiak/openapi-2-excel</PackageProjectUrl>
-        <PackageReleaseNotes>See $(PackageProjectUrl)/blob/main/CHANGELOG.md#$(VersionSuffix.Replace('.','')) for release notes.</PackageReleaseNotes>
-        <PackageReadmeFile>README.md</PackageReadmeFile>
-        <PackageVersion>$(VersionSuffix)</PackageVersion>
-        <RepositoryType>git</RepositoryType>
-        <RepositoryUrl>https://github.com/pszybiak/openapi-2-excel.git</RepositoryUrl>
-        <PackAsTool>true</PackAsTool>
-    </PropertyGroup>
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <LangVersion>latest</LangVersion>
+    <TargetFrameworks>net7.0;net8.0</TargetFrameworks>
+    <IsPackable>true</IsPackable>
+    <PackAsTool>true</PackAsTool>
+    <ToolCommandName>openapi2excel</ToolCommandName>
+    <AssemblyName>openapi2excel</AssemblyName>
+    <Authors>openapi2excel Team &amp; Contributors</Authors>
+    <Copyright>Copyright (c) Paweł Szybiak</Copyright>
+    <Description>A .NET Core global tool to generate Rest API specification in a MS Excel format - human friendly document from Swagger/OpenAPI spec in YAML or JSON.</Description>
+    <PackageId>openapi2excel.cli</PackageId>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageProjectUrl>https://github.com/pszybiak/openapi-2-excel</PackageProjectUrl>
+    <PackageReleaseNotes>See $(PackageProjectUrl)/blob/main/CHANGELOG.md#$(VersionSuffix.Replace('.','')) for release notes.</PackageReleaseNotes>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <PackageVersion>$(VersionSuffix)</PackageVersion>
+    <RepositoryType>git</RepositoryType>
+    <RepositoryUrl>https://github.com/pszybiak/openapi-2-excel.git</RepositoryUrl>
+    <PackAsTool>true</PackAsTool>
+  </PropertyGroup>
 
-    <ItemGroup>
-        <None Include="..\..\README.md" Pack="true" PackagePath="\" />
-    </ItemGroup>
+  <PropertyGroup>
+    <Version>$(Version)</Version>
+    <AssemblyVersion>$(Version)</AssemblyVersion>
+    <FileVersion>$(Version)</FileVersion>
+  </PropertyGroup>
 
-    <ItemGroup>
-        <PackageReference Include="ClosedXML" Version="0.104.1" />
-        <PackageReference Include="Microsoft.OpenApi" Version="1.6.22" />
-        <PackageReference Include="Microsoft.OpenApi.Readers" Version="1.6.22" />
-        <PackageReference Include="Spectre.Console" Version="0.49.1" />
-        <PackageReference Include="Spectre.Console.Cli" Version="0.49.1" />
-        <PackageReference Include="System.CommandLine" Version="2.0.0-beta4.22272.1" />
-    </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\README.md" Pack="true" PackagePath="\" />
+  </ItemGroup>
 
-    <ItemGroup>
-      <ProjectReference Include="..\openapi2excel\openapi2excel.core.csproj" />
-    </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="ClosedXML" Version="0.104.1" />
+    <PackageReference Include="Microsoft.OpenApi" Version="1.6.22" />
+    <PackageReference Include="Microsoft.OpenApi.Readers" Version="1.6.22" />
+    <PackageReference Include="Spectre.Console" Version="0.49.1" />
+    <PackageReference Include="Spectre.Console.Cli" Version="0.49.1" />
+    <PackageReference Include="System.CommandLine" Version="2.0.0-beta4.22272.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\openapi2excel\openapi2excel.core.csproj" />
+  </ItemGroup>
 </Project>

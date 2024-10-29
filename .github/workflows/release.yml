@@ -9,7 +9,8 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 30
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout code
+        uses: actions/checkout@v2
 
       - name: Setup .NET
         uses: actions/setup-dotnet@v4
@@ -21,17 +22,23 @@ jobs:
       - name: Tests
         run: dotnet test --configuration Release
 
+      - name: Read version from file
+        id: version
+        run: echo "VERSION=$(cat semver.txt)" >> $GITHUB_ENV
+
       - name: Package release
         id: package_release
         run: |
-          VERSION=`cat semver.txt`
           OUTPUT=${{ runner.temp }}/nupkgs
           echo "version=$VERSION" >> $GITHUB_OUTPUT
+          
           echo "core_package_name=openapi2excel.core.$VERSION.nupkg" >> $GITHUB_OUTPUT
           echo "core_package_filename=$OUTPUT/openapi2excel.core.$VERSION.nupkg" >> $GITHUB_OUTPUT
+          
           echo "tool_package_name=openapi2excel.cli.$VERSION.nupkg" >> $GITHUB_OUTPUT
           echo "tool_package_filename=$OUTPUT/openapi2excel.cli.$VERSION.nupkg" >> $GITHUB_OUTPUT
-          dotnet build --configuration Release
+          
+          dotnet build --configuration Release /p:Version=$VERSION
           dotnet pack --configuration Release /p:Version=$VERSION /p:PackageOutputPath=$OUTPUT
 
       - name: Publish package

@@ -1,39 +1,45 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-    <PropertyGroup>
-        <OutputType>Library</OutputType>
-        <LangVersion>latest</LangVersion>
-        <ImplicitUsings>enable</ImplicitUsings>
-        <Nullable>enable</Nullable>
-        <TargetFramework>netstandard2.1</TargetFramework>
-        <IsPackable>true</IsPackable>
-        <PackageTags>openapi;openapi2excel;excel;core;lib</PackageTags>
-        <Description>The core functionality of OpenApi2Excel as a library which allows you to embed it into your own applications</Description>
-        <Authors>openapi2excel Team &amp; Contributors</Authors>
-        <Copyright>Copyright (c) Paweł Szybiak</Copyright>
-        <PackageId>openapi2excel.core</PackageId>
-        <PackageLicenseExpression>MIT</PackageLicenseExpression>
-        <PackageProjectUrl>https://github.com/pszybiak/openapi-2-excel</PackageProjectUrl>
-        <PackageReleaseNotes>See $(PackageProjectUrl)/blob/main/CHANGELOG.md#$(VersionSuffix.Replace('.','')) for release notes.</PackageReleaseNotes>
-        <PackageReadmeFile>README.md</PackageReadmeFile>
-        <PackageVersion>$(VersionSuffix)</PackageVersion>
-        <RepositoryType>git</RepositoryType>
-        <RepositoryUrl>https://github.com/pszybiak/openapi-2-excel.git</RepositoryUrl>
-    </PropertyGroup>
+  <PropertyGroup>
+    <OutputType>Library</OutputType>
+    <LangVersion>latest</LangVersion>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <TargetFramework>netstandard2.1</TargetFramework>
+    <IsPackable>true</IsPackable>
+    <PackageTags>openapi;openapi2excel;excel;core;lib</PackageTags>
+    <Description>The core functionality of OpenApi2Excel as a library which allows you to embed it into your own applications</Description>
+    <Authors>openapi2excel Team &amp; Contributors</Authors>
+    <Copyright>Copyright (c) Paweł Szybiak</Copyright>
+    <PackageId>openapi2excel.core</PackageId>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageProjectUrl>https://github.com/pszybiak/openapi-2-excel</PackageProjectUrl>
+    <PackageReleaseNotes>See $(PackageProjectUrl)/blob/main/CHANGELOG.md#$(VersionSuffix.Replace('.','')) for release notes.</PackageReleaseNotes>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <PackageVersion>$(VersionSuffix)</PackageVersion>
+    <RepositoryType>git</RepositoryType>
+    <RepositoryUrl>https://github.com/pszybiak/openapi-2-excel.git</RepositoryUrl>
+  </PropertyGroup>
 
-    <ItemGroup>
-        <None Include="..\..\README.md" Pack="true" PackagePath="\" />
-    </ItemGroup>
-    
-    <ItemGroup>
-        <PackageReference Include="ClosedXML" Version="0.104.1" />
-        <PackageReference Include="Microsoft.OpenApi" Version="1.6.22" />
-        <PackageReference Include="Microsoft.OpenApi.Readers" Version="1.6.22" />
-        <PackageReference Include="System.CommandLine" Version="2.0.0-beta4.22272.1" />
-    </ItemGroup>
+  <PropertyGroup>
+    <Version>$(Version)</Version>
+    <AssemblyVersion>$(Version)</AssemblyVersion>
+    <FileVersion>$(Version)</FileVersion>
+  </PropertyGroup>
 
-    <ItemGroup>
-        <Folder Include="Properties\" />
-    </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\README.md" Pack="true" PackagePath="\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="ClosedXML" Version="0.104.1" />
+    <PackageReference Include="Microsoft.OpenApi" Version="1.6.22" />
+    <PackageReference Include="Microsoft.OpenApi.Readers" Version="1.6.22" />
+    <PackageReference Include="System.CommandLine" Version="2.0.0-beta4.22272.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Properties\" />
+  </ItemGroup>
 
 </Project>

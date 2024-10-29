@@ -10,7 +10,9 @@ internal static class Program
       app.Configure(config =>
       {
          config.SetHelpProvider(new CustomHelpProvider(config.Settings));
-         config.SetApplicationName("OpenApi 2 Excel");
+         config.SetApplicationName("openapi2excel");
+         config.AddExample("C:\\openapi.yml", "C:\\openapi.xlsx");
+         config.UseAssemblyInformationalVersion();
       });
       return await app.RunAsync(args);
    }
