@@ -85,9 +85,13 @@ internal class ResponseBodyBuilder(
 
    private void AddResponseHttpCode(string httpCode, string? description)
    {
-      Cell(1).SetTextBold(string.IsNullOrEmpty(description)
-         ? $"Response HttpCode: {httpCode}"
-         : $"Response HttpCode: {httpCode}: {description}");
+      var responseCode = httpCode.Equals("default") ? "Default response" : $"Response HttpCode: {httpCode}";
+      if (!string.IsNullOrEmpty(description) && !description.Equals("default response"))
+      {
+         responseCode += $": {description}";
+      }
+
+      Cell(1).SetTextBold(responseCode);
 
       ActualRow.MoveNext();
    }
