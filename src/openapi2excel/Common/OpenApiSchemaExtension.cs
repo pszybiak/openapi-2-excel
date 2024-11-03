@@ -11,10 +11,21 @@ internal static class OpenApiSchemaExtension
    {
       return schema.Type switch
       {
-         "object" => schema.Reference is null ? "object" : "object: " + schema.Reference.Id,
-         "array" => "array of " + schema.Items.GetTypeDescription(),
+         "object" => "object",
+         "array" => "array",
          null => "object",
          _ => schema.Type
+      };
+   }
+
+   public static string GetObjectDescription(this OpenApiSchema schema)
+   {
+      return schema.Type switch
+      {
+         "object" => schema.Reference is null ? "object" : schema.Reference.Id,
+         "array" => schema.Items.GetObjectDescription(),
+         null => "object",
+         _ => ""
       };
    }
 
@@ -117,6 +128,34 @@ internal static class OpenApiSchemaExtension
          return "";
       }
       return schema.Example switch
+      {
+         OpenApiString val => val.Value,
+         OpenApiInteger val => val.Value.ToString(),
+         OpenApiBoolean val => val.Value.ToString(),
+         OpenApiByte val => val.Value.ToString(),
+         OpenApiDate val => val.Value.ToShortDateString(),
+         OpenApiDateTime val => val.Value.ToString(CultureInfo.CurrentCulture),
+         OpenApiDouble val => val.Value.ToString(CultureInfo.CurrentCulture),
+         OpenApiFloat val => val.Value.ToString(CultureInfo.CurrentCulture),
+         OpenApiLong val => val.Value.ToString(CultureInfo.CurrentCulture),
+         OpenApiPassword val => val.Value,
+         _ => ""
+      };
+   }
+
+   public static string GetDefaultDescription(this OpenApiSchema schema)
+   {
+      if (schema.Default == null)
+      {
+         return string.Empty;
+      }
+
+      if (schema.Default is not IOpenApiPrimitive)
+      {
+         // TODO: add complex default value
+         return "";
+      }
+      return schema.Default switch
       {
          OpenApiString val => val.Value,
          OpenApiInteger val => val.Value.ToString(),
