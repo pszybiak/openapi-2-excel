@@ -31,7 +31,7 @@ internal class OpenApiSchemaDescriptor(IXLWorksheet worksheet, OpenApiDocumentat
       return cell.GetColumnNumber();
    }
 
-   public int AddSchemaDescriptionValues(OpenApiSchema schema, bool required, RowPointer actualRow, int startColumn, bool includeArrayItemType = false)
+   public int AddSchemaDescriptionValues(OpenApiSchema schema, bool required, RowPointer actualRow, int startColumn, string? description = null, bool includeArrayItemType = false )
    {
       if (schema.Items != null && includeArrayItemType)
       {
@@ -47,7 +47,7 @@ internal class OpenApiSchemaDescriptor(IXLWorksheet worksheet, OpenApiDocumentat
             .CellRight().SetText(schema.Items.GetEnumDescription())
             .CellRight().SetText(options.Language.Get(schema.Deprecated)).SetHorizontalAlignment(XLAlignmentHorizontalValues.Center)
             .CellRight().SetText(schema.GetExampleDescription())
-            .CellRight().SetText(schema.Description.StripHtmlTags());
+            .CellRight().SetText((string.IsNullOrEmpty(schema.Description) ? description : schema.Description).StripHtmlTags());
 
          return cell.GetColumnNumber();
       }
@@ -65,9 +65,9 @@ internal class OpenApiSchemaDescriptor(IXLWorksheet worksheet, OpenApiDocumentat
             .CellRight().SetText(options.Language.Get(schema.Deprecated)).SetHorizontalAlignment(XLAlignmentHorizontalValues.Center)
             .CellRight().SetText(schema.GetDefaultDescription())
             .CellRight().SetText(schema.GetExampleDescription())
-            .CellRight().SetText(schema.Description.StripHtmlTags());
+            .CellRight().SetText((string.IsNullOrEmpty(schema.Description) ? description : schema.Description).StripHtmlTags());
 
-         return cell.GetColumnNumber();
+            return cell.GetColumnNumber();
       }
    }
 }
