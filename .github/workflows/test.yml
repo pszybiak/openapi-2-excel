@@ -26,7 +26,7 @@ jobs:
 
     - name: Smoke test
       run: |
-        dotnet run --configuration Release --framework ${{ matrix.framework }} --project src/openapi2excel.cli --file src/openapi2excel.tests/Sample/Sample1.yaml --out Sample.xlsx
+        dotnet run --configuration Release --framework ${{ matrix.framework }} --project src/openapi2excel.cli src/openapi2excel.tests/Sample/Sample1.yaml Sample.xlsx
 
     - name: Tests
       run: dotnet test --configuration Release --framework ${{ matrix.framework }}
