@@ -46,8 +46,8 @@ internal class PropertiesTreeBuilder(
    {
       ActualRow = actualRow;
       var columnCount = AddSchemaDescriptionHeader();
-      var startColumn = CorrectRootElementIfArray(schema) ? 2 : 1;
-      AddProperties(schema, startColumn, options);
+      var startLevel = CorrectRootElementIfArray(schema) ? 2 : 1;
+      AddProperties(schema, startLevel, options);
       return columnCount;
    }
 
@@ -69,13 +69,44 @@ internal class PropertiesTreeBuilder(
       {
          AddPropertiesForArray(schema, level, options);
       }
-      if (schema.AllOf.Count == 1)
+
+      if (schema.AllOf.Any())
       {
-         AddProperties(schema.AllOf[0], level, options);
+         // Add all subschemas on the current level
+         schema.AllOf.ForEach(subschema =>
+         {
+            AddProperties(subschema, level, options);
+         });
       }
+
       if (schema.AnyOf.Count == 1)
       {
+         // If there is only one subschema, we can treat it as a single schema
          AddProperties(schema.AnyOf[0], level, options);
+      }
+      else if (schema.AnyOf.Any())
+      {
+         // Otherwise, add each subschema one level below, indicating their disjunction composition
+         schema.AnyOf.ForEach(subschema =>
+         {
+            AddPropertyRow("<anyOf>", subschema, false, level);
+            AddProperties(subschema, level + 1, options);
+         });
+      }
+
+      if (schema.OneOf.Count == 1)
+      {
+         // If there is only one subschema, we can treat it as a single schema
+         AddProperties(schema.OneOf[0], level, options);
+      }
+      else if (schema.OneOf.Any())
+      {
+         // Otherwise, add each subschema one level below, indicating their disjunction composition
+         schema.OneOf.ForEach(subschema =>
+         {
+            AddPropertyRow("<oneOf>", subschema, false, level);
+            AddProperties(subschema, level + 1, options);
+         });
       }
       foreach (var property in schema.Properties)
       {
@@ -85,9 +116,9 @@ internal class PropertiesTreeBuilder(
 
    private void AddPropertiesForArray(OpenApiSchema schema, int level, OpenApiDocumentationOptions options)
    {
-      if (schema.Items.Properties.Any())
+      if (schema.Items.Properties.Any() || schema.Items.AllOf.Any() || schema.Items.AnyOf.Any() || schema.Items.OneOf.Any())
       {
-         // array of object properties
+         // An array of either object properties or subschemas
          AddProperties(schema.Items, level, options);
       }
       else
