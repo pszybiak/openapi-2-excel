@@ -67,7 +67,7 @@ internal class OpenApiSchemaDescriptor(IXLWorksheet worksheet, OpenApiDocumentat
             .CellRight().SetText(schema.GetExampleDescription())
             .CellRight().SetText((string.IsNullOrEmpty(schema.Description) ? description : schema.Description).StripHtmlTags());
 
-            return cell.GetColumnNumber();
+         return cell.GetColumnNumber();
       }
    }
 }

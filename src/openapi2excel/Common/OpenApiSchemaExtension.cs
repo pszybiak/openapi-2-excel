@@ -24,7 +24,7 @@ internal static class OpenApiSchemaExtension
       {
          "object" => schema.Reference is null ? "object" : schema.Reference.Id,
          "array" => schema.Items.GetObjectDescription(),
-         null => "object",
+         null => schema.AllOf?.Any() == true ? "All of (" + string.Join(", ", schema.AllOf.Select(GetObjectDescription)) + ")" : "object",
          _ => ""
       };
    }

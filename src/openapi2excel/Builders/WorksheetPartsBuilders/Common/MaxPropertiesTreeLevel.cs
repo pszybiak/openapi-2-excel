@@ -40,17 +40,31 @@ internal static class MaxPropertiesTreeLevel
          max = Math.Max(currentLevel, EstablishMaxTreeLevel(schema.Items, currentLevel + 1, maxTreeLevel));
       }
 
+      // When the schema composition is a conjunction, we merge all the subschemas on the same level
       max = !schema.AllOf.Any()
          ? max
          : schema.AllOf
-            .Select(schemaProperty => EstablishMaxTreeLevel(schemaProperty, currentLevel, maxTreeLevel))
+            .Select(subschema => EstablishMaxTreeLevel(subschema, currentLevel, maxTreeLevel))
             .Prepend(max)
             .Max();
 
+      // When the schema composition is a disjunction and there's
+      // many subschemas, they go one level bellow the current level.
+      int subschemaLevel;
+
+      subschemaLevel = currentLevel + (schema.AnyOf.Count > 1 ? 1 : 0);
       max = !schema.AnyOf.Any()
          ? max
          : schema.AnyOf
-            .Select(schemaProperty => EstablishMaxTreeLevel(schemaProperty, currentLevel, maxTreeLevel))
+            .Select(subschema => EstablishMaxTreeLevel(subschema, subschemaLevel, maxTreeLevel))
+            .Prepend(max)
+            .Max();
+
+      subschemaLevel = currentLevel + (schema.OneOf.Count > 1 ? 1 : 0);
+      max = !schema.OneOf.Any()
+         ? max
+         : schema.OneOf
+            .Select(subschema => EstablishMaxTreeLevel(subschema, subschemaLevel, maxTreeLevel))
             .Prepend(max)
             .Max();
 
