@@ -39,6 +39,18 @@ Example
   openapi2excel C:\openapi-spec.yml C:\openapi-spec.xlsx
 ```
 
+## Container
+A container is available, allowing to run the tool without installing extra dependencies. Docker is required to be installed in your system.
+
+Example of building and running local container:
+```
+# Build the container
+docker build -t openapi2excel .
+
+# Run the container, mounting a volume for data persistance
+docker run -it -v ./data:/data openapi2excel /data/input.json /data/output.xlsx
+```
+
 ## Result
 
 To show how the application works, let's use the official example used on the [Swagger Editor website](https://editor.swagger.io/).
