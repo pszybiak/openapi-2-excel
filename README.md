@@ -122,9 +122,10 @@ The names in italics are the links: clicking _Location_ walks to the section des
 - a `$ref` to another document names a schema this one has never read. Such a name is printed and
   is not a link: a schema of the same name declared here is a different schema, and documenting it
   as that one would invent everything it says,
-- a schema written as several, `allOf`, is documented as the one schema its parts describe, and its
-  `Object type` names those parts, `All of (Cat, Dog)`. The alternatives of a `oneOf` or an `anyOf`
-  are documented as one row each, naming and linking to the alternative,
+- a schema written as several, `allOf`, is documented as the one schema its parts describe, and the
+  alternatives of a `oneOf` or an `anyOf` are documented as one row each, naming and linking to the
+  alternative. `Object type` says which of the three it is and what it is written as:
+  `All of (Cat, Dog)`, `One of (Cat, Dog)`, `Any of (Cat, Dog)`,
 - the `Object type` column links to the section documenting the object it names, from every tab and
   from the sections themselves,
 - the body of a request or of a response is an object as often as not, and the table under it only
@@ -254,8 +255,9 @@ schema it references, not as a bare `object`. Whatever the wrapper declares itse
 referenced schema, and `nullable` or `deprecated` counts when either of the two declares it.
 
 A composition of several schemas has no single name, so `Object type` names the schemas it is
-written as, all of them together: `All of (Category, Status)`. A composition the document declares
-under a name is named by it and links to its section, the way any other named schema does.
+written as, and says how they are to be read: `All of (Category, Status)` for an `allOf`,
+`One of (Cat, Dog)` for a `oneOf`, `Any of (Cat, Dog)` for an `anyOf`. A composition the document
+declares under a name is named by it and links to its section, the way any other named schema does.
 
 ## Result
 

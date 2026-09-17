@@ -38,6 +38,8 @@
   "ArrayType": "tablica",
   "ObjectType": "obiekt",
   "AllOfType": "Wszystkie z ({0})",
+  "OneOfType": "Jeden z ({0})",
+  "AnyOfType": "Dowolny z ({0})",
   "BodyFormat": "Format treści: {0}",
   "BodyFormatWithObject": "{0} ({1})",
   "ArrayPlaceholder": "<tablica>",

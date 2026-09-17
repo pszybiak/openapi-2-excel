@@ -611,6 +611,14 @@ namespace OpenApi2Excel.Tests
                      - $ref: '#/components/schemas/Dog'
                  named:
                    $ref: '#/components/schemas/Merged'
+                 either:
+                   oneOf:
+                     - $ref: '#/components/schemas/Cat'
+                     - $ref: '#/components/schemas/Dog'
+                 some:
+                   anyOf:
+                     - $ref: '#/components/schemas/Cat'
+                     - $ref: '#/components/schemas/Dog'
              Merged:
                allOf:
                  - $ref: '#/components/schemas/Cat'
@@ -642,11 +650,13 @@ namespace OpenApi2Excel.Tests
          Assert.False(objects.Cell(kennel + 2, objectType).HasHyperlink);
 
          // The same composition declared under a name is named by it, and walks to its section.
-         var named = objects.Column(1).CellsUsed(cell => cell.GetString() == "named").Single()
-            .Address.RowNumber;
-         Assert.Equal("Merged", objects.Cell(named, objectType).GetString());
+         Assert.Equal("Merged", objects.Cell(PropertyRow(objects, "named"), objectType).GetString());
          Assert.Equal($"'Objects'!A{SectionRow(objects, "Merged")}",
-            objects.Cell(named, objectType).GetHyperlink().InternalAddress);
+            objects.Cell(PropertyRow(objects, "named"), objectType).GetHyperlink().InternalAddress);
+
+         // A schema is written as several in three ways, and the column says which one it is.
+         Assert.Equal("One of (Cat, Dog)", objects.Cell(PropertyRow(objects, "either"), objectType).GetString());
+         Assert.Equal("Any of (Cat, Dog)", objects.Cell(PropertyRow(objects, "some"), objectType).GetString());
       }
 
       [Fact]
@@ -660,6 +670,8 @@ namespace OpenApi2Excel.Tests
          // Everything the document says is said in its language, and the names of the parts are
          // what the specification calls them.
          Assert.Equal("Wszystkie z (Cat, Dog)", objects.Cell(kennel + 2, objectType).GetString());
+         Assert.Equal("Jeden z (Cat, Dog)", objects.Cell(PropertyRow(objects, "either"), objectType).GetString());
+         Assert.Equal("Dowolny z (Cat, Dog)", objects.Cell(PropertyRow(objects, "some"), objectType).GetString());
       }
 
       [Fact]
@@ -774,6 +786,11 @@ namespace OpenApi2Excel.Tests
          => Enumerable.Range(4, (worksheet.LastRowUsed()?.RowNumber() ?? 3) - 3)
             .Where(row => worksheet.Row(row).OutlineLevel == 0
                           && !string.IsNullOrEmpty(worksheet.Cell(row, 1).GetString()));
+
+      /// <summary>The row of the property of that name, wherever the tree of a section puts it.</summary>
+      private static int PropertyRow(IXLWorksheet worksheet, string propertyName)
+         => worksheet.Column(1).CellsUsed(cell => cell.GetString() == propertyName).Single()
+            .Address.RowNumber;
 
       /// <summary>
       /// The column a header names, however deep the tree of the table pushes it to the right.

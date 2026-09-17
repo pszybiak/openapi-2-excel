@@ -89,6 +89,8 @@ namespace OpenApi2Excel.Tests
          Assert.Contains("{0}", translation.InfoOperationWithId);
          Assert.Contains("{1}", translation.InfoOperationWithId);
          Assert.Contains("{0}", translation.AllOfType);
+         Assert.Contains("{0}", translation.OneOfType);
+         Assert.Contains("{0}", translation.AnyOfType);
       }
 
       [Theory]

@@ -59,9 +59,21 @@ public class Translation
 
    /// <summary>
    /// Takes the names of the schemas a schema is written as, for example "All of ({0})". The
-   /// Object type column describes a schema written as several that way.
+   /// Object type column describes a schema written as all of several that way.
    /// </summary>
    public string AllOfType { get; set; } = null!;
+
+   /// <summary>
+   /// Takes the names of the schemas a schema is written as, for example "One of ({0})". The
+   /// Object type column describes a schema written as one of several that way.
+   /// </summary>
+   public string OneOfType { get; set; } = null!;
+
+   /// <summary>
+   /// Takes the names of the schemas a schema is written as, for example "Any of ({0})". The
+   /// Object type column describes a schema written as any of several that way.
+   /// </summary>
+   public string AnyOfType { get; set; } = null!;
    public string OperationHeader { get; set; } = null!;
    public string OperationType { get; set; } = null!;
    public string OperationId { get; set; } = null!;

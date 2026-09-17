@@ -38,6 +38,8 @@
   "ArrayType": "array",
   "ObjectType": "object",
   "AllOfType": "All of ({0})",
+  "OneOfType": "One of ({0})",
+  "AnyOfType": "Any of ({0})",
   "BodyFormat": "Body format: {0}",
   "BodyFormatWithObject": "{0} ({1})",
   "ArrayPlaceholder": "<array>",

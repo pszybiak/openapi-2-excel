@@ -150,27 +150,43 @@ internal static class OpenApiSchemaExtension
    }
 
    /// <summary>
-   /// What a schema written as several, an <c>allOf</c> of more than one, is made of: the names of
-   /// its parts, the way a reader of the specification has to read them, all of them together. Null
-   /// when the schema is not written that way, or when no part of it carries a name.
+   /// What a schema written as several is made of: the names of those schemas, and the way a reader
+   /// of the specification has to read them. All of them together for an <c>allOf</c>, one of them
+   /// for a <c>oneOf</c>, any of them for an <c>anyOf</c>. Null when the schema is not written that
+   /// way, or when no schema it is written as carries a name.
    /// <para>
-   /// A single part is not one of them: it is a wrapper around the schema it holds, and
+   /// A single one of them is not a composition: it is a wrapper around the schema it holds, and
    /// <see cref="GetEffectiveSchema"/> has already unwrapped it.
    /// </para>
    /// </summary>
    private static string? DescribeParts(OpenApiSchema schema, Translation translation, int depth)
    {
-      if (schema.AllOf.Count <= 1)
+      // A schema stating several of the three at once is legal and describes something no single
+      // column can hold, so the first of them is what the column states.
+      if (schema.AllOf.Count > 1)
       {
-         return null;
+         return DescribeParts(schema.AllOf, translation.AllOfType, translation, depth);
       }
 
-      var parts = schema.AllOf
+      if (schema.OneOf.Count > 1)
+      {
+         return DescribeParts(schema.OneOf, translation.OneOfType, translation, depth);
+      }
+
+      return schema.AnyOf.Count > 1
+         ? DescribeParts(schema.AnyOf, translation.AnyOfType, translation, depth)
+         : null;
+   }
+
+   private static string? DescribeParts(IList<OpenApiSchema> parts, string format,
+      Translation translation, int depth)
+   {
+      var names = parts
          .Select(part => part.GetObjectDescription(translation, depth + 1))
-         .Where(part => !string.IsNullOrEmpty(part))
+         .Where(name => !string.IsNullOrEmpty(name))
          .ToList();
 
-      return parts.Count == 0 ? null : string.Format(translation.AllOfType, string.Join(", ", parts));
+      return names.Count == 0 ? null : string.Format(format, string.Join(", ", names));
    }
 
    public static string GetPropertyDescription(this OpenApiSchema schema)
