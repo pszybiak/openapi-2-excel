@@ -15,19 +15,19 @@ internal class OperationInfoBuilder(
    public void AddOperationInfoSection(string path, OpenApiPathItem pathItem, OperationType operationType,
       OpenApiOperation operation)
    {
-      Cell(1).SetTextBold("OPERATION INFORMATION");
+      Cell(1).SetTextBold(Options.Translation.OperationHeader);
       ActualRow.MoveNext();
 
       using (var _ = new Section(Worksheet, ActualRow))
       {
-         var cell = Cell(1).SetTextBold("Operation type").CellRight(attributesColumnIndex).SetText(operationType.ToString().ToUpper())
-            .IfNotEmpty(operation.OperationId, c => c.NextRow().SetTextBold("Id").CellRight(attributesColumnIndex).SetText(operation.OperationId))
-            .NextRow().SetTextBold("Path").CellRight(attributesColumnIndex).SetText(path)
-            .IfNotEmpty(pathItem.Description, c => c.NextRow().SetTextBold("Path description").CellRight(attributesColumnIndex).SetText(pathItem.Description))
-            .IfNotEmpty(pathItem.Summary, c => c.NextRow().SetTextBold("Path summary").CellRight(attributesColumnIndex).SetText(pathItem.Summary))
-            .IfNotEmpty(operation.Description, c => c.NextRow().SetTextBold("Operation description").CellRight(attributesColumnIndex).SetText(operation.Description))
-            .IfNotEmpty(operation.Summary, c => c.NextRow().SetTextBold("Operation summary").CellRight(attributesColumnIndex).SetText(operation.Summary))
-            .NextRow().SetTextBold("Deprecated").CellRight(attributesColumnIndex).SetText(Options.Language.Get(operation.Deprecated));
+         var cell = Cell(1).SetTextBold(Options.Translation.OperationType).CellRight(attributesColumnIndex).SetText(operationType.ToString().ToUpper())
+            .IfNotEmpty(operation.OperationId, c => c.NextRow().SetTextBold(Options.Translation.OperationId).CellRight(attributesColumnIndex).SetText(operation.OperationId))
+            .NextRow().SetTextBold(Options.Translation.OperationPath).CellRight(attributesColumnIndex).SetText(path)
+            .IfNotEmpty(pathItem.Description, c => c.NextRow().SetTextBold(Options.Translation.OperationPathDescription).CellRight(attributesColumnIndex).SetText(pathItem.Description))
+            .IfNotEmpty(pathItem.Summary, c => c.NextRow().SetTextBold(Options.Translation.OperationPathSummary).CellRight(attributesColumnIndex).SetText(pathItem.Summary))
+            .IfNotEmpty(operation.Description, c => c.NextRow().SetTextBold(Options.Translation.OperationDescription).CellRight(attributesColumnIndex).SetText(operation.Description))
+            .IfNotEmpty(operation.Summary, c => c.NextRow().SetTextBold(Options.Translation.OperationSummary).CellRight(attributesColumnIndex).SetText(operation.Summary))
+            .NextRow().SetTextBold(Options.Translation.OperationDeprecated).CellRight(attributesColumnIndex).SetText(operation.Deprecated.Translate(Options.Translation));
 
          ActualRow.GoTo(cell.Address.RowNumber);
       }

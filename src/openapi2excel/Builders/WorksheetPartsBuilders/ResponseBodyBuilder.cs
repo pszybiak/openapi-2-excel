@@ -9,18 +9,19 @@ internal class ResponseBodyBuilder(
    RowPointer actualRow,
    int attributesColumnIndex,
    IXLWorksheet worksheet,
-   OpenApiDocumentationOptions options) : WorksheetPartBuilder(actualRow, worksheet, options)
+   OpenApiDocumentationOptions options,
+   ObjectLinkRegistry? objectLinks = null) : WorksheetPartBuilder(actualRow, worksheet, options)
 {
    public void AddResponseBodyPart(OpenApiOperation operation)
    {
       if (!operation.Responses.Any())
          return;
 
-      Cell(1).SetTextBold("RESPONSE");
+      Cell(1).SetTextBold(Options.Translation.ResponseHeader);
       ActualRow.MoveNext();
       using (var _ = new Section(Worksheet, ActualRow))
       {
-         var builder = new PropertiesTreeBuilder(attributesColumnIndex, Worksheet, Options);
+         var builder = new PropertiesTreeBuilder(attributesColumnIndex, Worksheet, Options, objectLinks);
          foreach (var response in operation.Responses)
          {
             AddResponseHttpCode(response.Key, response.Value.Description);
@@ -39,12 +40,12 @@ internal class ResponseBodyBuilder(
       ActualRow.MoveNext();
 
       var responseHeadertRowPointer = ActualRow.Copy();
-      Cell(1).SetTextBold("Response headers");
+      Cell(1).SetTextBold(Options.Translation.ResponseHeaders);
       ActualRow.MoveNext();
 
       using (var _ = new Section(Worksheet, ActualRow))
       {
-         var schemaDescriptor = new OpenApiSchemaDescriptor(Worksheet, Options);
+         var schemaDescriptor = new OpenApiSchemaDescriptor(Worksheet, Options, objectLinks);
 
          InsertHeader(schemaDescriptor);
          ActualRow.MoveNext();
@@ -59,7 +60,7 @@ internal class ResponseBodyBuilder(
 
       void InsertHeader(OpenApiSchemaDescriptor schemaDescriptor)
       {
-         var nextCell = Cell(1).SetTextBold("Name")
+         var nextCell = Cell(1).SetTextBold(Options.Translation.FieldName)
             .CellRight(attributesColumnIndex + 1).GetColumnNumber();
 
          var lastUsedColumn = schemaDescriptor.AddSchemaDescriptionHeader(ActualRow, nextCell);
@@ -85,10 +86,12 @@ internal class ResponseBodyBuilder(
 
    private void AddResponseHttpCode(string httpCode, string? description)
    {
-      var responseCode = httpCode.Equals("default") ? "Default response" : $"Response HttpCode: {httpCode}";
+      var responseCode = httpCode.Equals("default")
+         ? Options.Translation.ResponseDefault
+         : string.Format(Options.Translation.ResponseHttpCode, httpCode);
       if (!string.IsNullOrEmpty(description) && !description.Equals("default response"))
       {
-         responseCode += $": {description}";
+         responseCode = string.Format(Options.Translation.ResponseWithDescription, responseCode, description);
       }
 
       Cell(1).SetTextBold(responseCode);

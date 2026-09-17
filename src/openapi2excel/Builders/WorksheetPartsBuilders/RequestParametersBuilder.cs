@@ -9,10 +9,11 @@ internal class RequestParametersBuilder(
    RowPointer actualRow,
    int attributesColumnIndex,
    IXLWorksheet worksheet,
-   OpenApiDocumentationOptions options)
+   OpenApiDocumentationOptions options,
+   ObjectLinkRegistry? objectLinks = null)
    : WorksheetPartBuilder(actualRow, worksheet, options)
 {
-   private readonly OpenApiSchemaDescriptor _schemaDescriptor = new(worksheet, options);
+   private readonly OpenApiSchemaDescriptor _schemaDescriptor = new(worksheet, options, objectLinks);
 
    public void AddRequestParametersPart(OpenApiOperation operation)
    {
@@ -20,13 +21,13 @@ internal class RequestParametersBuilder(
       if (!operation.Parameters.Any())
          return;
 
-      Cell(1).SetTextBold("PARAMETERS");
+      Cell(1).SetTextBold(Options.Translation.ParametersHeader);
       ActualRow.MoveNext();
       using (var _ = new Section(Worksheet, ActualRow))
       {
-         var nextCell = Cell(1).SetTextBold("Name")
-            .CellRight(attributesColumnIndex - 1).SetTextBold("Location")
-            .CellRight().SetTextBold("Serialization")
+         var nextCell = Cell(1).SetTextBold(Options.Translation.ParameterName)
+            .CellRight(attributesColumnIndex - 1).SetTextBold(Options.Translation.ParameterLocation)
+            .CellRight().SetTextBold(Options.Translation.ParameterSerialization)
             .CellRight();
 
          var lastUsedColumn = _schemaDescriptor.AddSchemaDescriptionHeader(ActualRow, nextCell.Address.ColumnNumber);
@@ -52,7 +53,7 @@ internal class RequestParametersBuilder(
          .CellRight().SetText(parameter.Style?.ToString())
          .CellRight();
 
-      _schemaDescriptor.AddSchemaDescriptionValues(parameter.Schema, parameter.Required, ActualRow, nextCell.Address.ColumnNumber, parameter.Description, true );
+      _schemaDescriptor.AddSchemaDescriptionValues(parameter.Schema, parameter.Required, ActualRow, nextCell.Address.ColumnNumber, parameter.Description, true);
       ActualRow.MoveNext();
    }
 }

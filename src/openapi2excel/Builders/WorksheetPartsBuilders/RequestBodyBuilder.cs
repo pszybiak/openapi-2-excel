@@ -9,19 +9,20 @@ internal class RequestBodyBuilder(
    RowPointer actualRow,
    int attributesColumnIndex,
    IXLWorksheet worksheet,
-   OpenApiDocumentationOptions options) : WorksheetPartBuilder(actualRow, worksheet, options)
+   OpenApiDocumentationOptions options,
+   ObjectLinkRegistry? objectLinks = null) : WorksheetPartBuilder(actualRow, worksheet, options)
 {
    public void AddRequestBodyPart(OpenApiOperation operation)
    {
       if (operation.RequestBody is null)
          return;
 
-      Cell(1).SetTextBold("REQUEST");
+      Cell(1).SetTextBold(Options.Translation.RequestHeader);
       ActualRow.MoveNext();
 
       using (var _ = new Section(Worksheet, ActualRow))
       {
-         var builder = new PropertiesTreeBuilder(attributesColumnIndex, Worksheet, Options);
+         var builder = new PropertiesTreeBuilder(attributesColumnIndex, Worksheet, Options, objectLinks);
          builder.AddPropertiesTreeForMediaTypes(ActualRow, operation.RequestBody.Content, Options);
          ActualRow.MovePrev();
       }

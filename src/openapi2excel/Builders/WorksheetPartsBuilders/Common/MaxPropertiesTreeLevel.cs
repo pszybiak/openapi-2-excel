@@ -20,6 +20,15 @@ internal static class MaxPropertiesTreeLevel
          .Max();
    }
 
+   /// <summary>
+   /// Deepest tree of a set of schemas, each documented as a table of its own: the objects of the
+   /// objects worksheet.
+   /// </summary>
+   public static int Calculate(IEnumerable<OpenApiSchema> schemas, int maxTreeLevel)
+      => schemas.Select(schema => EstablishMaxTreeLevel(schema, 1, maxTreeLevel))
+         .Prepend(1)
+         .Max();
+
    private static int EstablishMaxTreeLevel(IDictionary<string, OpenApiMediaType> mediaTypes, int maxTreeLevel)
       => mediaTypes.Select(openApiMediaType => openApiMediaType.Value.Schema)
          .Select(schema => EstablishMaxTreeLevel(schema, 1, maxTreeLevel))

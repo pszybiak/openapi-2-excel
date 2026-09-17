@@ -1,4 +1,6 @@
 using openapi2excel.core;
+using openapi2excel.core.Lang;
+using openapi2excel.core.Sanitization;
 using Spectre.Console;
 using Spectre.Console.Cli;
 using System.ComponentModel;
@@ -7,7 +9,7 @@ using Path = System.IO.Path;
 namespace OpenApi2Excel.cli;
 
 [Description("Generate Rest API specification in a MS Excel format")]
-public class GenerateExcelCommand : Command<GenerateExcelCommand.GenerateExcelSettings>
+public class GenerateExcelCommand : AsyncCommand<GenerateExcelCommand.GenerateExcelSettings>
 {
    public class GenerateExcelSettings : CommandSettings
    {
@@ -23,7 +25,11 @@ public class GenerateExcelCommand : Command<GenerateExcelCommand.GenerateExcelSe
       [CommandOption("-n|--no-logo")]
       public bool NoLogo { get; init; }
 
-      [Description("Maximum depth level for documenting object hiearchies (defaults to 10).")]
+      [Description("Language of the generated document: a language code or a path to a json file with a translation.")]
+      [CommandOption("-l|--lang")]
+      public string? Language { get; init; }
+
+      [Description("Maximum depth level for documenting object hierarchies (defaults to 10).")]
       [CommandOption("-d|--depth")]
       public int Depth { get; init; } = 10;
 
@@ -31,8 +37,14 @@ public class GenerateExcelCommand : Command<GenerateExcelCommand.GenerateExcelSe
       [CommandOption("-g|--debug")]
       public bool Debug { get; init; }
 
+      [Description("Reject the input file instead of correcting its specification errors.")]
+      [CommandOption("--no-sanitize")]
+      public bool NoSanitize { get; init; }
+
       internal FileInfo InputFileParsed { get; set; } = null!;
       internal FileInfo OutputFileParsed { get; set; } = null!;
+      internal TranslationResult TranslationParsed { get; set; } = null!;
+
       public override ValidationResult Validate()
       {
          var inputFilePath = InputFile.Trim();
@@ -65,6 +77,15 @@ public class GenerateExcelCommand : Command<GenerateExcelCommand.GenerateExcelSe
 
          OutputFileParsed = new FileInfo(outputFilePath);
 
+         try
+         {
+            TranslationParsed = TranslationsSelector.Load(Language);
+         }
+         catch (InvalidLanguageException exception)
+         {
+            return ValidationResult.Error(exception.Message);
+         }
+
          return ValidationResult.Success();
       }
 
@@ -85,7 +106,8 @@ public class GenerateExcelCommand : Command<GenerateExcelCommand.GenerateExcelSe
       }
    }
 
-   public override int Execute(CommandContext context, GenerateExcelSettings settings)
+   protected override async Task<int> ExecuteAsync(CommandContext context, GenerateExcelSettings settings,
+      CancellationToken cancellationToken)
    {
       if (!settings.NoLogo)
       {
@@ -95,13 +117,21 @@ public class GenerateExcelCommand : Command<GenerateExcelCommand.GenerateExcelSe
          }
       }
 
+      WriteTranslationReport(settings);
+
       try
       {
-         var options = new OpenApiDocumentationOptions { MaxDepth = settings.Depth };
+         var options = new OpenApiDocumentationOptions
+         {
+            MaxDepth = settings.Depth,
+            Translation = settings.TranslationParsed.Translation,
+            SanitizeDocument = !settings.NoSanitize,
+            OnDocumentSanitized = WriteSanitizationReport
+         };
 
-         OpenApiDocumentationGenerator
+         await OpenApiDocumentationGenerator
             .GenerateDocumentation(settings.InputFileParsed.FullName, settings.OutputFileParsed.FullName, options)
-            .ConfigureAwait(false).GetAwaiter().GetResult();
+            .ConfigureAwait(false);
 
          AnsiConsole.MarkupLine($"Excel file saved to [green]{settings.OutputFileParsed.FullName.EscapeMarkup()}[/]");
       }
@@ -121,5 +151,41 @@ public class GenerateExcelCommand : Command<GenerateExcelCommand.GenerateExcelSe
       }
 
       return 0;
+   }
+
+   private static void WriteTranslationReport(GenerateExcelSettings settings)
+   {
+      if (settings.TranslationParsed.IsComplete)
+      {
+         return;
+      }
+
+      var missing = settings.TranslationParsed.MissingLabels;
+      AnsiConsole.MarkupLine(
+         $"[yellow]The translation '{settings.Language.EscapeMarkup()}' does not define {missing.Count} " +
+         $"{(missing.Count == 1 ? "label" : "labels")}, taken from '{TranslationsSelector.DefaultLanguage}': " +
+         $"{string.Join(", ", missing).EscapeMarkup()}.[/]");
+   }
+
+   private static void WriteSanitizationReport(SanitizationReport report)
+   {
+      if (report.Corrections.Any())
+      {
+         AnsiConsole.MarkupLine(
+            $"[yellow]The input file does not conform to the OpenAPI specification. Corrected {report.Corrections.Count} " +
+            $"{(report.Corrections.Count == 1 ? "problem" : "problems")}:[/]");
+         foreach (var correction in report.Corrections)
+         {
+            AnsiConsole.MarkupLine($"[yellow]  - {correction.ToString().EscapeMarkup()}[/]");
+         }
+
+         AnsiConsole.MarkupLine("[grey]  The corrections apply to the generated document only, the input file is not modified.[/]");
+         AnsiConsole.MarkupLine("[grey]  Run with --no-sanitize to reject such a file instead.[/]");
+      }
+
+      foreach (var problem in report.SkippedProblems)
+      {
+         AnsiConsole.MarkupLine($"[red]Cannot be corrected - {problem.ToString().EscapeMarkup()}[/]");
+      }
    }
 }

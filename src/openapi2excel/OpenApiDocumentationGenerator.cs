@@ -1,13 +1,29 @@
 using ClosedXML.Excel;
+using Microsoft.OpenApi.Extensions;
+using Microsoft.OpenApi.Models;
 using Microsoft.OpenApi.Readers;
+using Microsoft.OpenApi.Validations;
 using openapi2excel.core.Builders;
 using openapi2excel.core.Common;
+using openapi2excel.core.Sanitization;
 using System.Text;
 
 namespace openapi2excel.core;
 
 public static class OpenApiDocumentationGenerator
 {
+   public static async Task GenerateDocumentation(string openApiFile, string outputFile)
+   {
+      if (!File.Exists(openApiFile))
+         throw new FileNotFoundException($"Invalid input file path: {openApiFile}.");
+
+      if (string.IsNullOrEmpty(outputFile))
+         throw new ArgumentNullException(outputFile, "Invalid output file path.");
+
+      await using var fileStream = File.OpenRead(openApiFile);
+      await GenerateDocumentationImpl(fileStream, outputFile, new OpenApiDocumentationOptions());
+   }
+
    public static async Task GenerateDocumentation(string openApiFile, string outputFile,
       OpenApiDocumentationOptions options)
    {
@@ -34,33 +50,70 @@ public static class OpenApiDocumentationGenerator
       OpenApiDocumentationOptions options)
    {
       var readResult = await new OpenApiStreamReader().ReadAsync(openApiFileStream);
-      AssertReadResult(readResult);
+      AssertDocumentIsUsable(readResult, options);
+      UnresolvedReferences.ResolveResponseHeaderSchemas(readResult.OpenApiDocument);
 
       using var workbook = new XLWorkbook();
       var infoWorksheetsBuilder = new InfoWorksheetBuilder(workbook, options);
       infoWorksheetsBuilder.Build(readResult.OpenApiDocument);
 
-      var worksheetBuilder = new OperationWorksheetBuilder(workbook, options);
+      // The Object type column of every operation names a schema the last worksheet documents, and
+      // that worksheet does not exist yet, so the links are collected here and set at the end.
+      var objectLinks = new ObjectLinkRegistry();
+      var worksheetBuilder = new OperationWorksheetBuilder(workbook, options, objectLinks);
       readResult.OpenApiDocument.Paths.ForEach(path
          => path.Value.Operations.ForEach(operation
                =>
                {
                   var worksheet = worksheetBuilder.Build(path.Key, path.Value, operation.Key, operation.Value);
-                  infoWorksheetsBuilder.AddLink(operation.Key, path.Key, worksheet);
+                  infoWorksheetsBuilder.AddLink(path.Key, path.Value, operation.Key, operation.Value, worksheet);
                }
          ));
+
+      // Every worksheet exists by now, so the index can list them grouped instead of in the order
+      // the document happens to declare its paths.
+      infoWorksheetsBuilder.AddOperationsIndex();
+
+      // The objects come last, after every worksheet naming one, and linking them is the last thing
+      // the document needs.
+      var objectsWorksheet = new ObjectsWorksheetBuilder(workbook, options, objectLinks)
+         .Build(ObjectsCatalog.Collect(readResult.OpenApiDocument));
+      if (objectsWorksheet is not null)
+      {
+         infoWorksheetsBuilder.AddObjectsLink(objectsWorksheet);
+      }
+
+      objectLinks.Resolve();
 
       workbook.SaveAs(new FileInfo(outputFile).FullName);
    }
 
-   private static void AssertReadResult(ReadResult readResult)
+   private static void AssertDocumentIsUsable(ReadResult readResult, OpenApiDocumentationOptions options)
    {
-      if (!readResult.OpenApiDiagnostic.Errors.Any())
+      var errors = readResult.OpenApiDiagnostic.Errors.ToList();
+      if (!errors.Any())
          return;
+
+      if (options.SanitizeDocument)
+      {
+         var report = OpenApiDocumentSanitizer.Sanitize(readResult.OpenApiDocument);
+         if (report.HasChanges)
+         {
+            options.OnDocumentSanitized?.Invoke(report);
+         }
+
+         // The validator reports the same violations as the reader, so this is what is left of them.
+         errors = Validate(readResult.OpenApiDocument);
+         if (!errors.Any())
+            return;
+      }
 
       var errorMessageBuilder = new StringBuilder();
       errorMessageBuilder.AppendLine("Some errors occurred while processing input file.");
-      readResult.OpenApiDiagnostic.Errors.ToList().ForEach(e => errorMessageBuilder.AppendLine($"{e.Message} ({e.Pointer})"));
+      errors.ForEach(e => errorMessageBuilder.AppendLine($"{e.Message} ({e.Pointer})"));
       throw new InvalidOperationException(errorMessageBuilder.ToString());
    }
+
+   private static List<OpenApiError> Validate(OpenApiDocument document)
+      => document.Validate(ValidationRuleSet.GetDefaultRuleSet()).ToList();
 }

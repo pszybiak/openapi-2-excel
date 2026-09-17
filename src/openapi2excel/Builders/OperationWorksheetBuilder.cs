@@ -6,7 +6,10 @@ using openapi2excel.core.Common;
 
 namespace openapi2excel.core.Builders;
 
-internal class OperationWorksheetBuilder(IXLWorkbook workbook, OpenApiDocumentationOptions options)
+internal class OperationWorksheetBuilder(
+   IXLWorkbook workbook,
+   OpenApiDocumentationOptions options,
+   ObjectLinkRegistry? objectLinks = null)
    : WorksheetBuilder(options)
 {
    private readonly RowPointer _actualRowPointer = new(1);
@@ -22,23 +25,25 @@ internal class OperationWorksheetBuilder(IXLWorkbook workbook, OpenApiDocumentat
       _actualRowPointer.GoTo(1);
 
       _attributesColumnsStartIndex = MaxPropertiesTreeLevel.Calculate(operation, Options.MaxDepth);
-      AdjustColumnsWidthToRequestTreeLevel();
+      PropertiesTreeColumns.NarrowTreeColumns(_worksheet, _attributesColumnsStartIndex);
 
       AddHomePageLink();
       AddOperationInfos(path, pathItem, operationType, operation);
       AddRequestParameters(operation);
       AddRequestBody(operation);
       AddResponseBody(operation);
-      AdjustLastNamesColumnToContents();
-      AdjustDescriptionColumnToContents();
+      PropertiesTreeColumns.AdjustToContents(_worksheet, _attributesColumnsStartIndex);
 
       return _worksheet;
    }
 
    private string GetWorksheetName(string path, OpenApiOperation operation, OperationType operationType)
    {
-      var maxLength = 28;
-      var name = "";
+      // Short enough to leave room for the number a repeated name gets, inside the 31 characters
+      // Excel allows.
+      const int maxLength = 28;
+
+      string name;
       if (!string.IsNullOrEmpty(operation.OperationId))
       {
          // take worksheet name from OperationId
@@ -51,20 +56,7 @@ internal class OperationWorksheetBuilder(IXLWorkbook workbook, OpenApiDocumentat
          name = operationType.ToString().ToUpper() + "_" + pathName[1..];
       }
 
-      // check if the name is not too long
-      if (name.Length > maxLength)
-      {
-         name = name[..maxLength];
-      }
-
-      // check if the name is unique
-      var nr = 2;
-      var tmpName = name;
-      while (workbook.Worksheets.Any(s => s.Name.Equals(tmpName, StringComparison.CurrentCultureIgnoreCase)))
-      {
-         tmpName = name[..maxLength] + "_" + nr++;
-      }
-      return tmpName;
+      return WorksheetName.Unique(workbook, name, maxLength);
    }
 
    private void CreateNewWorksheet(string operation)
@@ -76,42 +68,21 @@ internal class OperationWorksheetBuilder(IXLWorkbook workbook, OpenApiDocumentat
       _worksheet.Outline.SummaryVLocation = XLOutlineSummaryVLocation.Top;
    }
 
-   private void AdjustColumnsWidthToRequestTreeLevel()
-   {
-      for (var columnIndex = 1; columnIndex < _attributesColumnsStartIndex - 1; columnIndex++)
-      {
-         _worksheet.Column(columnIndex).Width = 1.8;
-      }
-   }
-
-   private void AdjustLastNamesColumnToContents()
-   {
-      if (_attributesColumnsStartIndex > 1)
-      {
-         _worksheet.Column(_attributesColumnsStartIndex - 1).AdjustToContents();
-      }
-   }
-
-   private void AdjustDescriptionColumnToContents()
-   {
-      _worksheet.LastColumnUsed().AdjustToContents();
-   }
-
    private void AddOperationInfos(string path, OpenApiPathItem pathItem, OperationType operationType,
       OpenApiOperation operation) =>
       new OperationInfoBuilder(_actualRowPointer, _attributesColumnsStartIndex, _worksheet, Options)
          .AddOperationInfoSection(path, pathItem, operationType, operation);
 
    private void AddRequestParameters(OpenApiOperation operation) =>
-      new RequestParametersBuilder(_actualRowPointer, _attributesColumnsStartIndex, _worksheet, Options)
+      new RequestParametersBuilder(_actualRowPointer, _attributesColumnsStartIndex, _worksheet, Options, objectLinks)
          .AddRequestParametersPart(operation);
 
    private void AddRequestBody(OpenApiOperation operation) =>
-      new RequestBodyBuilder(_actualRowPointer, _attributesColumnsStartIndex, _worksheet, Options)
+      new RequestBodyBuilder(_actualRowPointer, _attributesColumnsStartIndex, _worksheet, Options, objectLinks)
          .AddRequestBodyPart(operation);
 
    private void AddResponseBody(OpenApiOperation operation) =>
-      new ResponseBodyBuilder(_actualRowPointer, _attributesColumnsStartIndex, _worksheet, Options)
+      new ResponseBodyBuilder(_actualRowPointer, _attributesColumnsStartIndex, _worksheet, Options, objectLinks)
          .AddResponseBodyPart(operation);
 
    private void AddHomePageLink() => new HomePageLinkBuilder(_actualRowPointer, _worksheet, Options)

@@ -14,7 +14,7 @@
     <PackageId>openapi2excel.core</PackageId>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageProjectUrl>https://github.com/pszybiak/openapi-2-excel</PackageProjectUrl>
-    <PackageReleaseNotes>See $(PackageProjectUrl)/blob/main/CHANGELOG.md#$(VersionSuffix.Replace('.','')) for release notes.</PackageReleaseNotes>
+    <PackageReleaseNotes>See $(PackageProjectUrl)/blob/main/CHANGELOG.md#$(Version.Replace('.','')) for release notes.</PackageReleaseNotes>
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <PackageVersion>$(VersionSuffix)</PackageVersion>
     <RepositoryType>git</RepositoryType>
@@ -28,14 +28,24 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <EmbeddedResource Include="Lang\*.json" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleToAttribute">
+      <_Parameter1>openapi2excel.tests</_Parameter1>
+    </AssemblyAttribute>
+  </ItemGroup>
+
+  <ItemGroup>
     <None Include="..\..\README.md" Pack="true" PackagePath="\" />
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="ClosedXML" Version="0.104.2" />
-    <PackageReference Include="Microsoft.OpenApi" Version="1.6.23" />
-    <PackageReference Include="Microsoft.OpenApi.Readers" Version="1.6.23" />
-    <PackageReference Include="System.CommandLine" Version="2.0.0-beta4.22272.1" />
+    <PackageReference Include="ClosedXML" Version="0.105.1" />
+    <PackageReference Include="Microsoft.OpenApi" Version="1.6.31" />
+    <PackageReference Include="Microsoft.OpenApi.Readers" Version="1.6.31" />
+    <PackageReference Include="System.Text.Json" Version="10.0.11" />
   </ItemGroup>
 
   <ItemGroup>
