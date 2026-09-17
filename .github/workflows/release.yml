@@ -8,6 +8,14 @@ jobs:
     name: Release
     runs-on: ubuntu-latest
     timeout-minutes: 30
+
+    # Trusted publishing: nuget.org issues a short lived api key to a workflow it trusts, so the
+    # account needs no long lived key to leak. Declaring any permission drops every other one to
+    # none, and checking out the code needs contents.
+    permissions:
+      id-token: write
+      contents: read
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v7
@@ -41,9 +49,18 @@ jobs:
           dotnet build --configuration Release /p:Version=$VERSION
           dotnet pack --configuration Release /p:Version=$VERSION /p:PackageOutputPath=$OUTPUT
 
+      # The key is valid for an hour, so it is asked for right before it is used. One key pushes
+      # both packages, the token it was exchanged for is what cannot be used twice.
+      - name: NuGet login
+        uses: NuGet/login@v1
+        id: login
+        with:
+          # The profile name on nuget.org owning the packages, not an email address.
+          user: ${{ secrets.NUGET_USER }}
+
       - name: Publish package
         env:
-          NUGET_API_KEY: ${{ secrets.NUGET_API_KEY }}
+          NUGET_API_KEY: ${{ steps.login.outputs.NUGET_API_KEY }}
         run: |
           dotnet nuget push --source https://api.nuget.org/v3/index.json --api-key "$NUGET_API_KEY" ${{ steps.package_release.outputs.core_package_filename }}
           dotnet nuget push --source https://api.nuget.org/v3/index.json --api-key "$NUGET_API_KEY" ${{ steps.package_release.outputs.tool_package_filename }}
