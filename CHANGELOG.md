@@ -5,7 +5,9 @@ carries no tags, so a version covers the commits up to and including the one tha
 `semver.txt` to it. Only what a reader of the generated document, or a user of the command line,
 can notice is listed here.
 
-## Unreleased
+## 0.3.0
+
+2026-09-17
 
 ### Added
 
