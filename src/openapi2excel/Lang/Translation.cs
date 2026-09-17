@@ -56,6 +56,12 @@ public class Translation
    public string FieldExample { get; set; } = null!;
    public string ArrayType { get; set; } = null!;
    public string ObjectType { get; set; } = null!;
+
+   /// <summary>
+   /// Takes the names of the schemas a schema is written as, for example "All of ({0})". The
+   /// Object type column describes a schema written as several that way.
+   /// </summary>
+   public string AllOfType { get; set; } = null!;
    public string OperationHeader { get; set; } = null!;
    public string OperationType { get; set; } = null!;
    public string OperationId { get; set; } = null!;

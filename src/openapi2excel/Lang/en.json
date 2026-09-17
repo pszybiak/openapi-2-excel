@@ -37,6 +37,7 @@
   "OperationDeprecated": "Deprecated",
   "ArrayType": "array",
   "ObjectType": "object",
+  "AllOfType": "All of ({0})",
   "BodyFormat": "Body format: {0}",
   "BodyFormatWithObject": "{0} ({1})",
   "ArrayPlaceholder": "<array>",

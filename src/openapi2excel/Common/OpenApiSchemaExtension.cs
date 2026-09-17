@@ -118,17 +118,59 @@ internal static class OpenApiSchemaExtension
       => schema.GetDeclaredSchema()?.Reference?.Id;
 
    public static string GetObjectDescription(this OpenApiSchema schema, Translation translation)
+      => schema.GetObjectDescription(translation, 0);
+
+   /// <summary>
+   /// <paramref name="depth"/> counts the schemas this description already walked through: an array
+   /// of arrays, or a schema written as several which are written as several themselves. A schema
+   /// holding itself would walk forever.
+   /// </summary>
+   private static string GetObjectDescription(this OpenApiSchema schema, Translation translation, int depth)
    {
+      const int maxDepth = 20;
+      if (depth >= maxDepth)
+      {
+         return translation.ObjectType;
+      }
+
       var effective = schema.GetEffectiveSchema();
       return effective.Type switch
       {
          "object" => effective.Reference is null ? translation.ObjectType : effective.Reference.Id,
          // An array is named by what it holds, and an array holding nothing the document describes
          // names nothing. The Type column already says it is an array.
-         "array" => effective.Items is null ? string.Empty : effective.Items.GetObjectDescription(translation),
-         null => effective.Reference is null ? translation.ObjectType : effective.Reference.Id,
+         "array" => effective.Items is null
+            ? string.Empty
+            : effective.Items.GetObjectDescription(translation, depth + 1),
+         null => effective.Reference is null
+            ? DescribeParts(effective, translation, depth) ?? translation.ObjectType
+            : effective.Reference.Id,
          _ => effective.Reference is null ? "" : effective.Reference.Id
       };
+   }
+
+   /// <summary>
+   /// What a schema written as several, an <c>allOf</c> of more than one, is made of: the names of
+   /// its parts, the way a reader of the specification has to read them, all of them together. Null
+   /// when the schema is not written that way, or when no part of it carries a name.
+   /// <para>
+   /// A single part is not one of them: it is a wrapper around the schema it holds, and
+   /// <see cref="GetEffectiveSchema"/> has already unwrapped it.
+   /// </para>
+   /// </summary>
+   private static string? DescribeParts(OpenApiSchema schema, Translation translation, int depth)
+   {
+      if (schema.AllOf.Count <= 1)
+      {
+         return null;
+      }
+
+      var parts = schema.AllOf
+         .Select(part => part.GetObjectDescription(translation, depth + 1))
+         .Where(part => !string.IsNullOrEmpty(part))
+         .ToList();
+
+      return parts.Count == 0 ? null : string.Format(translation.AllOfType, string.Join(", ", parts));
    }
 
    public static string GetPropertyDescription(this OpenApiSchema schema)

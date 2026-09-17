@@ -70,13 +70,14 @@ namespace OpenApi2Excel.Tests
       }
 
       [Fact]
-      public void Composition_of_several_schemas_is_not_named_after_one_of_them()
+      public void Composition_of_several_schemas_is_named_after_all_of_them()
       {
          var property = PropertyRow("composition");
 
-         // Two references composed into an anonymous type, no single name describes it.
+         // Two references composed into a type the specification never names. No single name
+         // describes it, and the names it is written as do, all of them together.
          Assert.Equal("object", property["Type"]);
-         Assert.Equal("object", property["Object type"]);
+         Assert.Equal("All of (CategoryDto, StatusDto)", property["Object type"]);
       }
 
       [Fact]

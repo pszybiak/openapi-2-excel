@@ -30,6 +30,9 @@ can notice is listed here.
   alternative, and a schema written as several with `allOf` is documented as the one schema its
   parts describe. A `oneOf` used to be documented as nothing at all, and so was every composition
   of more than two schemas.
+- `Object type` names the schemas a composition is written as, `All of (Cat, Dog)`, instead of
+  calling it an object. The label is part of the translation, so the document says it in its own
+  language.
 
 ### Fixed
 

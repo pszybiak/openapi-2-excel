@@ -584,6 +584,84 @@ namespace OpenApi2Excel.Tests
             new[] { anyPet + 3, anyPet + 5 }.Select(row => objects.Cell(row, 2).GetString()));
       }
 
+      private const string Composed = """
+         openapi: 3.0.1
+         info:
+           title: Kennels
+           version: v1
+         paths:
+           /kennels:
+             get:
+               operationId: GetKennels
+               responses:
+                 '200':
+                   description: Ok
+                   content:
+                     application/json:
+                       schema:
+                         $ref: '#/components/schemas/Kennel'
+         components:
+           schemas:
+             Kennel:
+               type: object
+               properties:
+                 resident:
+                   allOf:
+                     - $ref: '#/components/schemas/Cat'
+                     - $ref: '#/components/schemas/Dog'
+                 named:
+                   $ref: '#/components/schemas/Merged'
+             Merged:
+               allOf:
+                 - $ref: '#/components/schemas/Cat'
+                 - $ref: '#/components/schemas/Dog'
+             Cat:
+               type: object
+               properties:
+                 meows:
+                   type: boolean
+             Dog:
+               type: object
+               properties:
+                 barks:
+                   type: boolean
+         """;
+
+      [Fact]
+      public void Object_type_of_a_schema_written_as_several_names_the_parts_of_it()
+      {
+         using var workbook = Generate("en", Composed);
+         var objects = workbook.Worksheet("Objects");
+         var kennel = SectionRow(objects, "Kennel");
+         var objectType = ColumnOf(objects, kennel + 1, "Object type");
+
+         // A composition written in place has no name of its own. Calling it an object says nothing
+         // about what a reader has to read together to know what it is.
+         Assert.Equal("resident", objects.Cell(kennel + 2, 1).GetString());
+         Assert.Equal("All of (Cat, Dog)", objects.Cell(kennel + 2, objectType).GetString());
+         Assert.False(objects.Cell(kennel + 2, objectType).HasHyperlink);
+
+         // The same composition declared under a name is named by it, and walks to its section.
+         var named = objects.Column(1).CellsUsed(cell => cell.GetString() == "named").Single()
+            .Address.RowNumber;
+         Assert.Equal("Merged", objects.Cell(named, objectType).GetString());
+         Assert.Equal($"'Objects'!A{SectionRow(objects, "Merged")}",
+            objects.Cell(named, objectType).GetHyperlink().InternalAddress);
+      }
+
+      [Fact]
+      public void Names_of_the_parts_of_a_schema_are_composed_in_the_language_of_the_document()
+      {
+         using var workbook = Generate("pl", Composed);
+         var objects = workbook.Worksheet("Obiekty");
+         var kennel = SectionRow(objects, "Kennel");
+         var objectType = ColumnOf(objects, kennel + 1, "Typ obiektu");
+
+         // Everything the document says is said in its language, and the names of the parts are
+         // what the specification calls them.
+         Assert.Equal("Wszystkie z (Cat, Dog)", objects.Cell(kennel + 2, objectType).GetString());
+      }
+
       [Fact]
       public void Schema_written_in_parts_is_documented_as_the_one_schema_it_describes()
       {
@@ -696,6 +774,13 @@ namespace OpenApi2Excel.Tests
          => Enumerable.Range(4, (worksheet.LastRowUsed()?.RowNumber() ?? 3) - 3)
             .Where(row => worksheet.Row(row).OutlineLevel == 0
                           && !string.IsNullOrEmpty(worksheet.Cell(row, 1).GetString()));
+
+      /// <summary>
+      /// The column a header names, however deep the tree of the table pushes it to the right.
+      /// </summary>
+      private static int ColumnOf(IXLWorksheet worksheet, int headerRow, string header)
+         => worksheet.Row(headerRow).CellsUsed(cell => cell.GetString() == header).Single()
+            .Address.ColumnNumber;
 
       private static string[] Row(IXLWorksheet worksheet, int rowNumber, int[] columns)
          => columns.Select(column => worksheet.Cell(rowNumber, column).GetString()).ToArray();
